@@ -1,0 +1,117 @@
+.upside {
+  display: flex;
+  padding: 20px 5px;
+  gap: 5px;
+}
+
+.cbelogo {
+  width: 40px;
+  height: 40px;
+  margin-right: 5px;
+}
+.sidebar {
+  position: relative;
+  color: var(--text-primary);
+  display: flex;
+  padding: 5px;
+  flex-direction: column;
+  gap: 5px;
+  background-color: var(--primary);
+  min-width: 150px;
+  max-width: 200px;
+}
+
+.sidebar::before,
+.sidebar::after {
+  content: "";
+  position: absolute;
+  right: -32px;
+  width: 2rem;
+  height: 2rem;
+  background-color: var(--primary);
+}
+
+.sidebar::before {
+  top: 0;
+  z-index: -1;
+}
+.sidebar::after {
+  bottom: 0;
+  z-index: -1;
+}
+
+.middleside {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  flex: 1;
+  border-top: 1px solid var(--text-primary);
+  border-bottom: 1px solid var(--text-primary);
+}
+
+.sidebarLink {
+  color: var(--text-secondary);
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 5px;
+}
+
+.bottomside {
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  padding-bottom: 15px;
+}
+
+.user_detail {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  line-height: 1.5;
+  font-size: small;
+}
+
+.user_detail p:nth-child(1) {
+  font-weight: bold;
+}
+.user_detail p:nth-child(2) {
+  font-weight: lighter;
+}
+
+@media (max-width: 40rem) {
+  .sidebar {
+    min-width: 25px;
+    width: 30px;
+  }
+  .upside {
+    padding: 0;
+  }
+  .cbelogo {
+    width: 100%;
+    height: 25px;
+    margin-right: 0;
+  }
+  .upside > p {
+    display: none;
+  }
+
+  .middleside > a > span {
+    display: none;
+  }
+
+  .bottomside {
+    gap: 10px;
+  }
+
+  .user_info {
+    display: none;
+  }
+  .btn_logout {
+    padding: 2px;
+  }
+  .btn_logout > span {
+    display: none;
+  }
+}
