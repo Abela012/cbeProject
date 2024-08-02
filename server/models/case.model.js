@@ -40,4 +40,5 @@ const CaseSchema = Schema(
   { timestamp: true }
 );
 
-export default Case = model("Case", CaseSchema);
+const Case = model("Case", CaseSchema);
+export default Case;

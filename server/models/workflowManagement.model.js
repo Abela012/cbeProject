@@ -13,7 +13,8 @@ const WorkflowManagementSchema = Schema(
   { timestamp: true }
 );
 
-export default WorkflowManagement = model(
+const WorkflowManagement = model(
   "WorkflowManagement",
   WorkflowManagementSchema
 );
+export default WorkflowManagement;

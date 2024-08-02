@@ -18,7 +18,7 @@ function Login() {
     resolver: yupResolver(schema),
   });
   return (
-    <div className={styles.Formwraper}>
+    <div className={styles.wrapper}>
       <form
         className={styles.form}
         onSubmit={handleSubmit((data) => console.log(data))}
