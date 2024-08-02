@@ -18,5 +18,5 @@ const AppointmentSchema = new Schema(
 );
 
 const Appointment = model("Appointment", AppointmentSchema);
+export default Appointment
 
-export default Appointment;

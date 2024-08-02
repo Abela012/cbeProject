@@ -33,6 +33,7 @@ function Appointment() {
     console.log(data);
     const response = await api.post("/create-appointment", data);
     console.log(response.data);
+
   };
   return (
     <form action="" className="Hform" onSubmit={handleSubmit(submit)}>

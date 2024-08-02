@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import cors from "cors";
+
 import helmet from "helmet";
 import Customer from "./models/customer.model.js";
 import Appointment from "./models/appointment.model.js";
@@ -54,6 +55,36 @@ app.post("/create-appointment", async (req, res) => {
   res.json({ ...newCustomer, ...newAppointment });
 });
 
+mongoose.connect("mongodb://127.0.0.1:27017/appointment")
+
+ 
+app.post('/create-appointment',async (req,res) => {
+  const {
+    customer_name,
+    buissness_name,
+    email,
+    phone,
+    office_id,
+    start_time,
+    end_time,
+    category,
+  } = req.body;
+  
+ const newCustomer =  Customer.create({
+    customerName: customer_name,
+    buissnesName: buissness_name,
+    email: email,
+    phone: phone
+  })
+  const newAppointment = Appointment.create({
+    customerId: newCustomer._id,
+    officeId:office_id,
+    startTime: start_time,
+    endTime: end_time,
+    category:category
+  })
+  res.json({message:"successfully created"})
+})
 app.listen(port, () => {
   console.log(`server statrt on port: ${port}`);
 });
