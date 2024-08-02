@@ -13,4 +13,5 @@ const AppointmentSchema = new Schema(
   { timestamps: true }
 );
 
-export default Appointment = model("Appointment", AppointmentSchema);
+const Appointment = model("Appointment", AppointmentSchema);
+export default Appointment

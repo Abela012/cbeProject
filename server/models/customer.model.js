@@ -8,4 +8,5 @@ const CustomerSchema = new Schema(
   { timestamps: true }
 );
 
-export default Customer = model("Customer", CustomerSchema);
+const Customer = model("Customer", CustomerSchema);
+export default Customer;

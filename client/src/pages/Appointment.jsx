@@ -3,6 +3,7 @@ import FormError from "../components/FormError";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import axios from 'axios'
 
 const schema = yup.object().shape({
   customer_name: yup.string().required("Customer name required"),
@@ -25,7 +26,9 @@ function Appointment() {
   });
 
   const submit = (data) => {
-    console.log(data);
+    axios.post('http://localhost:3005/create-appointment',data)
+    .then(result =>console.log(result))
+    .catch(error => console.log(error))
   };
   return (
     <div className="Formwraper">
