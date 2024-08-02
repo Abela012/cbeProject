@@ -7,7 +7,5 @@ const OfficeManagementSchema = Schema(
   { timestamp: true }
 );
 
-export default OfficeManagement = model(
-  "OfficeManagement",
-  OfficeManagementSchema
-);
+const OfficeManagement = model("OfficeManagement", OfficeManagementSchema);
+export default OfficeManagement;

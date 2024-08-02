@@ -4,8 +4,11 @@ const CustomerSchema = new Schema(
   {
     customerName: { type: String },
     businessName: { type: String },
+    email: { type: String },
+    phone: { type: String },
   },
   { timestamps: true }
 );
 
-export default Customer = model("Customer", CustomerSchema);
+const Customer = model("Customer", CustomerSchema);
+export default Customer;

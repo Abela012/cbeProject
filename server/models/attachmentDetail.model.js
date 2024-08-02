@@ -7,7 +7,5 @@ const AttachmentDetailSchema = Schema(
   { timestamp: true }
 );
 
-export default AttachmentDetail = model(
-  "AttachmentDetail",
-  AttachmentDetailSchema
-);
+const AttachmentDetail = model("AttachmentDetail", AttachmentDetailSchema);
+export default AttachmentDetail;

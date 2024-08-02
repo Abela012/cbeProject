@@ -6,7 +6,9 @@ function Layout() {
   return (
     <main className="maincontainer">
       <SideBar />
-      <Outlet />
+      <div className="wrapper">
+        <Outlet />
+      </div>
     </main>
   );
 }
