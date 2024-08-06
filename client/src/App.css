@@ -92,3 +92,27 @@ body,
 .btn-submit:hover {
   cursor: pointer;
 }
+
+.table_Wrapper {
+  width: 98%;
+  height: 95%;
+}
+
+.table_Wrapper > table {
+  font-size: 15px;
+  width: 100%;
+  background-color: var(--text-primary);
+  padding: 20px;
+  border-radius: 10px;
+  border-collapse: collapse;
+}
+.table_Wrapper > table > thead {
+  text-align: left;
+}
+.table_Wrapper > table tr {
+  border: solid 2px lightgray;
+}
+.table_Wrapper > table td,
+.table_Wrapper > table th {
+  padding: 10px;
+}

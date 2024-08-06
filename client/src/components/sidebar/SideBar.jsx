@@ -23,6 +23,10 @@ function SideBar() {
           <MdWindow size={20} />
           <span>Manage Appointment</span>
         </NavLink>
+        <NavLink to="/appointment-list" className={styles.sidebarLink}>
+          <MdWindow size={20} />
+          <span>Appointments</span>
+        </NavLink>
         <NavLink to="case" className={styles.sidebarLink}>
           <LuMenuSquare size={20} />
           <span>Case Managememt</span>

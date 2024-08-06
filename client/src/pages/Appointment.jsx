@@ -25,15 +25,15 @@ function Appointment() {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
   const submit = async (data) => {
-    console.log(data);
     const response = await api.post("/create-appointment", data);
-    console.log(response.data);
-
+    console.log(response);
+    reset();
   };
   return (
     <form action="" className="Hform" onSubmit={handleSubmit(submit)}>
