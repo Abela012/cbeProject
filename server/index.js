@@ -122,10 +122,11 @@ app.delete("/delete-appointments/:id", async (req, res) => {
   }
 });
 
-mongoose.connect("mongodb://127.0.0.1:27017/appointment")
 
  
 app.post('/create-appointment',async (req,res) => {
+  console.log(req.body);
+  
   const {
     customer_name,
     buissness_name,
@@ -151,6 +152,17 @@ app.post('/create-appointment',async (req,res) => {
     category:category
   })
   res.json({message:"successfully created"})
+})
+
+app.get("/get-appointment/:id", async(req,res) =>{
+  try {
+    const {id} = req.params
+    const appointement = await Appointment.findOne({_id: id}).populate("customerId")
+    res.json(appointement)
+  } catch (error) {
+    console.log(error);
+    
+  }
 })
 app.listen(port, () => {
   console.log(`server statrt on port: ${port}`);

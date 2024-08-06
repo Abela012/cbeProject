@@ -17,7 +17,7 @@ const schema = yup.object().shape({
   office_id: yup.string().required("Office id required"),
   start_time: yup.string().required("Start time required"),
   end_time: yup.string().required("End time required"),
-  catagory: yup.string().required("Catagory required"),
+  category: yup.string().required("Category required"),
 });
 
 function Appointment() {
@@ -91,9 +91,9 @@ function Appointment() {
       </div>
 
       <div className="forminput">
-        {errors.catagory && <FormError error={errors.catagory.message} />}
+        {errors.category && <FormError error={errors.category.message} />}
         <label htmlFor="">Cataory</label>
-        <input {...register("catagory")} type="text" />
+        <input {...register("category")} type="text" />
       </div>
       <button type="submit" className="btn btn-submit">
         Submit
