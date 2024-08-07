@@ -1,0 +1,7 @@
+.searchBar > input {
+  padding: 0.625rem;
+  border: none;
+  outline: none;
+  border-radius: 0.3125rem;
+  width: 50%;
+}

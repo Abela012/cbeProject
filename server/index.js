@@ -27,7 +27,7 @@ app.use(express.json());
 
 app.post("/create-appointment", async (req, res) => {
   try {
-    console.log(req.body);
+    // console.log(req.body);
     const {
       customer_name,
       buissness_name,
@@ -53,7 +53,7 @@ app.post("/create-appointment", async (req, res) => {
       endTime: end_time,
       category: category,
     });
-    return res.json({ ...newCustomer, ...newAppointment });
+    return res.status(201).json({ ...newCustomer, ...newAppointment });
   } catch (error) {
     console.log(error);
   }
@@ -61,12 +61,39 @@ app.post("/create-appointment", async (req, res) => {
 
 app.get("/get-appointments", async (req, res) => {
   try {
+    if (req.query.q != "null") {
+      let query = req.query.q;
+      const appointments = await Appointment.find({}).populate({
+        path: "customerId",
+        // select: "customerName email phone",
+      });
+      const filterdAppointments = appointments.filter((appointment) => {
+        return appointment.customerId.customerName
+          .toLowerCase()
+          .includes(query.toLowerCase());
+      });
+
+      return res.json(filterdAppointments);
+    }
     const appointments = await Appointment.find({}).populate({
       path: "customerId",
       // select: "customerName email phone",
     });
     // console.log(appointments);
     return res.json(appointments);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("server error");
+  }
+});
+
+app.get("/get-appointment/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const appointement = await Appointment.findOne({ _id: id }).populate(
+      "customerId"
+    );
+    res.json(appointement);
   } catch (error) {
     console.log(error);
   }
@@ -115,55 +142,13 @@ app.delete("/delete-appointments/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const appointment = await Appointment.findOneAndDelete({ _id: id });
-    // console.log(appointments);
+    // console.log(appointment);
     return res.json(appointment);
   } catch (error) {
     console.log(error);
   }
 });
 
-
- 
-app.post('/create-appointment',async (req,res) => {
-  console.log(req.body);
-  
-  const {
-    customer_name,
-    buissness_name,
-    email,
-    phone,
-    office_id,
-    start_time,
-    end_time,
-    category,
-  } = req.body;
-  
- const newCustomer =  Customer.create({
-    customerName: customer_name,
-    buissnesName: buissness_name,
-    email: email,
-    phone: phone
-  })
-  const newAppointment = Appointment.create({
-    customerId: newCustomer._id,
-    officeId:office_id,
-    startTime: start_time,
-    endTime: end_time,
-    category:category
-  })
-  res.json({message:"successfully created"})
-})
-
-app.get("/get-appointment/:id", async(req,res) =>{
-  try {
-    const {id} = req.params
-    const appointement = await Appointment.findOne({_id: id}).populate("customerId")
-    res.json(appointement)
-  } catch (error) {
-    console.log(error);
-    
-  }
-})
 app.listen(port, () => {
   console.log(`server statrt on port: ${port}`);
 });

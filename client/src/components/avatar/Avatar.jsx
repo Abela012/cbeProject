@@ -5,7 +5,7 @@ function Avatar({ src, size }) {
     <div className={styles.avatar_wrapper}>
       <img
         className={styles.avatar_img}
-        src="./public/default_u.jfif"
+        src="./default_u.jfif"
         alt="User profile"
       />
     </div>
