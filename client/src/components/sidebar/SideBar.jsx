@@ -10,22 +10,18 @@ function SideBar() {
   return (
     <div className={styles.sidebar}>
       <div className={styles.upside}>
-        <img
-          src="./public/logo.jpg"
-          alt="logo image"
-          className={styles.cbelogo}
-        />
+        <img src="./logo.jpg" alt="logo image" className={styles.cbelogo} />
         <p>Commercial Bank of Ethiopia</p>
       </div>
 
       <div className={styles.middleside}>
         <NavLink to="/" className={styles.sidebarLink}>
           <MdWindow size={20} />
-          <span>Manage Appointment</span>
+          <span>Create Appointment</span>
         </NavLink>
         <NavLink to="/appointment-list" className={styles.sidebarLink}>
           <MdWindow size={20} />
-          <span>Appointments</span>
+          <span>Manage Appointments</span>
         </NavLink>
         <NavLink to="case" className={styles.sidebarLink}>
           <LuMenuSquare size={20} />
