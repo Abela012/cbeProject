@@ -8,6 +8,7 @@ import Customer from "./models/customer.model.js";
 import Appointment from "./models/appointment.model.js";
 import ConnectToDB from "./db/dbConnections.js";
 
+
 ConnectToDB();
 
 const port = process.env.PORT;
@@ -58,6 +59,33 @@ app.post("/create-appointment", async (req, res) => {
     console.log(error);
   }
 });
+
+app.post('/customer_registration', async (req, res)=>{
+  let {firstName,
+    middleName,
+    lastName,
+    businessName,
+    customerEmail,
+    phoneNumber,
+    address,
+    catagory
+  } = req.body;
+
+  const newCustomer = await Customers.create({
+    firstName,
+    middleName,
+    lastName,
+    businessName,
+    customerEmail,
+    phoneNumber,
+    address,
+    catagory
+  });
+
+  return res.status(201).json({...newCustomer})
+})
+
+
 
 app.get("/get-appointments", async (req, res) => {
   try {

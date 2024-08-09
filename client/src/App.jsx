@@ -5,6 +5,7 @@ import Appointment from "./pages/Appointment";
 import Login from "./pages/Login";
 import AppointmentList from "./pages/AppointmentList";
 import Case from "./pages/Case";
+import Registration from "./pages/Registration";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "case",
         element: <Case />,
+      },
+      {
+        path: "register",
+        element: <Registration />,
       },
     ],
   },
