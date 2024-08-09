@@ -5,6 +5,7 @@ import SearchBar from "../components/searchBar/SearchBar";
 import { useSearchParams } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
+import Edit from "../components/EditAppointment/Edit.jsx";
 
 function AppointmentList() {
   const [appointments, setAppointments] = useState([]);
@@ -12,7 +13,13 @@ function AppointmentList() {
   const [showapp, setshowapp] = useState(false);
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
-
+  const [showedit,setshowedit] = useState(false); 
+ const [appId, setappId] = useState("")
+  function edit(e){
+    
+   
+     setshowedit(true)
+  }
   function Show() {
     setshowapp(true);
   }
@@ -29,7 +36,9 @@ function AppointmentList() {
   const handleCloseModal = () => {
     setshowapp(false);
   };
-
+const CloseEdit = () => {
+  setshowedit(false)
+}
   return (
     <div className="table_Wrapper">
       <SearchBar placeholder="Search appointment" />
@@ -44,12 +53,15 @@ function AppointmentList() {
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody onClick={Show}>
+        <tbody>
           {appointments?.map((appointment, idx) => {
             return (
-              <tr
+             <tr
                 key={appointment._id}
-                onClick={() => setappointmentId(appointment._id)}
+                onClick={() => {
+                  setappointmentId(appointment._id)
+                  Show()
+                }}
               >
                 <td>{appointment.customerId.customerName}</td>
                 <td>{appointment.officeId}</td>
@@ -58,10 +70,12 @@ function AppointmentList() {
                 <td>{appointment.status}</td>
                 <td className="table_actions">
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      api.patch(`/update-appointments/${appointment._id}`);
-                    }}
+                
+                   onClick={(e) => {
+                    e.stopPropagation();
+                    api.get(`/get-appointment/${appointment._id}`);
+                    setappId(appointment._id)
+                    edit()}}
                   >
                     <MdEdit size={20} color="green" />
                   </button>
@@ -87,6 +101,8 @@ function AppointmentList() {
       {showapp && (
         <Popup appointmentId={appointmentId} onClose={handleCloseModal} />
       )}
+      {showedit && <Edit appId={appId}
+      onClose={CloseEdit}/>}
     </div>
   );
 }

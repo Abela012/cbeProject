@@ -127,12 +127,12 @@ app.get("/get-appointment/:id", async (req, res) => {
   }
 });
 
-app.patch("/update-appointments/:id", async (req, res) => {
+app.patch("/update-appointment/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const {
-      customer_name,
-      buissness_name,
+      customerName,
+      buissnessName,
       email,
       phone,
       office_id,
@@ -154,8 +154,8 @@ app.patch("/update-appointments/:id", async (req, res) => {
     const updatedCustomer = await Customer.findOneAndUpdate(
       { _id: updatedappointment.customerId },
       {
-        customerName: customer_name,
-        businessName: buissness_name,
+        customerName: customerName,
+        businessName: buissnessName,
         email: email,
         phone: phone,
       }
@@ -176,6 +176,8 @@ app.delete("/delete-appointments/:id", async (req, res) => {
     console.log(error);
   }
 });
+
+
 
 app.listen(port, () => {
   console.log(`server statrt on port: ${port}`);
