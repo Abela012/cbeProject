@@ -1,6 +1,6 @@
 import styles from "./avatar.module.css";
 
-function Avatar({ src, size }) {
+function Avatar({src, size}) {
   return (
     <div className={styles.avatar_wrapper}>
       <img

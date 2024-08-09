@@ -52,6 +52,10 @@ body,
   border-radius: 10px;
 }
 
+.title{
+  text-align: center;
+}
+
 .forminput {
   position: relative;
   display: flex;
@@ -65,6 +69,17 @@ body,
   background-color: rgb(241, 241, 241);
   border-radius: 5px;
 }
+
+
+
+.forminput > select {
+  padding: 5px;
+  border: none;
+  outline: none;
+  background-color: rgb(241, 241, 241);
+  border-radius: 5px;
+}
+
 .formerror {
   font-size: small;
   color: red;
@@ -72,6 +87,7 @@ body,
   bottom: -15px;
   /* padding-left: 8px; */
 }
+
 
 .btn {
   display: flex;
@@ -88,6 +104,7 @@ body,
 .btn-submit {
   width: fit-content;
 }
+
 
 .btn-submit:hover {
   cursor: pointer;
