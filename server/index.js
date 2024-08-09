@@ -71,7 +71,7 @@ app.post('/customer_registration', async (req, res)=>{
     catagory
   } = req.body;
 
-  const newCustomer = await Customers.create({
+  const newCustomer = await Customer.create({
     firstName,
     middleName,
     lastName,

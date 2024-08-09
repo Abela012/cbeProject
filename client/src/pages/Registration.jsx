@@ -24,14 +24,15 @@ const schema = yup.object().shape({
 export default function Registration(){
 
 
-const {register, handleSubmit, formState: {errors}}  = useForm({
+const {register, handleSubmit, reset, formState: {errors}}  = useForm({
   resolver: yupResolver(schema)
 })
 
 const submitForm = async (data)=>{
-  const response = await api.post('/Customer_registration', data);
-  // reset();
+  const response = await api.post('/customer_registration', data);
   console.log(response);
+  
+  reset()
   
 }
 
