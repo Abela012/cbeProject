@@ -1,45 +1,43 @@
 import styles from "../components/forminput/formInput.module.css";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import FormInput from "../components/forminput/FormInput";
+import Button from "../components/button/Button";
+import { useState } from "react";
 
 function Login() {
-  const schema = yup.object().shape({
-    email: yup.string().required("Email required").email("Invalid email"),
-    password: yup.string().required("Password required"),
-  });
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCredentials((prev) => ({ ...prev, [name]: value }));
+  };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(credentials);
+  };
+
   return (
     <div className={styles.wrapper}>
-      <form
-        className={styles.form}
-        onSubmit={handleSubmit((data) => console.log(data))}
-      >
+      <form className={styles.form} onSubmit={handleSubmit}>
         <FormInput
+          placeholder="Enter email"
+          name="email"
+          required={true}
           lableName="Email"
           inputName="email"
           inputType="email"
-          error={errors.email}
-          register={register}
+          onChange={handleChange}
         />
         <FormInput
+          placeholder="Enter password"
+          name="password"
+          required={true}
           lableName="Password"
           inputName="password"
           inputType="password"
-          error={errors.password}
-          register={register}
+          onChange={handleChange}
         />
-        <button className="btn" type="submit">
-          Log in
-        </button>
+
+        <Button className="" btnName="Log in" type="submit" />
       </form>
     </div>
   );

@@ -51,11 +51,12 @@
 }
 
 .sidebarLink {
+  font-size: small;
   color: var(--text-secondary);
   display: flex;
   gap: 5px;
   align-items: center;
-  padding: 5px;
+  padding: 10px;
 }
 
 .bottomside {

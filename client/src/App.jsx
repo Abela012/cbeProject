@@ -5,6 +5,7 @@ import Appointment from "./pages/Appointment";
 import Login from "./pages/Login";
 import AppointmentList from "./pages/AppointmentList";
 import Case from "./pages/Case";
+import CaseList from "./pages/CaseList";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +28,15 @@ const router = createBrowserRouter([
         path: "case",
         element: <Case />,
       },
+      {
+        path: "case-list",
+        element: <CaseList />,
+      },
     ],
+  },
+  {
+    path: "*",
+    element: <h2> 404 Not found :(</h2>,
   },
 ]);
 

@@ -26,12 +26,19 @@
   flex-direction: column;
 }
 
+.forminput > label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: small;
+}
+
 .forminput > input {
-  padding: 5px;
+  padding: 10px;
   border: none;
   outline: none;
-  background-color: rgb(241, 241, 241);
+  /* background-color: rgb(241, 241, 241); */
   border-radius: 5px;
+  border: solid 2px rgb(241, 241, 241);
 }
 .formerror {
   font-size: small;
@@ -39,16 +46,4 @@
   position: absolute;
   bottom: -15px;
   /* padding-left: 8px; */
-}
-
-.btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  font-weight: bold;
-  padding: 10px;
-  border: none;
-  background-color: var(--secondary);
-  border-radius: 5px;
 }

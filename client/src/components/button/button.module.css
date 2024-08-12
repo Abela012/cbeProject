@@ -1,0 +1,23 @@
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-weight: bold;
+  padding: 10px;
+  border: none;
+  background-color: var(--secondary);
+  border-radius: 5px;
+}
+
+.btn:hover {
+  cursor: pointer;
+}
+
+.btn-submit {
+  width: fit-content;
+}
+
+.btn-submit:hover {
+  cursor: pointer;
+}
