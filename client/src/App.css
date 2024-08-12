@@ -154,8 +154,9 @@ body,
 .table_Wrapper > table tr {
   border: solid 2px lightgray;
 }
-.table_Wrapper > table tr:hover {
+.table_Wrapper > table tbody tr:hover {
   background-color: lightgray;
+  cursor: pointer;
 }
 .table_Wrapper > table td,
 .table_Wrapper > table th {
@@ -186,4 +187,29 @@ body,
   border: none;
   size: 50px;
   top: 5px;
+}
+
+.case_category {
+  padding: 10px;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  border: solid 2px rgb(241, 241, 241);
+}
+
+.customer_search_result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3125rem;
+  margin-top: 0.3125rem;
+  max-height: 12rem;
+  overflow-y: auto;
+}
+.result_item {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(241, 241, 241);
+  padding: 0.3125rem;
+  border-radius: 0.3125rem;
+  cursor: pointer;
 }

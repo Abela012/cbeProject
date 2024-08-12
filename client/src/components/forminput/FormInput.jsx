@@ -2,12 +2,11 @@ import React from "react";
 import FormError from "../FormError";
 import styles from "./formInput.module.css";
 
-function FormInput({ lableName, inputName, inputType, error, register }) {
+function FormInput({ placeholder, lableName, inputName, inputType, ...props }) {
   return (
     <div className={styles.forminput}>
-      {error && <FormError error={error.message} />}
       <label htmlFor="">{lableName}</label>
-      <input {...register(inputName)} type={inputType} />
+      <input {...props} type={inputType} placeholder={placeholder} />
     </div>
   );
 }

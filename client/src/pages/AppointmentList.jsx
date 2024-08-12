@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
-import Popup from "../components/popup";
+import Popup from "../components/Popup";
 import SearchBar from "../components/searchBar/SearchBar";
 import { useSearchParams } from "react-router-dom";
 import { MdEdit } from "react-icons/md";

@@ -1,7 +1,7 @@
 import styles from "./searchBar.module.css";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-function SearchBar({ placeholder }) {
+function SearchBar({ placeholder, className }) {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -18,7 +18,12 @@ function SearchBar({ placeholder }) {
 
   return (
     <div className={styles.searchBar}>
-      <input type="search" placeholder={placeholder} onChange={handleChange} />
+      <input
+        className={styles[className]}
+        type="search"
+        placeholder={placeholder}
+        onChange={handleChange}
+      />
     </div>
   );
 }
