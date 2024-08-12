@@ -8,8 +8,8 @@ const AppointmentSchema = new Schema(
     customerId: { type: Schema.Types.ObjectId, ref: "Customer" },
     status: {
       type: String,
-      enum: ["pending", "canceled", "completed"],
-      default: "pending",
+      enum: ["Pending", "Canceled", "Completed"],
+      default: "Pending",
     },
     caseId: { type: Schema.Types.ObjectId, ref: "Case" },
     category: { type: String },

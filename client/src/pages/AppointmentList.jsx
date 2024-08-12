@@ -13,11 +13,11 @@ function AppointmentList() {
   const [showapp, setshowapp] = useState(false);
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
-  const [showedit,setshowedit] = useState(false); 
+  const [showedit, setshowedit] = useState(false); 
+  const [refetch, setRefetch] = useState(false); 
  const [appId, setappId] = useState("")
-  function edit(e){
-    
-   
+ 
+ function edit(e){
      setshowedit(true)
   }
   function Show() {
@@ -28,10 +28,14 @@ function AppointmentList() {
     async function getAppointments() {
       const response = await api.get(`/get-appointments?q=${query}`);
       setAppointments(response.data);
-      // console.log(response);
+      console.log(response.data);
     }
     getAppointments();
-  }, [query]);
+    
+    return ()=>{
+      setRefetch(false)
+    }
+  }, [query, refetch]);
 
   const handleCloseModal = () => {
     setshowapp(false);
@@ -63,7 +67,7 @@ const CloseEdit = () => {
                   Show()
                 }}
               >
-                <td>{appointment.customerId.customerName}</td>
+                <td>{appointment.customerId.fullName}</td>
                 <td>{appointment.officeId}</td>
                 <td>{new Date(appointment.startTime).toLocaleString()}</td>
                 <td>{new Date(appointment.endTime).toLocaleString()}</td>
@@ -102,7 +106,9 @@ const CloseEdit = () => {
         <Popup appointmentId={appointmentId} onClose={handleCloseModal} />
       )}
       {showedit && <Edit appId={appId}
-      onClose={CloseEdit}/>}
+      onClose={CloseEdit}
+      setRefetch={setRefetch}
+      />}
     </div>
   );
 }

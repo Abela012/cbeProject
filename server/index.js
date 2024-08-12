@@ -76,10 +76,13 @@ app.post('/customer_registration', async (req, res)=>{
     catagory
   } = req.body;
 
+  let fullName= firstName +" "+middleName +" "+ lastName
+
   const newCustomer = await Customer.create({
     firstName,
     middleName,
     lastName,
+    fullName,
     businessName,
     customerEmail,
     phoneNumber,
@@ -101,7 +104,7 @@ app.get("/get-appointments", async (req, res) => {
         // select: "customerName email phone",
       });
       const filterdAppointments = appointments.filter((appointment) => {
-        return appointment.customerId.customerName
+        return appointment.customerId.fullName
           .toLowerCase()
           .includes(query.toLowerCase());
       });
@@ -124,15 +127,18 @@ app.get("/get-customer", async (req, res) => {
   try {
     if (req.query.q != "null") {
       let query = req.query.q;
-      const customers = await Customer.find({});
-      const filterdCustomers = customers.filter((customer) => {
-        return (
-          customer.customerName.toLowerCase().includes(query.toLowerCase()) ||
-          customer.email.toLowerCase().includes(query.toLowerCase())
-        );
-      });
+      const customers = await Customer.find({$or:[{firstName: query},{customerEmail: query}]});
+      console.log(customers);
+      
+      // const filterdCustomers = customers.filter((customer) => {
+      //   return (
+      //     customer.firstName.toLowerCase().includes(query.toLowerCase()) 
+      //     ||
+      //     customer.email.toLowerCase().includes(query.toLowerCase())
+      //   );
+      // });
 
-      return res.json(filterdCustomers);
+      return res.json(customers);
     }
     // const customers = await Customer.find({});
     return res.json([]);
@@ -159,15 +165,18 @@ app.patch("/update-appointment/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const {
-      customerName,
+      fullName,
       buissnessName,
-      email,
-      phone,
+      customerEmail,
+      phoneNumber,
       office_id,
       start_time,
       end_time,
       category,
     } = req.body;
+
+    console.log(req.body);
+    
 
     const updatedappointment = await Appointment.findOneAndUpdate(
       { _id: id },
@@ -178,14 +187,17 @@ app.patch("/update-appointment/:id", async (req, res) => {
         category: category,
       }
     );
-
+const [firstName, middleName, lastName] = fullName.split(" ");
     const updatedCustomer = await Customer.findOneAndUpdate(
       { _id: updatedappointment.customerId },
       {
-        customerName: customerName,
+        firstName,
+        middleName,
+        lastName,
+        fullName: fullName,
         businessName: buissnessName,
-        email: email,
-        phone: phone,
+        customerEmail: customerEmail,
+        phoneNumber: phoneNumber,
       }
     );
     return res.json(updatedappointment);

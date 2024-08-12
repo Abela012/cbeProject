@@ -9,20 +9,24 @@ import Button from "../components/button/Button";
 function Case() {
   const [newCase, setNewCase] = useState({
     customerId: "",
-    email: "",
+    customerEmail: "",
     caseCategory: "",
     subject: "",
   });
 
   const [customers, setCustomers] = useState([
     {
-      businessName: "",
+      _id: "",   
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      businessName: '',
+      customerEmail: '',
+      phoneNumber: '',
+      address: '',
+      catagory: '',
       createdAt: "",
-      customerName: "",
-      email: "",
-      phone: "",
       updatedAt: "",
-      _id: "",
     },
   ]);
 
@@ -83,13 +87,13 @@ function Case() {
                     setNewCase((prev) => ({
                       ...prev,
                       customerId: customer._id,
-                      email: customer.email,
+                      customerEmail: customer.customerEmail,
                     }));
                     setCustomers([]);
                   }}
                 >
-                  <span>{customer.customerName}</span>
-                  <span>{customer.email}</span>
+                  <span>{customer.fullName}</span>
+                  <span>{customer.customerEmail}</span>
                 </div>
               );
             })}
@@ -99,7 +103,7 @@ function Case() {
         inputType="text"
         required={true}
         lableName="Customer"
-        value={newCase.email}
+        value={newCase.customerEmail}
         disabled={true}
         inputName="customer"
       />

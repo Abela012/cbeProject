@@ -9,7 +9,7 @@ import { useRef } from 'react'
 import "../../App.css"
 import { IoIosClose } from "react-icons/io";
 
-function Edit({appId,onClose }) {
+function Edit({appId, onClose, setRefetch }) {
   const schema = yup.object().shape({
     customer_name: yup.string().required("Customer name required"),
     buissness_name: yup.string().required("Buissness name required"),
@@ -26,10 +26,10 @@ function Edit({appId,onClose }) {
   });
   const [edit,setedit]  = useState({
     _id:'',
-      customerName:'',
-      businessName:'',
-      email:'',
-      phone:'',
+    fullName:'',
+    businessName:'',
+    customerEmail:'',
+    phoneNumber:'',
     officeId:'',
     startTime:'',
     endTime:'',
@@ -41,16 +41,16 @@ function Edit({appId,onClose }) {
       const response = await api.get(`/get-appointment/${appId}`)
       setedit({
         _id: response.data._id,
-        customerName: response.data.customerId.customerName,
+        fullName: response.data.customerId.fullName,
         businessName: response.data.customerId.businessName,
-        email: response.data.customerId.email,
-        phone: response.data.customerId.phone,
+        customerEmail: response.data.customerId.customerEmail,
+        phoneNumber: response.data.customerId.phoneNumber,
       officeId: response.data.officeId,
       startTime: response.data.startTime,
       endTime: response.data.endTime,
       category: response.data.category
       })
-console.log(response.data);
+// console.log(response.data);
 
     }
     getAppointment()
@@ -68,7 +68,12 @@ console.log(response.data);
   const submit = async (e) => {
     e.preventDefault()
      const response = await api.patch(`/update-appointment/${edit._id}`, edit);
-    console.log(edit);
+     if(response.status === 200){
+       onClose()
+      }
+      setRefetch(true)
+      // console.log(response);
+
   };
 
   const modalRef = useRef(null)
@@ -88,10 +93,10 @@ console.log(response.data);
           <FormError error={errors.customer_name.message} />
         )}
         <label htmlFor="">Customer Name</label>
-        <input  type="text" value={edit.customerName} 
+        <input  type="text" value={edit.fullName} 
         onChange={e => setedit({
           ...edit,
-            customerName: e.target.value
+            fullName: e.target.value
           })}
         />
       </div>
@@ -112,7 +117,7 @@ console.log(response.data);
       <div className="forminput">
         {errors.email && <FormError error={errors.email.message} />}
         <label htmlFor="" >Email</label>
-        <input  type="text" value={edit.email}
+        <input  type="text" value={edit.customerEmail}
           onChange={e => setedit({
             ...edit,
               email: e.target.value
@@ -127,7 +132,7 @@ console.log(response.data);
          
           type="tel"
           pattern="[0-9]{2}[0-9]{2}[0-9]{2}[0-9]{2}[0-9]{2}"
-       value={edit.phone}
+       value={edit.phoneNumber}
        onChange={e => setedit({
         ...edit,
           phone: e.target.value

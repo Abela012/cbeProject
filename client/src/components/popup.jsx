@@ -41,17 +41,17 @@ function Popup({ appointmentId, caseId, onClose }) {
           <IoIosClose size={26} />
         </button>
 
-        <div>Name: {pop.customerId?.customerName}</div>
+        <div>Name: {pop.customerId?.fullName}</div>
 
-        <div> {pop.customerId?.businessName}</div>
+        <div>Business Name: {pop.customerId?.businessName}</div>
 
-        <div>Email: {pop.customerId?.email}</div>
+        <div>Email: {pop.customerId?.customerEmail}</div>
 
-        <div>Phone: {pop.customerId?.phone}</div>
+        <div>Phone: {pop.customerId?.phoneNumber}</div>
 
         <div>Office ID: {pop?.officeId}</div>
 
-        <div>start Time: {new Date(pop.startTime).toLocaleString()}</div>
+        <div>Start Time: {new Date(pop.startTime).toLocaleString()}</div>
 
         <div>End Time: {new Date(pop.endTime).toLocaleString()}</div>
 

@@ -7,7 +7,9 @@ const UserSchema = new Schema({
     password:{type: string},
     roletype:{type: String},
     otp:{type: String},
-    status:{type: String}
+    status:{type: String},
+    officeId:{type: String}
+
 },
 {timestamp: true} 
 )
