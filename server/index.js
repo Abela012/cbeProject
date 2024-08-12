@@ -11,6 +11,7 @@ import Case from "./models/case.model.js";
 import authRouter from "./routes/auth.route.js";
 import Category from "./models/category.model.js";
 
+
 ConnectToDB();
 
 const port = process.env.PORT;
@@ -63,6 +64,33 @@ app.post("/create-appointment", async (req, res) => {
     console.log(error);
   }
 });
+
+app.post('/customer_registration', async (req, res)=>{
+  let {firstName,
+    middleName,
+    lastName,
+    businessName,
+    customerEmail,
+    phoneNumber,
+    address,
+    catagory
+  } = req.body;
+
+  const newCustomer = await Customer.create({
+    firstName,
+    middleName,
+    lastName,
+    businessName,
+    customerEmail,
+    phoneNumber,
+    address,
+    catagory
+  });
+
+  return res.status(201).json({...newCustomer})
+})
+
+
 
 app.get("/get-appointments", async (req, res) => {
   try {
@@ -127,12 +155,12 @@ app.get("/get-appointment/:id", async (req, res) => {
   }
 });
 
-app.patch("/update-appointments/:id", async (req, res) => {
+app.patch("/update-appointment/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const {
-      customer_name,
-      buissness_name,
+      customerName,
+      buissnessName,
       email,
       phone,
       office_id,
@@ -154,8 +182,8 @@ app.patch("/update-appointments/:id", async (req, res) => {
     const updatedCustomer = await Customer.findOneAndUpdate(
       { _id: updatedappointment.customerId },
       {
-        customerName: customer_name,
-        businessName: buissness_name,
+        customerName: customerName,
+        businessName: buissnessName,
         email: email,
         phone: phone,
       }
@@ -176,6 +204,7 @@ app.delete("/delete-appointments/:id", async (req, res) => {
     console.log(error);
   }
 });
+
 
 app.post("/create-case", async (req, res) => {
   try {
@@ -262,6 +291,7 @@ app.get("/get-categories", async (req, res) => {
     return res.status(500).json("Server error");
   }
 });
+
 
 app.listen(port, () => {
   console.log(`server statrt on port: ${port}`);

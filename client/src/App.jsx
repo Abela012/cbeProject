@@ -5,7 +5,10 @@ import Appointment from "./pages/Appointment";
 import Login from "./pages/Login";
 import AppointmentList from "./pages/AppointmentList";
 import Case from "./pages/Case";
+
 import CaseList from "./pages/CaseList";
+
+import Registration from "./pages/Registration";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: "case-list",
         element: <CaseList />,
+      },
+      {
+        path: "register",
+        element: <Registration />,
       },
     ],
   },

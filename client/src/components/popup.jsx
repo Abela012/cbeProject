@@ -51,9 +51,9 @@ function Popup({ appointmentId, caseId, onClose }) {
 
         <div>Office ID: {pop?.officeId}</div>
 
-        <div>start Time: {pop.startTime}</div>
+        <div>start Time: {new Date(pop.startTime).toLocaleString()}</div>
 
-        <div>End Time: {pop.endTime}</div>
+        <div>End Time: {new Date(pop.endTime).toLocaleString()}</div>
 
         <div>Catagory: {pop.category}</div>
       </div>
@@ -62,3 +62,4 @@ function Popup({ appointmentId, caseId, onClose }) {
 }
 
 export default Popup;
+

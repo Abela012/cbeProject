@@ -1,6 +1,7 @@
 import React from "react";
 import { CiLogin } from "react-icons/ci";
 import { MdWindow } from "react-icons/md";
+import { MdAppRegistration } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 import { LuMenuSquare } from "react-icons/lu";
 import styles from "./SideBar.module.css";
@@ -34,11 +35,15 @@ function SideBar() {
           <LuMenuSquare size={20} />
           <span>Case Managememt</span>
         </NavLink>
+        <NavLink to="register" className={styles.sidebarLink}>
+          <MdAppRegistration size={20} />
+          <span>Customer Registration</span>
+        </NavLink>
       </div>
 
       <div className={styles.bottomside}>
         <div className={styles.user_detail}>
-          <Avatar src="" size="" />
+          <Avatar src="/secre.jpeg" size="" />
           <div className={styles.user_info}>
             <p>Meklit Aschalew</p>
             <p>meklitaschalew@cbe.com</p>
