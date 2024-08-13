@@ -72,8 +72,7 @@ app.post('/customer_registration', async (req, res)=>{
     businessName,
     customerEmail,
     phoneNumber,
-    address,
-    catagory
+    address
   } = req.body;
 
   let fullName= firstName +" "+middleName +" "+ lastName
@@ -86,8 +85,7 @@ app.post('/customer_registration', async (req, res)=>{
     businessName,
     customerEmail,
     phoneNumber,
-    address,
-    catagory
+    address
   });
 
   return res.status(201).json({...newCustomer})

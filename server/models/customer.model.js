@@ -9,8 +9,7 @@ const CustomerSchema = new Schema(
     businessName: {type: String},
     customerEmail: {type: String},
     phoneNumber: { type: String },
-    address: {type: String},
-    catagory: {type: String}
+    address: {type: String}
   },
   { timestamps: true }
 );
