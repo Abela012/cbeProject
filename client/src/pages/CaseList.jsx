@@ -5,6 +5,7 @@ import { MdDelete } from "react-icons/md";
 import SearchBar from "../components/searchBar/SearchBar";
 import Popup from "../components/Popup";
 import api from "../api/axios";
+import { useGetCaseMutation } from "../features/caseApiSlice";
 
 function CaseList() {
   const [cases, setCases] = useState([]);
@@ -12,6 +13,7 @@ function CaseList() {
   const [showApp, setShowApp] = useState(false);
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
+  const [getCase] = useGetCaseMutation();
 
   function Show() {
     setShowApp(true);
@@ -19,9 +21,10 @@ function CaseList() {
 
   useEffect(() => {
     async function getCases() {
-      const response = await api.get(`/get-cases?q=${query}`);
+      const response = await getCase({ query });
+
+      // const response = await api.get(`/get-cases?q=${query}`);
       setCases(response.data);
-      console.log(response.data);
     }
     getCases();
   }, [query]);

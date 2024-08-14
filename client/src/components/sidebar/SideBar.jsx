@@ -1,13 +1,24 @@
-import React from "react";
 import { CiLogin } from "react-icons/ci";
 import { MdWindow } from "react-icons/md";
 import { MdAppRegistration } from "react-icons/md";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { LuMenuSquare } from "react-icons/lu";
 import styles from "./SideBar.module.css";
 import Avatar from "../avatar/Avatar";
+import { useSelector } from "react-redux";
+import { getCurrentUser, logOut } from "../../features/authSlice";
+import { useLogoutMutation } from "../../features/authApiSlice";
 
 function SideBar() {
+  const user = useSelector(getCurrentUser);
+  const navigate = useNavigate();
+  const [logOut, { error }] = useLogoutMutation();
+
+  const handeLogout = () => {
+    logOut();
+    navigate("/login", { replace: true });
+  };
+
   return (
     <div className={styles.sidebar}>
       <div className={styles.upside}>
@@ -45,11 +56,15 @@ function SideBar() {
         <div className={styles.user_detail}>
           <Avatar src="/secre.jpeg" size="" />
           <div className={styles.user_info}>
-            <p>Meklit Aschalew</p>
-            <p>meklitaschalew@cbe.com</p>
+            <p>{user.name}</p>
+            <p>{user.email}</p>
           </div>
         </div>
-        <button className={"btn " + styles.btn_logout} title="logout">
+        <button
+          className={"btn " + styles.btn_logout}
+          title="logout"
+          onClick={handeLogout}
+        >
           <CiLogin size={20} />
           <span>Log Out</span>
         </button>

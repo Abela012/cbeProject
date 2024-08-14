@@ -2,17 +2,40 @@ import styles from "../components/forminput/formInput.module.css";
 import FormInput from "../components/forminput/FormInput";
 import Button from "../components/button/Button";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useLoginMutation } from "../features/authApiSlice.js";
+import { setCredentials } from "../features/authSlice.js";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Login() {
-  const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [userCredentials, setUserCredentials] = useState({
+    email: "",
+    password: "",
+  });
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathName || "/";
+
+  const [login, { isLoading }] = useLoginMutation();
+  const dispatch = useDispatch();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCredentials((prev) => ({ ...prev, [name]: value }));
+    setUserCredentials((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(credentials);
+    try {
+      const response = await login(userCredentials).unwrap();
+      // console.log(response);
+      dispatch(setCredentials(response.data));
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setUserCredentials({ email: "", password: "" });
+    }
   };
 
   return (
@@ -25,6 +48,7 @@ function Login() {
           lableName="Email"
           inputName="email"
           inputType="email"
+          value={userCredentials.email}
           onChange={handleChange}
         />
         <FormInput
@@ -34,6 +58,7 @@ function Login() {
           lableName="Password"
           inputName="password"
           inputType="password"
+          value={userCredentials.password}
           onChange={handleChange}
         />
 

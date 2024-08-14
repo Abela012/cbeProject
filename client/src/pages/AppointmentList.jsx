@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
-import Popup from "../components/Popup";
+import Popup from "../components/Popup.jsx";
 import SearchBar from "../components/searchBar/SearchBar";
 import { useSearchParams } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
@@ -13,12 +13,12 @@ function AppointmentList() {
   const [showapp, setshowapp] = useState(false);
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
-  const [showedit, setshowedit] = useState(false); 
-  const [refetch, setRefetch] = useState(false); 
- const [appId, setappId] = useState("")
- 
- function edit(e){
-     setshowedit(true)
+  const [showedit, setshowedit] = useState(false);
+  const [refetch, setRefetch] = useState(false);
+  const [appId, setappId] = useState("");
+
+  function edit(e) {
+    setshowedit(true);
   }
   function Show() {
     setshowapp(true);
@@ -28,21 +28,20 @@ function AppointmentList() {
     async function getAppointments() {
       const response = await api.get(`/get-appointments?q=${query}`);
       setAppointments(response.data);
-      console.log(response.data);
     }
     getAppointments();
-    
-    return ()=>{
-      setRefetch(false)
-    }
+
+    return () => {
+      setRefetch(false);
+    };
   }, [query, refetch]);
 
   const handleCloseModal = () => {
     setshowapp(false);
   };
-const CloseEdit = () => {
-  setshowedit(false)
-}
+  const CloseEdit = () => {
+    setshowedit(false);
+  };
   return (
     <div className="table_Wrapper">
       <SearchBar placeholder="Search appointment" />
@@ -60,11 +59,11 @@ const CloseEdit = () => {
         <tbody>
           {appointments?.map((appointment, idx) => {
             return (
-             <tr
+              <tr
                 key={appointment._id}
                 onClick={() => {
-                  setappointmentId(appointment._id)
-                  Show()
+                  setappointmentId(appointment._id);
+                  Show();
                 }}
               >
                 <td>{appointment.customerId.fullName}</td>
@@ -74,12 +73,12 @@ const CloseEdit = () => {
                 <td>{appointment.status}</td>
                 <td className="table_actions">
                   <button
-                
-                   onClick={(e) => {
-                    e.stopPropagation();
-                    api.get(`/get-appointment/${appointment._id}`);
-                    setappId(appointment._id)
-                    edit()}}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      api.get(`/get-appointment/${appointment._id}`);
+                      setappId(appointment._id);
+                      edit();
+                    }}
                   >
                     <MdEdit size={20} color="green" />
                   </button>
@@ -105,10 +104,9 @@ const CloseEdit = () => {
       {showapp && (
         <Popup appointmentId={appointmentId} onClose={handleCloseModal} />
       )}
-      {showedit && <Edit appId={appId}
-      onClose={CloseEdit}
-      setRefetch={setRefetch}
-      />}
+      {showedit && (
+        <Edit appId={appId} onClose={CloseEdit} setRefetch={setRefetch} />
+      )}
     </div>
   );
 }

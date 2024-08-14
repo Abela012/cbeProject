@@ -5,6 +5,9 @@ import SearchBar from "../components/searchBar/SearchBar";
 import api from "../api/axios";
 import { useSearchParams } from "react-router-dom";
 import Button from "../components/button/Button";
+import { useCreateCaseMutation } from "../features/caseApiSlice";
+import { useGetCustomerMutation } from "../features/customerApiSlice";
+import { useGetCategoriesMutation } from "../features/categoryApiSlice";
 
 function Case() {
   const [newCase, setNewCase] = useState({
@@ -16,15 +19,15 @@ function Case() {
 
   const [customers, setCustomers] = useState([
     {
-      _id: "",   
-      firstName: '',
-      middleName: '',
-      lastName: '',
-      businessName: '',
-      customerEmail: '',
-      phoneNumber: '',
-      address: '',
-      catagory: '',
+      _id: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      businessName: "",
+      customerEmail: "",
+      phoneNumber: "",
+      address: "",
+      catagory: "",
       createdAt: "",
       updatedAt: "",
     },
@@ -39,10 +42,15 @@ function Case() {
 
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
+  const [createCase, { error }] = useCreateCaseMutation();
+  const [customer] = useGetCustomerMutation();
+  const [category] = useGetCategoriesMutation();
 
   useEffect(() => {
     async function getCustomer() {
-      const response = await api.get(`/get-customer?q=${query}`);
+      const response = await customer({ query });
+      // const response = await api.get(`/get-customer?q=${query}`);
+
       setCustomers(response.data);
     }
     getCustomer();
@@ -50,7 +58,8 @@ function Case() {
 
   useEffect(() => {
     async function getCategory() {
-      const response = await api.get("/get-categories");
+      const response = await category();
+      // const response = await api.get("/get-categories");
       setCategories(response.data);
     }
     getCategory();
@@ -66,19 +75,29 @@ function Case() {
       className="Hform"
       onSubmit={async (e) => {
         e.preventDefault();
-        console.log(newCase);
-        const response = await api.post("/create-case", newCase);
-        console.log(response.data);
+        try {
+          const response = await createCase(newCase);
+          // const response = await api.post("/create-case", newCase);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setNewCase({
+            customerId: "",
+            customerEmail: "",
+            caseCategory: "",
+            subject: "",
+          });
+        }
       }}
     >
       <div>
         <SearchBar
           className="full_width"
-          placeholder="Search customer by name or email"
+          placeholder="Search customer by phone or email"
         />
         <div className="customer_search_result">
           {customers &&
-            customers.map((customer) => {
+            customers?.map((customer) => {
               return (
                 <div
                   className="result_item"
@@ -116,7 +135,7 @@ function Case() {
           onChange={handleChange}
         >
           <option value="">Select Case category</option>
-          {categories.map((category) => (
+          {categories?.map((category) => (
             <option key={category._id} value={category._id}>
               {category.categoryName}
             </option>
