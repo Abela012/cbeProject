@@ -3,7 +3,7 @@ import {Link} from "react-router-dom"
 import FormInput from "../components/forminput/FormInput.jsx";
 import Button from "../components/button/Button.jsx";
 import { useState } from "react";
-
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function Registration(){
 
@@ -48,7 +48,19 @@ setCustomer((prevValue)=>{
 
 }
 
-
+const notify = () => {
+  if (200) {
+    toast.success("registerd successfully", {
+      position:"bottom-right"
+    })
+  } else {
+    toast.error("check again", {
+      position:"bottom-right"
+    })
+  }
+   
+ 
+}
    
   return (
 
@@ -141,9 +153,9 @@ setCustomer((prevValue)=>{
 </div>
 
     <div className='register'>
-        <Button className="btn-register" btnName="Register" type = "submit"/>
+        <Button className="btn-register" btnName="Register" type = "submit" onClick={notify}/>
     </div>
-        
+    <ToastContainer />
 
     already registerd?
          <Link to= "/case">Create Case</Link>

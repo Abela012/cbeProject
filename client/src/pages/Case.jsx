@@ -8,6 +8,7 @@ import Button from "../components/button/Button";
 import { useCreateCaseMutation } from "../features/caseApiSlice";
 import { useGetCustomerMutation } from "../features/customerApiSlice";
 import { useGetCategoriesMutation } from "../features/categoryApiSlice";
+import { ToastContainer, toast } from 'react-toastify';
 
 function Case() {
   const [newCase, setNewCase] = useState({
@@ -69,6 +70,20 @@ function Case() {
     const { name, value } = e.target;
     setNewCase((prev) => ({ ...prev, [name]: value }));
   };
+
+  const notify = () => {
+    if (200) {
+      toast.success("case created successfully", {
+        position:"bottom-right"
+      })
+    } else {
+      toast.error("check again", {
+        position:"bottom-right"
+      })
+    }
+     
+   
+  }
 
   return (
     <form
@@ -155,7 +170,8 @@ function Case() {
       />
       {/* <TextArea handleInputChange={() => {}} /> */}
 
-      <Button className="btn-submit" btnName="Create" type="submit" />
+      <Button className="btn-submit" btnName="Create" type="submit" onClick={notify} />
+      <ToastContainer />
     </form>
   );
 }

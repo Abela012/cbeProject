@@ -7,7 +7,7 @@ import api from "../api/axios.js";
 import FormInput from "../components/forminput/FormInput.jsx";
 import Button from "../components/button/Button.jsx";
 import { ToastContainer, toast } from 'react-toastify';
-
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function Appointment() {
@@ -28,13 +28,21 @@ const [data,setdata] = useState({
       start_time:"",
       end_time:""
     })
-    if (response === 200) {
-      toast.success("registerd successfully")
-    }
-    else{
-      toast.error("error")
-    }
+    
   };
+  const notify = () => {
+    if (200) {
+      toast.success("registerd successfully", {
+        position:"bottom-right"
+      })
+    } else {
+      toast.error("check again", {
+        position:"bottom-right"
+      })
+    }
+     
+   
+  }
 
   return (
     <form action="" className="Hform" onSubmit={handleSubmit}>
@@ -57,8 +65,8 @@ const [data,setdata] = useState({
         required
       />
 
-      <Button className="btn-submit" btnName="Submit" type="submit" />
-      <ToastContainer position="bottom_right"/>
+      <Button className="btn-submit" btnName="Submit" type="submit" onClick={notify}/>
+      <ToastContainer />
     </form>
   );
 }
