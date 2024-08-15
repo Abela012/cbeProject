@@ -37,19 +37,12 @@ function SideBar() {
           <span>Manage Appointments</span>
         </NavLink>
 
-        <NavLink to="case" className={styles.sidebarLink}>
-          <LuMenuSquare size={20} />
-          <span>Create Case</span>
-        </NavLink>
 
-        <NavLink to="case-list" className={styles.sidebarLink}>
+        <NavLink to="case-management" className={styles.sidebarLink}>
           <LuMenuSquare size={20} />
           <span>Case Managememt</span>
         </NavLink>
-        <NavLink to="register" className={styles.sidebarLink}>
-          <MdAppRegistration size={20} />
-          <span>Customer Registration</span>
-        </NavLink>
+        
       </div>
 
       <div className={styles.bottomside}>

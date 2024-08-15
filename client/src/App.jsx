@@ -11,6 +11,7 @@ import CaseList from "./pages/CaseList";
 import Registration from "./pages/Registration";
 import RequireAuth from "./components/RequireAuth";
 import PersistUser from "./components/PersistUser";
+import CaseManagement from "./pages/CaseManagement";
 
 const router = createBrowserRouter([
   {
@@ -37,16 +38,23 @@ const router = createBrowserRouter([
                 element: <AppointmentList />,
               },
               {
-                path: "case",
-                element: <Case />,
-              },
-              {
-                path: "case-list",
-                element: <CaseList />,
-              },
-              {
-                path: "register",
-                element: <Registration />,
+                path:'case-management',
+                element: <CaseManagement />,
+                children:[
+                  {
+                    index:true,
+                    element: <Registration />,
+                  },
+                  {
+                    path: "case",
+                    element: <Case />,
+                  },
+                  {
+                    path: "case-list",
+                    element: <CaseList />,
+                  },
+
+                ]
               },
             ],
           },

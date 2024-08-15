@@ -45,7 +45,7 @@ body,
   display: flex;
   flex-direction: column;
   gap: 15px;
-  width: 60%;
+  width: 100%;
   max-width: 378px;
   background-color: white;
   padding: 20px;
@@ -57,7 +57,7 @@ body,
     display: flex;
     flex-direction: column;
     gap: 15px;
-    width: 70%;
+    width: 100%;
     background-color: white;
     padding: 20px;
     border-radius: 10px;
@@ -263,4 +263,25 @@ h2{
   padding: 0.3125rem;
   border-radius: 0.3125rem;
   cursor: pointer;
+}
+.case{
+
+  width: 100%;
+  height: 100%;
+}
+.casenav{
+  display: flex;
+ margin-bottom: 10px;
+ gap: 10px;
+    justify-content: center;
+
+}
+.casenavlinks{
+  padding: 5px;
+  margin-top: 4px;
+  
+}
+.casenavlinks.active{
+  color: blueviolet;
+  border-bottom: solid blueviolet;
 }
