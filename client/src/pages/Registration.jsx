@@ -1,4 +1,3 @@
-// import { useForm } from "react-hook-form";
 import api from "../api/axios.js";
 import {Link} from "react-router-dom"
 import FormInput from "../components/forminput/FormInput.jsx";
@@ -21,7 +20,7 @@ const [customer, setCustomer] = useState({
 
 let handleSubmit = async (event)=>{
    event.preventDefault();
-     const response = await api.post('/customer_registration', customer);
+     const response = await api.post('/customer-registration', customer);
      console.log("Registerd Succesfully");
      setCustomer({
       firstName:"" ,
@@ -35,7 +34,6 @@ let handleSubmit = async (event)=>{
      })
      
 }
-
 
 let handleChange = (event) =>{
 let {name, value} = event.target;
@@ -152,4 +150,5 @@ setCustomer((prevValue)=>{
       </form>
 
   )
+
 }

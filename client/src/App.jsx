@@ -9,6 +9,8 @@ import Case from "./pages/Case";
 import CaseList from "./pages/CaseList";
 
 import Registration from "./pages/Registration";
+import RequireAuth from "./components/RequireAuth";
+import PersistUser from "./components/PersistUser";
 
 const router = createBrowserRouter([
   {
@@ -16,30 +18,45 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    path: "/",
-    element: <Layout />,
+    element: <PersistUser />,
     children: [
       {
-        index: true,
-        element: <Appointment />,
-      },
-      {
-        path: "appointment-list",
-        element: <AppointmentList />,
-      },
-      {
-        path: "case",
-        element: <Case />,
-      },
-      {
-        path: "case-list",
-        element: <CaseList />,
-      },
-      {
-        path: "register",
-        element: <Registration />,
+        path: "/",
+        element: <RequireAuth allowedRoles={[1234, 4321]} />,
+        children: [
+          {
+            path: "",
+            element: <Layout />,
+            children: [
+              {
+                index: true,
+                element: <Appointment />,
+              },
+              {
+                path: "appointment-list",
+                element: <AppointmentList />,
+              },
+              {
+                path: "case",
+                element: <Case />,
+              },
+              {
+                path: "case-list",
+                element: <CaseList />,
+              },
+              {
+                path: "register",
+                element: <Registration />,
+              },
+            ],
+          },
+        ],
       },
     ],
+  },
+  {
+    path: "unautherized",
+    element: <h2> Unautherized :(</h2>,
   },
   {
     path: "*",
