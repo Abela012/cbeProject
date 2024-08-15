@@ -1,97 +1,154 @@
-import * as yup from "yup";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import FormError from "../components/FormError";
 import api from "../api/axios.js";
+import {Link} from "react-router-dom"
+import FormInput from "../components/forminput/FormInput.jsx";
+import Button from "../components/button/Button.jsx";
+import { useState } from "react";
 
-const schema = yup.object().shape({
-  firstName: yup.string().required(" Customer's First Name is required!"),
-  middleName: yup.string().required(" Customer's Middle Name is required!"),
-  lastName: yup.string().required(" Customer's Last Name is required!"),
-  businessName: yup.string().required("Customer's Business Name is required!"),
-  customerEmail: yup.string().email().required("Customer's Email is required"),
-  phoneNumber: yup
-    .string()
-    .matches(/^0\d{9}$/, "Phone number must be in the format 0912345678")
-    .required("Customer's phone number is required "),
-  address: yup.string().required("Adress is required"),
-  catagory: yup.string().required("please select a catagory"),
-});
 
-export default function Registration() {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
+export default function Registration(){
 
-  const submitForm = async (data) => {
-    const response = await api.post("/customer-registration", data);
-    console.log(response);
+const [customer, setCustomer] = useState({
+  firstName:"" ,
+  middleName: "" ,
+  lastName: "" ,
+  fullName: "" ,
+  businessName:"" ,
+  customerEmail:"" ,
+  phoneNumber:"" ,
+  address: "",
+})
 
-    reset();
-  };
+let handleSubmit = async (event)=>{
+   event.preventDefault();
+     const response = await api.post('/customer-registration', customer);
+     console.log("Registerd Succesfully");
+     setCustomer({
+      firstName:"" ,
+      middleName: "" ,
+      lastName: "" ,
+      fullName: "" ,
+      businessName:"" ,
+      customerEmail:"" ,
+      phoneNumber:"" ,
+      address: "",
+     })
+     
+}
 
+let handleChange = (event) =>{
+let {name, value} = event.target;
+setCustomer((prevValue)=>{
   return (
-    <form className="Hform" onSubmit={handleSubmit(submitForm)}>
-      <div className="title">
-        <h2>Customer Registration Page</h2>
+    {
+      ...prevValue,
+      [name]: value
+    }
+  )
+})
+
+}
+
+
+   
+  return (
+
+      <form className='registration' onSubmit={handleSubmit} >
+      <div className="title"><h1>Customer Registration Page</h1></div>
+      <br/>
+<div className="container">
+
+      <div className='personal_info'>
+        <h2>Personal Information</h2>
+
+        <br/>
+        <div className="personal_info_input">
+           
+            <FormInput
+              placeholder="Enter First Name"
+              lableName="First Name"
+              inputType="text"
+              name = "firstName"
+              onChange = {handleChange}
+              value = {customer.firstName}
+              required
+            />
+            <FormInput
+              placeholder="Enter Middle Name"
+              lableName="Middle Name"
+              inputType="text"
+              name = "middleName"
+              onChange = {handleChange}
+              value = {customer.middleName}
+              required
+            />
+            <FormInput
+              placeholder="Enter Last Name"
+              lableName="Last Name"
+              inputType="text"
+              name = "lastName"
+              onChange = {handleChange}
+              value = {customer.lastName}
+              required
+            />
+
+        </div>
       </div>
-      <br />
-      <div className="forminput">
-        <label htmlFor="fName">First Name</label>
-        <input type="text" id="fName" {...register("firstName")} />
-        <FormError error={errors.firstName?.message} />
-      </div>
-      <div className="forminput">
-        <label htmlFor="mName">Middle Name</label>
-        <input type="text" id="mName" {...register("middleName")} />
-        <FormError error={errors.middleName?.message} />
-      </div>
-      <div className="forminput">
-        <label htmlFor="lName">Last Name</label>
-        <input type="text" id="lName" {...register("lastName")} />
-        <FormError error={errors.lastName?.message} />
-      </div>
-      <div className="forminput">
-        <label htmlFor="bName">Business Name</label>
-        <input type="text" id="bName" {...register("businessName")} />
-        <FormError error={errors.businessName?.message} />
-      </div>
-      <div className="forminput">
-        <label htmlFor="email"> Customer Email</label>
-        <input type="email" id="email" {...register("customerEmail")} />
-        <FormError error={errors.customerEmail?.message} />
-      </div>
-      <div className="forminput">
-        <label htmlFor="pNumber">Phone Number</label>
-        <input type="text" id="pNumber" {...register("phoneNumber")} />
-        <FormError error={errors.phoneNumber?.message} />
-      </div>
-      <div className="forminput">
-        <label htmlFor="address">Address</label>
-        <input type="text" id="address" {...register("address")} />
-        <FormError error={errors.address?.message} />
-      </div>
-      <div className="forminput">
-        <label htmlFor="catagory">Case Catagory</label>
-        <select id="catagory" {...register("catagory")}>
-          <option value="">Select Case Catagory</option>
-          <option value="a">A</option>
-          <option value="b">B</option>
-          <option value="c">C</option>
-          <option value="d">D</option>
-        </select>
-        <FormError error={errors.catagory?.message} />
-      </div>
-      <button type="submit" className="btn btn-submit">
-        Register
-      </button>
-      already registerd?
-      <a href="#"></a>
-    </form>
-  );
+<div className='contactInfo'>
+      <h2>Contact Information</h2>
+      <br/>
+   <div className="contactInfoInput"> 
+          <FormInput
+              placeholder="Enter Customer's Email"
+              lableName="Customer Email"
+              inputType="email"
+              name = "customerEmail"
+              onChange = {handleChange}
+              value = {customer.customerEmail}
+              required
+            />
+          <FormInput
+              placeholder="Enter Phone Number"
+              lableName="Phone Number"
+              inputType="number"
+              min = {10}
+              name ="phoneNumber"
+              onChange = {handleChange}
+              value = {customer.phoneNumber}
+              required
+            />
+            <FormInput
+              placeholder="Enter Adress"
+              lableName="Adress"
+              inputType="text"
+              name = "address"
+              onChange = {handleChange}
+              value = {customer.address}
+              required
+            />
+    </div>
+</div>
+</div>
+<div className="business">
+           <FormInput
+              placeholder="Enter Business Name "
+              lableName="Business Name"
+              inputType="text"
+              name = "businessName"
+              onChange = {handleChange}
+              value = {customer.businessName}
+              required
+              />
+</div>
+
+    <div className='register'>
+        <Button className="btn-register" btnName="Register" type = "submit"/>
+    </div>
+        
+
+    already registerd?
+         <Link to= "/case">Create Case</Link>
+      </form>
+
+  )
+
 }
