@@ -13,7 +13,7 @@ const caseRouter = express.Router();
 
 caseRouter.post(
   "/create-case",
-  verifyRole(rolesList.secretary, rolesList.staff),
+  // verifyRole(rolesList.secretary, rolesList.staff),
   createCase
 );
 

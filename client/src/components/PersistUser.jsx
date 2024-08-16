@@ -12,7 +12,7 @@ function PersistUser() {
 
   useEffect(() => {
     if (!token && data) {
-      dispatch(setCredentials(data.data));
+      dispatch(setCredentials(data));
     }
   }, [data, dispatch]);
 

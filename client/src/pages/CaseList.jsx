@@ -5,7 +5,11 @@ import { MdDelete } from "react-icons/md";
 import SearchBar from "../components/searchBar/SearchBar";
 import Popup from "../components/Popup";
 import api from "../api/axios";
-import { useGetCaseMutation } from "../features/caseApiSlice";
+import {
+  useDeleteCaseMutation,
+  useGetCasesMutation,
+  useUpdateCaseMutation,
+} from "../features/caseApiSlice";
 
 function CaseList() {
   const [cases, setCases] = useState([]);
@@ -13,7 +17,9 @@ function CaseList() {
   const [showApp, setShowApp] = useState(false);
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
-  const [getCase] = useGetCaseMutation();
+  const [getCaseData] = useGetCasesMutation();
+  const [updateCase] = useUpdateCaseMutation();
+  const [deleteCase] = useDeleteCaseMutation();
 
   function Show() {
     setShowApp(true);
@@ -21,9 +27,7 @@ function CaseList() {
 
   useEffect(() => {
     async function getCases() {
-      const response = await getCase({ query });
-
-      // const response = await api.get(`/get-cases?q=${query}`);
+      const response = await getCaseData(query);
       setCases(response.data);
     }
     getCases();
@@ -34,7 +38,7 @@ function CaseList() {
   };
   return (
     <div className="table_Wrapper">
-      <SearchBar placeholder="Search case" />
+      <SearchBar placeholder="Search by case number" />
       <table>
         <thead>
           <tr>
@@ -49,7 +53,7 @@ function CaseList() {
           {cases?.map((_case, idx) => {
             return (
               <tr key={_case._id} onClick={() => setCaseId(_case._id)}>
-                <td>{_case.customerId.customerName}</td>
+                <td>{_case.customerId?.fullName}</td>
                 <td>{_case.caseNumber}</td>
                 <td>{_case.subject}</td>
                 <td>{_case.status}</td>
@@ -57,7 +61,7 @@ function CaseList() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      api.patch(`/update-case/${_case._id}`);
+                      updateCase(_case._id);
                     }}
                   >
                     <MdEdit size={20} color="green" />
@@ -70,7 +74,7 @@ function CaseList() {
                           return appoint._id !== _case._id;
                         })
                       );
-                      api.delete(`/delete-case/${_case._id}`);
+                      deleteCase(_case._id);
                     }}
                   >
                     <MdDelete size={20} color="red" />

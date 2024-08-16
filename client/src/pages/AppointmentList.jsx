@@ -6,6 +6,11 @@ import { useSearchParams } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import Edit from "../components/EditAppointment/Edit.jsx";
+import {
+  useDeleteAppointmentMutation,
+  useGetAppointmentMutation,
+  useGetAppointmentsMutation,
+} from "../features/appointmentApiSlice.js";
 
 function AppointmentList() {
   const [appointments, setAppointments] = useState([]);
@@ -16,6 +21,9 @@ function AppointmentList() {
   const [showedit, setshowedit] = useState(false);
   const [refetch, setRefetch] = useState(false);
   const [appId, setappId] = useState("");
+  const [getAppointmentsData] = useGetAppointmentsMutation();
+  const [getAppointmentData] = useGetAppointmentMutation();
+  const [deleteAppointment] = useDeleteAppointmentMutation();
 
   function edit(e) {
     setshowedit(true);
@@ -26,7 +34,7 @@ function AppointmentList() {
 
   useEffect(() => {
     async function getAppointments() {
-      const response = await api.get(`/get-appointments?q=${query}`);
+      const response = await getAppointmentsData(query);
       setAppointments(response.data);
     }
     getAppointments();
@@ -66,7 +74,7 @@ function AppointmentList() {
                   Show();
                 }}
               >
-                <td>{appointment.customerId.fullName}</td>
+                <td>{appointment.customerId?.fullName}</td>
                 <td>{appointment.officeId}</td>
                 <td>{new Date(appointment.startTime).toLocaleString()}</td>
                 <td>{new Date(appointment.endTime).toLocaleString()}</td>
@@ -75,7 +83,8 @@ function AppointmentList() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      api.get(`/get-appointment/${appointment._id}`);
+                      getAppointmentData(appointment._id);
+                      // api.get(`/get-appointment/${appointment._id}`);
                       setappId(appointment._id);
                       edit();
                     }}
@@ -90,7 +99,8 @@ function AppointmentList() {
                           return appoint._id !== appointment._id;
                         })
                       );
-                      api.delete(`/delete-appointments/${appointment._id}`);
+                      deleteAppointment(appointment._id);
+                      // api.delete(`/delete-appointments/${appointment._id}`);
                     }}
                   >
                     <MdDelete size={20} color="red" />

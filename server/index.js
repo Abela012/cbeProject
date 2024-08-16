@@ -36,7 +36,6 @@ app.use(helmet());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-
 app.use("/auth", authRouter);
 
 app.use(isAuthenticated);
