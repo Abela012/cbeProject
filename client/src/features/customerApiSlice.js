@@ -8,7 +8,15 @@ export const customerApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    registerCustomer: builder.mutation({
+      query: (customer) => ({
+        url: "/customer-registration",
+        method: "POST",
+        body: { ...customer },
+      }),
+    }),
   }),
 });
 
-export const { useGetCustomerMutation } = customerApiSlice;
+export const { useGetCustomerMutation, useRegisterCustomerMutation } =
+  customerApiSlice;

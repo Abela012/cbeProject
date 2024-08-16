@@ -8,27 +8,26 @@ const createAppointment = async (req, res) => {
       buissness_name,
       email,
       phone,
-      office_id,
-      start_time,
-      end_time,
+      officeId,
+      startTime,
+      endTime,
       category,
     } = req.body;
 
-    const newCustomer = await Customer.create({
-      customerName: customer_name,
-      businessName: buissness_name,
-      email: email,
-      phone: phone,
-    });
+    // const newCustomer = await Customer.create({
+    //   customerName: customer_name,
+    //   businessName: buissness_name,
+    //   email: email,
+    //   phone: phone,
+    // });
 
     const newAppointment = await Appointment.create({
-      customerId: newCustomer._id,
-      officeId: office_id,
-      startTime: start_time,
-      endTime: end_time,
-      category: category,
+      // customerId: newCustomer._id,
+      officeId,
+      startTime,
+      endTime,
     });
-    return res.status(201).json({ ...newCustomer, ...newAppointment });
+    return res.status(201).json({ ...newAppointment });
   } catch (error) {
     console.log(error);
   }

@@ -2,29 +2,37 @@ import React from "react";
 import "../App.css";
 import { useState } from "react";
 import { useEffect } from "react";
-import api from "../api/axios";
 import { IoIosClose } from "react-icons/io";
 import OverLay from "./OverLay";
+import { useGetAppointmentMutation } from "../features/appointmentApiSlice";
+import { useGetCaseMutation } from "../features/caseApiSlice";
 
 function Popup({ appointmentId, caseId, onClose }) {
   const [pop, setPop] = useState([]);
+  const [getAppointmentData] = useGetAppointmentMutation();
+  const [getCaseData] = useGetCaseMutation();
 
   useEffect(() => {
-    if (appointmentId) {
-      api
-        .get(`/get-appointment/${appointmentId}`)
-        .then((response) => {
-          setPop(response.data);
-        })
-        .catch((err) => console.log(err));
-    } else {
-      api
-        .get(`/get-case/${caseId}`)
-        .then((response) => {
-          setPop(response.data);
-        })
-        .catch((err) => console.log(err));
+    async function loadData() {
+      if (appointmentId) {
+        const response = await getAppointmentData(appointmentId);
+        // api
+        //   .get(`/get-appointment/${appointmentId}`)
+        //   .then((response) => {
+        setPop(response.data);
+        // })
+        // .catch((err) => console.log(err));
+      } else {
+        const response = await getCaseData(caseId);
+        // api
+        //   .get(`/get-case/${caseId}`)
+        //   .then((response) => {
+        setPop(response.data);
+        // })
+        // .catch((err) => console.log(err));
+      }
     }
+    loadData();
   }, []);
 
   //   console.log(pop);
@@ -62,4 +70,3 @@ function Popup({ appointmentId, caseId, onClose }) {
 }
 
 export default Popup;
-

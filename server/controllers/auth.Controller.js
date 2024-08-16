@@ -56,18 +56,18 @@ const sigIn = async (req, res) => {
     // GENERATE ACCESS AND REFRESHTOKEN
     // SAVE REFRESHTOKEN IN DB AND SEND TO HTTPONLY COOKIE
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: "15s",
+      expiresIn: "15m",
     });
 
     const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
-      expiresIn: "30m",
+      expiresIn: "1h",
     });
     const userUpdate = await User.updateOne({ email }, { refreshToken });
 
     res.cookie("rjwt", refreshToken, {
       httpOnly: true,
-      secute: true,
-      samSite: "none",
+      secure: true,
+      sameSite: "none",
       maxAge: 60 * 60 * 1000,
       withCredentials: true,
     });

@@ -28,8 +28,7 @@ function Login() {
     e.preventDefault();
     try {
       const response = await login(userCredentials).unwrap();
-      // console.log(response);
-      dispatch(setCredentials(response.data));
+      dispatch(setCredentials(response));
       navigate(from, { replace: true });
     } catch (error) {
       console.log(error);
