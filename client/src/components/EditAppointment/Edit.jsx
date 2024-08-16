@@ -12,22 +12,10 @@ import {
   useGetAppointmentMutation,
   useUpdateAppointmentMutation,
 } from "../../features/appointmentApiSlice.js";
+import FormInput from "../forminput/FormInput.jsx";
 
 function Edit({ appId, onClose, setRefetch }) {
-  const schema = yup.object().shape({
-    customer_name: yup.string().required("Customer name required"),
-    buissness_name: yup.string().required("Buissness name required"),
-    email: yup.string().required("Email required").email("Invalid email"),
-    phone: yup
-      .string()
-      .required("Phone required")
-      .min(10, "Invalid phone number")
-      .max(10),
-    office_id: yup.string().required("Office id required"),
-    start_time: yup.string().required("Start time required"),
-    end_time: yup.string().required("End time required"),
-    category: yup.string().required("Category required"),
-  });
+  
   const [edit, setedit] = useState({
     _id: "",
     fullName: "",
@@ -49,7 +37,7 @@ function Edit({ appId, onClose, setRefetch }) {
       // const response = await api.get(`/get-appointment/${appId}`)
       setedit({
         _id: response.data._id,
-        fullName: response.data.customerId.fullName,
+        fullName: response.data.customerId?.fullName,
         businessName: response.data.customerId.businessName,
         customerEmail: response.data.customerId.customerEmail,
         phoneNumber: response.data.customerId.phoneNumber,
@@ -63,14 +51,7 @@ function Edit({ appId, onClose, setRefetch }) {
     getAppointment();
   }, []);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
+  
 
   const submit = async (e) => {
     e.preventDefault();
@@ -93,141 +74,131 @@ function Edit({ appId, onClose, setRefetch }) {
   return (
     <div className={styles.edit} ref={modalRef} onClick={closeModal}>
       <form action="" className="Hform edit" onSubmit={submit}>
-        <button
-          onClick={() => {
-            onClose();
-          }}
-          className="closepop"
-        >
-          <IoIosClose size={26} />
-        </button>
-        <div className="forminput">
-          {errors.customer_name && (
-            <FormError error={errors.customer_name.message} />
-          )}
-          <label htmlFor="">Customer Name</label>
-          <input
-            type="text"
-            value={edit.fullName}
-            onChange={(e) =>
-              setedit({
-                ...edit,
-                fullName: e.target.value,
-              })
-            }
-          />
-        </div>
+      <div className="inputs_wrapper">
+      <div className="personalinfo">
+      <FormInput
+        lableName="Customer Name"
+         placeholder="Enter customer name"
+         type="text"
+         value={edit.fullName}
+         onChange={(e) =>
+           setedit({
+             ...edit,
+             fullName: e.target.value,
+           })
+         }
+         required
+        />
 
-        <div className="forminput">
-          {errors.buissness_name && (
-            <FormError error={errors.buissness_name.message} />
-          )}
-          <label htmlFor="">Buissness Name</label>
-          <input
-            type="text"
-            value={edit.businessName}
-            onChange={(e) =>
-              setedit({
-                ...edit,
-                businessName: e.target.value,
-              })
-            }
-          />
-        </div>
+        <FormInput
+        lableName="Buissness Name"
+         placeholder="Enter Buissness Name"
+         type="text"
+         value={edit.businessName}
+         onChange={(e) =>
+           setedit({
+             ...edit,
+             businessName: e.target.value,
+           })
+         }
+         required
+        />
 
-        <div className="forminput">
-          {errors.email && <FormError error={errors.email.message} />}
-          <label htmlFor="">Email</label>
-          <input
-            type="text"
-            value={edit.customerEmail}
-            onChange={(e) =>
-              setedit({
-                ...edit,
-                email: e.target.value,
-              })
-            }
-          />
-        </div>
+        <FormInput
+        lableName="Email"
+         placeholder="Enter Email"
+         type="text"
+         value={edit.customerEmail}
+         onChange={(e) =>
+           setedit({
+             ...edit,
+             email: e.target.value,
+           })
+         }
+         required
+        />
 
-        <div className="forminput">
-          {errors.phone && <FormError error={errors.phone.message} />}
 
-          <label htmlFor="">Phone Number</label>
-          <input
-            type="tel"
-            pattern="[0-9]{2}[0-9]{2}[0-9]{2}[0-9]{2}[0-9]{2}"
-            value={edit.phoneNumber}
-            onChange={(e) =>
-              setedit({
-                ...edit,
-                phone: e.target.value,
-              })
-            }
-          />
-        </div>
+        <FormInput
+        lableName="Phone Number"
+         placeholder="Enter Phone Number"
+         type="tel"
+         value={edit.phoneNumber}
+         onChange={(e) =>
+           setedit({
+             ...edit,
+             phone: e.target.value,
+           })
+         }
+         required
+        />
+      </div>
+      
+      <div className="appointmentschedule">
+      <FormInput
+        lableName="Office Id"
+         placeholder="Enter Office Id"
+         type="text"
+         value={edit.officeId}
+         onChange={(e) =>
+           setedit({
+             ...edit,
+             officeId: e.target.value,
+           })
+         }
+         required
+        />
+        
 
-        <div className="forminput">
-          {errors.office_id && <FormError error={errors.office_id.message} />}
+        <FormInput
+        lableName="Start Time"
+         placeholder="Enter Start Time"
+         type="datetime-local"
+         value={edit.startTime}
+         onChange={(e) =>
+           setedit({
+             ...edit,
+             startTime: e.target.value,
+           })
+         }
+         required
+        />
 
-          <label htmlFor="">Office Id</label>
-          <input
-            type="text"
-            value={edit.officeId}
-            onChange={(e) =>
-              setedit({
-                ...edit,
-                officeId: e.target.value,
-              })
-            }
-          />
-        </div>
+        
+        <FormInput
+        lableName="End Time"
+         placeholder="Enter End Time"
+         type="datetime-local"
+         value={edit.endTime}
+         onChange={(e) =>
+           setedit({
+             ...edit,
+             endTime: e.target.value,
+           })
+         }
+         required
+        />
 
-        <div className="forminput">
-          {errors.start_time && <FormError error={errors.start_time.message} />}
+        <FormInput
+        lableName="Catagory"
+         placeholder="Enter Catagory"
+         type="text"
+         value={edit.category}
+         onChange={(e) =>
+           setedit({
+             ...edit,
+             category: e.target.value,
+           })
+         }
+         required
+        />
+      </div>
 
-          <label htmlFor="">Start Time</label>
-          <input
-            type="datetime-local"
-            value={edit.startTime}
-            onChange={(e) =>
-              setedit({
-                ...edit,
-                startTime: e.target.value,
-              })
-            }
-          />
-        </div>
+      </div>
+        
 
-        <div className="forminput">
-          {errors.end_time && <FormError error={errors.end_time.message} />}
-          <label htmlFor="">End Time</label>
-          <input
-            type="datetime-local"
-            value={edit.endTime}
-            onChange={(e) =>
-              setedit({
-                ...edit,
-                endTime: e.target.value,
-              })
-            }
-          />
-        </div>
+        
 
-        <div className="forminput">
-          {errors.category && <FormError error={errors.category.message} />}
-          <label htmlFor="">Cataory</label>
-          <input
-            type="text"
-            value={edit.category}
-            onChange={(e) =>
-              setedit({
-                ...edit,
-                category: e.target.value,
-              })
-            }
-          />
-        </div>
         <button type="submit" className="btn btn-submit">
           Submit
         </button>

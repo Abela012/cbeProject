@@ -265,13 +265,12 @@ h2{
   cursor: pointer;
 }
 .case{
-
+  
   width: 100%;
   height: 100%;
 }
 .casenav{
   display: flex;
- margin-bottom: 10px;
  gap: 10px;
     justify-content: center;
 
@@ -283,5 +282,19 @@ h2{
 }
 .casenavlinks.active{
   color: blueviolet;
-  border-bottom: solid blueviolet;
+  border-top: solid blueviolet;
+  height: 100%;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.edit{
+  max-width: 500px;
+}
+.inputs_wrapper{
+  display: flex;
+  gap: 10px;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: center;
+  
 }
