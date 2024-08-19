@@ -1,7 +1,6 @@
-import styles from "./searchBar.module.css";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-function SearchBar({ placeholder, className }) {
+function SearchBar({ placeholder, className, props }) {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -17,9 +16,13 @@ function SearchBar({ placeholder, className }) {
   };
 
   return (
-    <div className={styles.searchBar}>
+    <div className="">
       <input
-        className={styles[className]}
+        {...props}
+        className={
+          "p-3 outline-none rounded-md w-1/2 border-solid border-2 border-[rgb(221,221,221)] " +
+          className
+        }
         type="search"
         placeholder={placeholder}
         onChange={handleChange}

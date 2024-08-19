@@ -14,10 +14,11 @@ export const caseApiSlice = apiSlice.injectEndpoints({
         url: `/get-cases?q=${query}`,
         method: "GET",
       }),
+      invalidatesTags: ["Case"],
     }),
     getCase: builder.mutation({
       query: (query) => ({
-        url: `/get-case?q=${query}`,
+        url: `/get-case/${query}`,
         method: "GET",
       }),
     }),
@@ -25,6 +26,13 @@ export const caseApiSlice = apiSlice.injectEndpoints({
       query: (query) => ({
         url: `/update-case/${query}`,
         method: "PATCH",
+      }),
+    }),
+    updateCaseStatus: builder.mutation({
+      query: (query) => ({
+        url: `/update-case-status/${query.id}`,
+        method: "PATCH",
+        body: { status: query.status },
       }),
     }),
     deleteCase: builder.mutation({
@@ -41,5 +49,6 @@ export const {
   useGetCasesMutation,
   useGetCaseMutation,
   useUpdateCaseMutation,
+  useUpdateCaseStatusMutation,
   useDeleteCaseMutation,
 } = caseApiSlice;

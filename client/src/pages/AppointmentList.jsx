@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import api from "../api/axios";
+import { useEffect, useState } from "react";
 import Popup from "../components/Popup.jsx";
 import SearchBar from "../components/searchBar/SearchBar";
 import { useSearchParams } from "react-router-dom";
@@ -7,35 +6,46 @@ import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import Edit from "../components/EditAppointment/Edit.jsx";
 import {
-  useDeleteAppointmentMutation,
   useGetAppointmentMutation,
   useGetAppointmentsMutation,
+  useUpdateAppointmentStatusMutation,
 } from "../features/appointmentApiSlice.js";
+import { toast } from "react-toastify";
+import DeleteConfirmation from "../components/DeleteConfirmation.jsx";
 
 function AppointmentList() {
   const [appointments, setAppointments] = useState([]);
   const [appointmentId, setappointmentId] = useState("");
-  const [showapp, setshowapp] = useState(false);
+  const [showAppointment, setShowAppointment] = useState(false);
+
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
-  const [showedit, setshowedit] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [appId, setAppId] = useState(""); // hold the appointment id for edit
+  const [appToBeDelete, setAppToBeDelete] = useState({
+    title: "appointment",
+    itemId: "",
+    name: "",
+  }); // hold the appointment to be deleted
   const [refetch, setRefetch] = useState(false);
-  const [appId, setappId] = useState("");
   const [getAppointmentsData] = useGetAppointmentsMutation();
   const [getAppointmentData] = useGetAppointmentMutation();
-  const [deleteAppointment] = useDeleteAppointmentMutation();
+  const [updateAppointmentStatus] = useUpdateAppointmentStatusMutation();
 
-  function edit(e) {
-    setshowedit(true);
+  function edit() {
+    setShowEdit(true);
   }
+
   function Show() {
-    setshowapp(true);
+    setShowAppointment(true);
   }
 
   useEffect(() => {
     async function getAppointments() {
-      const response = await getAppointmentsData(query);
-      setAppointments(response.data);
+      const response = await getAppointmentsData(query).unwrap();
+
+      setAppointments(response);
     }
     getAppointments();
 
@@ -45,77 +55,122 @@ function AppointmentList() {
   }, [query, refetch]);
 
   const handleCloseModal = () => {
-    setshowapp(false);
+    setShowAppointment(false);
+    setShowDelete(false);
   };
   const CloseEdit = () => {
-    setshowedit(false);
+    setShowEdit(false);
   };
+
+  const handleSCaseStateChange = async (appointmentid, e) => {
+    try {
+      const response = await updateAppointmentStatus({
+        status: e.target.value,
+        id: appointmentid,
+      }).unwrap();
+
+      toast.success(response, {
+        position: "bottom-right",
+      });
+    } catch (error) {
+      toast.error(error.data, {
+        position: "bottom-right",
+      });
+    }
+  };
+
   return (
-    <div className="table_Wrapper">
+    <div className=" w-[98%] h-[95%] rounde-d-[10px] flex flex-col gap-2">
       <SearchBar placeholder="Search appointment" />
-      <table>
-        <thead>
-          <tr>
-            <th>Customer Name</th>
-            <th>Office Id</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Status</th>
-            <th>Actions</th>
+      <table className=" text-sm w-full bg-white p-5 rounded-lg border-collapse ">
+        <thead className=" text-left">
+          <tr className=" border-solid border-2 border-gray-300">
+            <th className="p-[10px]">Customer Name</th>
+            <th className="p-[10px]">Office Id</th>
+            <th className="p-[10px]">Start Time</th>
+            <th className="p-[10px]">End Time</th>
+            <th className="p-[10px]">Status</th>
+            <th className="p-[10px]">Actions</th>
           </tr>
         </thead>
         <tbody>
           {appointments?.map((appointment, idx) => {
             return (
               <tr
+                className="hover:bg-light-gray hover:cursor-pointer border-solid border-2 border-gray-300"
                 key={appointment._id}
                 onClick={() => {
                   setappointmentId(appointment._id);
                   Show();
                 }}
               >
-                <td>{appointment.customerId?.fullName}</td>
-                <td>{appointment.officeId}</td>
-                <td>{new Date(appointment.startTime).toLocaleString()}</td>
-                <td>{new Date(appointment.endTime).toLocaleString()}</td>
-                <td>{appointment.status}</td>
-                <td className="table_actions">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      getAppointmentData(appointment._id);
-                      // api.get(`/get-appointment/${appointment._id}`);
-                      setappId(appointment._id);
-                      edit();
-                    }}
+                <td className="p-[10px]">{appointment.customerId?.fullName}</td>
+                <td className="p-[10px]">{appointment.officeId}</td>
+                <td className="p-[10px]">
+                  {new Date(appointment.startTime).toLocaleString()}
+                </td>
+                <td className="p-[10px]">
+                  {new Date(appointment.endTime).toLocaleString()}
+                </td>
+                <td className="p-[10px]" onClick={(e) => e.stopPropagation()}>
+                  <select
+                    className=" p-1 outline-none border-none cursor-pointer bg-transparent "
+                    defaultValue={appointment.status}
+                    onChange={(e) => handleSCaseStateChange(appointment._id, e)}
                   >
-                    <MdEdit size={20} color="green" />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setAppointments(
-                        appointments.filter((appoint) => {
-                          return appoint._id !== appointment._id;
-                        })
-                      );
-                      deleteAppointment(appointment._id);
-                      // api.delete(`/delete-appointments/${appointment._id}`);
-                    }}
-                  >
-                    <MdDelete size={20} color="red" />
-                  </button>
+                    <option value={appointment.status}>
+                      {appointment.status}
+                    </option>
+                    <option value="Pending">Pending</option>
+                    <option value="Canceled">Canceled</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                </td>
+                <td className="p-[10px]">
+                  <div className="table_actions">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        getAppointmentData(appointment._id);
+                        setAppId(appointment._id);
+                        edit();
+                      }}
+                    >
+                      <MdEdit size={20} color="green" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // setAppointments(
+                        //   appointments.filter((appoint) => {
+                        //     return appoint._id !== appointment._id;
+                        //   })
+                        // );
+                        setShowDelete(true);
+                        setAppToBeDelete((prev) => ({
+                          ...prev,
+                          itemId: appointment._id,
+                          name: appointment.customerId?.fullName,
+                        }));
+                      }}
+                    >
+                      <MdDelete size={20} color="red" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      {showapp && (
+      {showAppointment && (
         <Popup appointmentId={appointmentId} onClose={handleCloseModal} />
       )}
-      {showedit && (
+      {showEdit && (
         <Edit appId={appId} onClose={CloseEdit} setRefetch={setRefetch} />
+      )}
+      {showDelete && (
+        <DeleteConfirmation item={appToBeDelete} onClose={handleCloseModal} />
       )}
     </div>
   );

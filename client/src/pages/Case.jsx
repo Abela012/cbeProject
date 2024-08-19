@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import FormInput from "../components/forminput/FormInput";
 import TextArea from "../components/textArea/TextArea";
 import SearchBar from "../components/searchBar/SearchBar";
-import api from "../api/axios";
 import { useSearchParams } from "react-router-dom";
 import Button from "../components/button/Button";
 import { useCreateCaseMutation } from "../features/caseApiSlice";
 import { useGetCustomerMutation } from "../features/customerApiSlice";
 import { useGetCategoriesMutation } from "../features/categoryApiSlice";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 function Case() {
   const [newCase, setNewCase] = useState({
@@ -50,8 +49,6 @@ function Case() {
   useEffect(() => {
     async function getCustomer() {
       const response = await customer({ query });
-      // const response = await api.get(`/get-customer?q=${query}`);
-
       setCustomers(response.data);
     }
     getCustomer();
@@ -60,7 +57,6 @@ function Case() {
   useEffect(() => {
     async function getCategory() {
       const response = await category();
-      // const response = await api.get("/get-categories");
       setCategories(response.data);
     }
     getCategory();
@@ -71,51 +67,43 @@ function Case() {
     setNewCase((prev) => ({ ...prev, [name]: value }));
   };
 
-  const notify = () => {
-    if (200) {
-      toast.success("case created successfully", {
-        position:"bottom-right"
-      })
-    } else {
-      toast.error("check again", {
-        position:"bottom-right"
-      })
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await createCase(newCase).unwrap();
+      toast.success(response, {
+        position: "bottom-right",
+      });
+    } catch (error) {
+      toast.error(error.data, {
+        position: "bottom-right",
+      });
+    } finally {
+      setNewCase({
+        customerId: "",
+        customerEmail: "",
+        caseCategory: "",
+        subject: "",
+      });
     }
-     
-   
-  }
+  };
 
   return (
     <form
-      className="Hform"
-      onSubmit={async (e) => {
-        e.preventDefault();
-        try {
-          const response = await createCase(newCase);
-          // const response = await api.post("/create-case", newCase);
-        } catch (error) {
-          console.log(error);
-        } finally {
-          setNewCase({
-            customerId: "",
-            customerEmail: "",
-            caseCategory: "",
-            subject: "",
-          });
-        }
-      }}
+      className=" flex flex-col gap-4 bg-white p-5 rounded-lg"
+      onSubmit={handleSubmit}
     >
       <div>
         <SearchBar
-          className="full_width"
+          className="!w-full"
           placeholder="Search customer by phone or email"
         />
-        <div className="customer_search_result">
+        <div className=" flex flex-col gap-1 mt-1 max-h-48 overflow-y-auto">
           {customers &&
             customers?.map((customer) => {
               return (
                 <div
-                  className="result_item"
+                  className="flex flex-col bg-[rgb(241,241,241)] p-[5px] rounded-[5px] cursor-pointer"
                   key={customer._id}
                   onClick={() => {
                     setNewCase((prev) => ({
@@ -143,7 +131,7 @@ function Case() {
       />
       <div className="forminput">
         <select
-          className="case_category"
+          className="case_category p-[10px] outline-none rounded-[5px] border-solid border-2 border-[#f1f1f1]"
           required={true}
           value={newCase.caseCategory}
           name="caseCategory"
@@ -169,9 +157,9 @@ function Case() {
         onChange={handleChange}
       />
       {/* <TextArea handleInputChange={() => {}} /> */}
-
-      <Button className="btn-submit" btnName="Create" type="submit" onClick={notify} />
-      <ToastContainer />
+      <div className=" w-full flex items-center justify-center font-bold ">
+        <Button className="w-full sm:w-1/2" btnName="Create" type="submit" />
+      </div>
     </form>
   );
 }

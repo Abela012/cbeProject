@@ -52,48 +52,46 @@ body,
   border-radius: 10px;
 }
 /* new added */
-.registration{ 
-    /* margin-top: 6.25rem; */
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
+.registration {
+  /* margin-top: 6.25rem; */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
 }
 
-h2{
+h2 {
   text-align: center;
 }
 
-.personal_info, .contactInfo{
+.personal_info,
+.contactInfo {
   width: 100%;
 }
 
-.personal_info_input, .contactInfoInput{
+.personal_info_input,
+.contactInfoInput {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  
-
 }
-.business{
+.business {
   width: 100%;
   display: flex;
   flex-direction: row;
 }
 
-.container{
+.container {
   display: flex;
   gap: 20px;
 }
 /* -------------- */
-.title{
+.title {
   text-align: center;
 }
-
-
 
 .forminput {
   position: relative;
@@ -109,15 +107,13 @@ h2{
   border-radius: 5px;
 }
 
-
-
-.forminput > select {
+/* .forminput > select {
   padding: 5px;
   border: none;
   outline: none;
   background-color: rgb(241, 241, 241);
   border-radius: 5px;
-}
+} */
 
 .formerror {
   font-size: small;
@@ -126,7 +122,6 @@ h2{
   bottom: -15px;
   /* padding-left: 8px; */
 }
-
 
 .btn {
   display: flex;
@@ -140,22 +135,20 @@ h2{
   border-radius: 5px;
 }
 /* new added */
-.register{
+.register {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
 }
-.btn-register{
-   width: 50%;
+.btn-register {
+  width: 50%;
 }
-
 
 .btn-submit {
   width: fit-content;
 }
-
 
 .btn-submit:hover {
   cursor: pointer;
@@ -173,6 +166,8 @@ h2{
 .table_actions {
   display: flex;
   gap: 10px;
+  align-items: center;
+  justify-content: center;
 }
 
 .table_actions > button {
@@ -264,37 +259,33 @@ h2{
   border-radius: 0.3125rem;
   cursor: pointer;
 }
-.case{
-  
+.case {
   width: 100%;
   height: 100%;
 }
-.casenav{
+.casenav {
   display: flex;
- gap: 10px;
-    justify-content: center;
-
+  gap: 10px;
+  justify-content: center;
 }
-.casenavlinks{
+.casenavlinks {
   padding: 5px;
   margin-top: 4px;
-  
 }
-.casenavlinks.active{
+.casenavlinks.active {
   color: blueviolet;
   border-top: solid blueviolet;
   height: 100%;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
-.edit{
+.edit {
   max-width: 500px;
 }
-.inputs_wrapper{
+.inputs_wrapper {
   display: flex;
   gap: 10px;
   flex-direction: row !important;
   align-items: center;
   justify-content: center;
-  
 }

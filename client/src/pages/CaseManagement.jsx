@@ -1,20 +1,25 @@
-import React from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import React from "react";
+import { NavLink, Outlet } from "react-router-dom";
 import "../App.css";
 function CaseManagement() {
   return (
-    <div className='case'>
-      <nav className='casenav'>
-        <NavLink to="" end className="casenavlinks"> Registration</NavLink>
-        <NavLink to="case" className="casenavlinks">Case</NavLink>
-        <NavLink to="case-list" className="casenavlinks" >Case Management</NavLink>
+    <div className="w-[98%] h-[98%] flex flex-col ">
+      <nav className=" flex gap-2 justify-center">
+        <NavLink to="" end className="casenavlinks p-2 mt-1  ">
+          Registration
+        </NavLink>
+        <NavLink to="case" className="casenavlinks p-2 mt-1">
+          Case
+        </NavLink>
+        <NavLink to="case-list" className="casenavlinks p-2 mt-1">
+          Case Management
+        </NavLink>
       </nav>
-      <div className='case_outlet'>
-      <Outlet/>
+      <div className="">
+        <Outlet />
       </div>
-            
     </div>
-  )
+  );
 }
 
-export default CaseManagement
+export default CaseManagement;

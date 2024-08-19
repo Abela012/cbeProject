@@ -48,7 +48,7 @@ const registreCustomer = async (req, res) => {
       catagory,
     });
 
-    return res.status(201).json({ ...newCustomer });
+    return res.status(201).json("Customer registerd successfully");
   } catch (error) {
     return res.status(500).json("Server error");
   }

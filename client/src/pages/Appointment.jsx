@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import FormInput from "../components/forminput/FormInput.jsx";
 import Button from "../components/button/Button.jsx";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 
 import { useCreateAppointmentMutation } from "../features/appointmentApiSlice.js";
+import OverLay from "../components/OverLay.jsx";
+import { useSelector } from "react-redux";
+import { getCurrentUser } from "../features/authSlice.js";
 
-function Appointment() {
+function Appointment({ customerId, onClose }) {
+  const user = useSelector(getCurrentUser);
   const [createAppointment] = useCreateAppointmentMutation();
   const [appointmentData, setAppointmentData] = useState({
+    staffId: user._id,
+    customerId: customerId,
     officeId: "",
     startTime: "",
     endTime: "",
@@ -17,21 +22,23 @@ function Appointment() {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      createAppointment(appointmentData);
-
-      toast.success("registerd successfully", {
+      const resonse = await createAppointment(appointmentData).unwrap();
+      toast.success(resonse, {
         position: "bottom-right",
       });
     } catch (error) {
-      toast.error("check again", {
+      toast.error(error.data, {
         position: "bottom-right",
       });
     } finally {
       setAppointmentData({
+        staffId: "",
+        customerId: "",
         officeId: "",
         startTime: "",
         endTime: "",
       });
+      onClose();
     }
   };
 
@@ -41,38 +48,42 @@ function Appointment() {
   };
 
   return (
-    <form action="" className="Hform" onSubmit={handleSubmit}>
-      <FormInput
-        placeholder="Enter Office id"
-        lableName="Office Id"
-        inputType="text"
-        required
-        name="officeId"
-        value={appointmentData.officeId}
-        onChange={handleChange}
-      />
-      <FormInput
-        placeholder="Enter Office id"
-        lableName="Start Time"
-        inputType="datetime-local"
-        required
-        name="startTime"
-        value={appointmentData.startTime}
-        onChange={handleChange}
-      />
-      <FormInput
-        placeholder="Enter Office id"
-        lableName="End Time"
-        inputType="datetime-local"
-        required
-        name="endTime"
-        value={appointmentData.endTime}
-        onChange={handleChange}
-      />
+    <OverLay handleClick={onClose}>
+      <form
+        className=" flex flex-col gap-[15px] w-full max-w-[380px] bg-white p-5 rounded-[10px] "
+        onSubmit={handleSubmit}
+      >
+        <FormInput
+          placeholder="Enter Office id"
+          lableName="Office Id"
+          inputType="text"
+          required
+          name="officeId"
+          value={appointmentData.officeId}
+          onChange={handleChange}
+        />
+        <FormInput
+          placeholder="Enter Office id"
+          lableName="Start Time"
+          inputType="datetime-local"
+          required
+          name="startTime"
+          value={appointmentData.startTime}
+          onChange={handleChange}
+        />
+        <FormInput
+          placeholder="Enter Office id"
+          lableName="End Time"
+          inputType="datetime-local"
+          required
+          name="endTime"
+          value={appointmentData.endTime}
+          onChange={handleChange}
+        />
 
-      <Button className="btn-submit" btnName="Submit" type="submit" />
-      <ToastContainer />
-    </form>
+        <Button className="" btnName="Submit" type="submit" />
+      </form>
+    </OverLay>
   );
 }
 

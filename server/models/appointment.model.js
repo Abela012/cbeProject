@@ -6,6 +6,7 @@ const AppointmentSchema = new Schema(
     startTime: { type: Date },
     endTime: { type: Date },
     customerId: { type: Schema.Types.ObjectId, ref: "Customer" },
+    staffId: { type: Schema.Types.ObjectId, ref: "User" },
     status: {
       type: String,
       enum: ["Pending", "Canceled", "Completed"],
@@ -18,5 +19,4 @@ const AppointmentSchema = new Schema(
 );
 
 const Appointment = model("Appointment", AppointmentSchema);
-export default Appointment
-
+export default Appointment;
