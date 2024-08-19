@@ -3,31 +3,17 @@ import Appointment from "../models/appointment.model.js";
 const createAppointment = async (req, res) => {
   try {
     // console.log(req.body);
-    const {
-      customer_name,
-      buissness_name,
-      email,
-      phone,
-      officeId,
-      startTime,
-      endTime,
-      category,
-    } = req.body;
-
-    // const newCustomer = await Customer.create({
-    //   customerName: customer_name,
-    //   businessName: buissness_name,
-    //   email: email,
-    //   phone: phone,
-    // });
+    const { staffId, customerId, officeId, startTime, endTime, category } =
+      req.body;
 
     const newAppointment = await Appointment.create({
-      // customerId: newCustomer._id,
+      staffId,
+      customerId,
       officeId,
       startTime,
       endTime,
     });
-    return res.status(201).json({ ...newAppointment });
+    return res.status(201).json("Appointment created successfully");
   } catch (error) {
     console.log(error);
   }
@@ -90,8 +76,6 @@ const updateAppointment = async (req, res) => {
       category,
     } = req.body;
 
-    console.log(req.body);
-
     const updatedappointment = await Appointment.findOneAndUpdate(
       { _id: id },
       {
@@ -114,9 +98,28 @@ const updateAppointment = async (req, res) => {
         phoneNumber: phoneNumber,
       }
     );
-    return res.json(updatedappointment);
+    return res.json("Appointment updated");
   } catch (error) {
     console.log(error);
+    return res.status(500).json("Server error");
+  }
+};
+
+const updateAppointmentStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const updatedappointment = await Appointment.findOneAndUpdate(
+      { _id: id },
+      {
+        status,
+      }
+    );
+    return res.json("Appointment updated");
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Server error");
   }
 };
 
@@ -136,5 +139,6 @@ export {
   getAppointments,
   getAppointmentById,
   updateAppointment,
+  updateAppointmentStatus,
   deleteAppointment,
 };

@@ -19,7 +19,7 @@ const generateAccount = async (req, res) => {
       password: hashedPassword,
       roleType: roleType,
     });
-    return res.status(201).json("New user created successfuly");
+    return res.status(201).json("New user created successfully");
 
     // const user = {
     //     _id: newUser._id,

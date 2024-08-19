@@ -4,9 +4,9 @@ import SideBar from "./sidebar/SideBar";
 
 function Layout() {
   return (
-    <main className="maincontainer">
+    <main className=" flex h-screen">
       <SideBar />
-      <div className="wrapper">
+      <div className=" flex items-center justify-center w-full h-dvh bg-[rgb(241,241,241)] overflow-y-auto">
         <Outlet />
       </div>
     </main>

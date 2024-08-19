@@ -1,12 +1,15 @@
-import React from "react";
-import FormError from "../FormError";
-import styles from "./formInput.module.css";
-
 function FormInput({ placeholder, lableName, inputName, inputType, ...props }) {
   return (
-    <div className={styles.forminput}>
-      <label htmlFor="">{lableName}</label>
-      <input {...props} type={inputType} placeholder={placeholder} />
+    <div className=" relative flex flex-col">
+      <label className=" font-bold mb-[5px] text-sm" htmlFor="">
+        {lableName}
+      </label>
+      <input
+        className=" p-[10px] outline-none rounded-md border-solid border-2 border-[rgb(221,221,221)]"
+        type={inputType}
+        {...props}
+        placeholder={placeholder}
+      />
     </div>
   );
 }

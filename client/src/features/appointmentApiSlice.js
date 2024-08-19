@@ -14,6 +14,7 @@ const appointmentApiSlice = apiSlice.injectEndpoints({
         url: `/get-appointments?q=${query}`,
         method: "GET",
       }),
+      invalidatesTags: ["Appointment"],
     }),
     getAppointment: builder.mutation({
       query: (id) => ({
@@ -26,6 +27,13 @@ const appointmentApiSlice = apiSlice.injectEndpoints({
         url: `/update-appointment/${id}`,
         method: "PATCH",
         body: { ...appointment },
+      }),
+    }),
+    updateAppointmentStatus: builder.mutation({
+      query: (query) => ({
+        url: `/update-appointment-status/${query.id}`,
+        method: "PATCH",
+        body: { status: query.status },
       }),
     }),
     deleteAppointment: builder.mutation({
@@ -42,5 +50,6 @@ export const {
   useGetAppointmentsMutation,
   useGetAppointmentMutation,
   useUpdateAppointmentMutation,
+  useUpdateAppointmentStatusMutation,
   useDeleteAppointmentMutation,
 } = appointmentApiSlice;

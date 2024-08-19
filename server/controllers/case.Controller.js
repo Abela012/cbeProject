@@ -6,7 +6,7 @@ const createCase = async (req, res) => {
 
     const newCase = await Case.create({
       customerId: customerId,
-      // category: caseCategory,
+      category: caseCategory,
       subject: subject,
       caseNumber: "",
     });
@@ -63,8 +63,21 @@ const updateCase = async (req, res) => {
 
     // const updatedCase = await Case.findOneAndUpdate({ _id: id }, {});
 
-    return res.json("updatedCase");
-    // return res.json(updatedCase);
+    return res.status(200).json("Case updated");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("Server error");
+  }
+};
+
+const updateCaseStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const updatedCase = await Case.findOneAndUpdate({ _id: id }, { status });
+
+    return res.status(200).json("Case updated");
   } catch (error) {
     console.log(error);
     return res.status(500).json("Server error");
@@ -76,11 +89,18 @@ const deleteCase = async (req, res) => {
     const { id } = req.params;
     const deletedCase = await Case.findOneAndDelete({ _id: id });
     // console.log(deletedCase);
-    return res.json(deletedCase);
+    return res.status(204).json("Case deleted");
   } catch (error) {
     console.log(error);
     return res.status(500).json("Server error");
   }
 };
 
-export { createCase, getCases, getCaseById, updateCase, deleteCase };
+export {
+  createCase,
+  getCases,
+  getCaseById,
+  updateCase,
+  updateCaseStatus,
+  deleteCase,
+};

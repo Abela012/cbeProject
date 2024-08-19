@@ -1,9 +1,7 @@
-import api from "../api/axios.js";
-import { Link } from "react-router-dom";
 import FormInput from "../components/forminput/FormInput.jsx";
 import Button from "../components/button/Button.jsx";
 import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useRegisterCustomerMutation } from "../features/customerApiSlice.js";
 
 export default function Registration() {
@@ -22,13 +20,13 @@ export default function Registration() {
   let handleSubmit = async (event) => {
     try {
       event.preventDefault();
-      console.log(customer);
-      const response = await registerCustomer({ ...customer });
-      toast.success("registerd successfully", {
+      // console.log(customer);
+      const response = await registerCustomer({ ...customer }).unwrap();
+      toast.success(response, {
         position: "bottom-right",
       });
     } catch (error) {
-      toast.error("check again", {
+      toast.error(error.data, {
         position: "bottom-right",
       });
     } finally {
@@ -56,17 +54,17 @@ export default function Registration() {
   };
 
   return (
-    <form className="registration" onSubmit={handleSubmit}>
-      <div className="title">
-        <h1>Customer Registration Page</h1>
+    <form
+      className=" flex flex-col gap-4 w-full bg-white p-5 rounded-lg "
+      onSubmit={handleSubmit}
+    >
+      <div className=" text-center">
+        <h1 className=" font-bold">Customer Registration Page</h1>
       </div>
-      <br />
-      <div className="container">
-        <div className="personal_info">
-          <h2>Personal Information</h2>
-
-          <br />
-          <div className="personal_info_input">
+      <div className=" w-full flex gap-5 flex-col sm:flex-row">
+        <div className=" w-full">
+          <h2 className=" font-bold">Personal Information</h2>
+          <div className=" flex flex-col">
             <FormInput
               placeholder="Enter First Name"
               lableName="First Name"
@@ -96,10 +94,10 @@ export default function Registration() {
             />
           </div>
         </div>
-        <div className="contactInfo">
-          <h2>Contact Information</h2>
-          <br />
-          <div className="contactInfoInput">
+
+        <div className=" w-full">
+          <h2 className=" font-bold">Contact Information</h2>
+          <div className="flex flex-col">
             <FormInput
               placeholder="Enter Customer's Email"
               lableName="Customer Email"
@@ -120,8 +118,8 @@ export default function Registration() {
               required
             />
             <FormInput
-              placeholder="Enter Adress"
-              lableName="Adress"
+              placeholder="Enter Address"
+              lableName="Address"
               inputType="text"
               name="address"
               onChange={handleChange}
@@ -131,7 +129,8 @@ export default function Registration() {
           </div>
         </div>
       </div>
-      <div className="business">
+
+      <div className="">
         <FormInput
           placeholder="Enter Business Name "
           lableName="Business Name"
@@ -142,10 +141,9 @@ export default function Registration() {
           required
         />
       </div>
-      <div className="register">
-        <Button className="btn-register" btnName="Register" type="submit" />
+      <div className=" w-full flex items-center justify-center font-bold ">
+        <Button className="w-full sm:w-1/2" btnName="Register" type="submit" />
       </div>
-      <ToastContainer />
     </form>
   );
 }

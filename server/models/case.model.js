@@ -4,7 +4,7 @@ const CaseSchema = Schema(
   {
     customerId: { type: Schema.Types.ObjectId, ref: "Customer" },
     appointmentId: { type: Schema.Types.ObjectId, ref: "Appointment" },
-    staffId: { type: Schema.Types.ObjectId, ref: "Staff" },
+    staffId: { type: Schema.Types.ObjectId, ref: "User" },
     officeId: { type: Schema.Types.ObjectId, ref: "OfficeManagement" },
     startDate: { type: String },
     dueDate: { type: String },

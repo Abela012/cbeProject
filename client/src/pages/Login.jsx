@@ -1,4 +1,3 @@
-import styles from "../components/forminput/formInput.module.css";
 import FormInput from "../components/forminput/FormInput";
 import Button from "../components/button/Button";
 import { useState } from "react";
@@ -6,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../features/authApiSlice.js";
 import { setCredentials } from "../features/authSlice.js";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Login() {
   const [userCredentials, setUserCredentials] = useState({
@@ -28,18 +28,28 @@ function Login() {
     e.preventDefault();
     try {
       const response = await login(userCredentials).unwrap();
+      // console.log(response);
       dispatch(setCredentials(response));
       navigate(from, { replace: true });
+
+      toast.success("Successfully logged in", {
+        position: "bottom-right",
+      });
     } catch (error) {
-      console.log(error);
+      toast.error(error.data, {
+        position: "bottom-right",
+      });
     } finally {
       setUserCredentials({ email: "", password: "" });
     }
   };
 
   return (
-    <div className={styles.wrapper}>
-      <form className={styles.form} onSubmit={handleSubmit}>
+    <div className=" flex items-center justify-center w-full h-dvh bg-[rgb(241,241,241)] overflow-y-auto">
+      <form
+        className=" flex flex-col gap-[15px] w-3/5 max-w-[380px] bg-white p-5 rounded-[10px] "
+        onSubmit={handleSubmit}
+      >
         <FormInput
           placeholder="Enter email"
           name="email"

@@ -12,6 +12,9 @@ import Registration from "./pages/Registration";
 import RequireAuth from "./components/RequireAuth";
 import PersistUser from "./components/PersistUser";
 import CaseManagement from "./pages/CaseManagement";
+import Unauthorized from "./pages/Unauthorized";
+import NotFound from "./pages/NotFound";
+import CreateUser from "./pages/CreateUser";
 
 const router = createBrowserRouter([
   {
@@ -31,18 +34,18 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <Appointment />,
+                element: <CreateUser />,
               },
               {
                 path: "appointment-list",
                 element: <AppointmentList />,
               },
               {
-                path:'case-management',
+                path: "case-management",
                 element: <CaseManagement />,
-                children:[
+                children: [
                   {
-                    index:true,
+                    index: true,
                     element: <Registration />,
                   },
                   {
@@ -53,8 +56,7 @@ const router = createBrowserRouter([
                     path: "case-list",
                     element: <CaseList />,
                   },
-
-                ]
+                ],
               },
             ],
           },
@@ -64,11 +66,11 @@ const router = createBrowserRouter([
   },
   {
     path: "unautherized",
-    element: <h2> Unautherized :(</h2>,
+    element: <Unauthorized />,
   },
   {
     path: "*",
-    element: <h2> 404 Not found :(</h2>,
+    element: <NotFound />,
   },
 ]);
 
