@@ -1,6 +1,5 @@
-import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import "../App.css";
+
 function CaseManagement() {
   return (
     <div className="w-[98%] h-[98%] flex flex-col ">

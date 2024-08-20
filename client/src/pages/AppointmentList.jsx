@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import Popup from "../components/Popup.jsx";
 import SearchBar from "../components/searchBar/SearchBar";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import Edit from "../components/EditAppointment/Edit.jsx";
 import {
-  useGetAppointmentMutation,
-  useGetAppointmentsMutation,
+  useGetAppointmentsQuery,
   useUpdateAppointmentStatusMutation,
 } from "../features/appointmentApiSlice.js";
 import { toast } from "react-toastify";
@@ -28,12 +27,12 @@ function AppointmentList() {
     itemId: "",
     name: "",
   }); // hold the appointment to be deleted
-  const [refetch, setRefetch] = useState(false);
-  const [getAppointmentsData] = useGetAppointmentsMutation();
-  const [getAppointmentData] = useGetAppointmentMutation();
+  const location = useLocation();
+  const { data, refetch } = useGetAppointmentsQuery(query);
+
   const [updateAppointmentStatus] = useUpdateAppointmentStatusMutation();
 
-  function edit() {
+  function showEditModal() {
     setShowEdit(true);
   }
 
@@ -42,17 +41,12 @@ function AppointmentList() {
   }
 
   useEffect(() => {
-    async function getAppointments() {
-      const response = await getAppointmentsData(query).unwrap();
+    setAppointments(data);
+  }, [data]);
 
-      setAppointments(response);
-    }
-    getAppointments();
-
-    return () => {
-      setRefetch(false);
-    };
-  }, [query, refetch]);
+  useEffect(() => {
+    refetch();
+  }, [location, query]);
 
   const handleCloseModal = () => {
     setShowAppointment(false);
@@ -81,7 +75,7 @@ function AppointmentList() {
 
   return (
     <div className=" w-[98%] h-[95%] rounde-d-[10px] flex flex-col gap-2">
-      <SearchBar placeholder="Search appointment" />
+      <SearchBar placeholder="Search appointment by name" />
       <table className=" text-sm w-full bg-white p-5 rounded-lg border-collapse ">
         <thead className=" text-left">
           <tr className=" border-solid border-2 border-gray-300">
@@ -131,9 +125,8 @@ function AppointmentList() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        getAppointmentData(appointment._id);
                         setAppId(appointment._id);
-                        edit();
+                        showEditModal();
                       }}
                     >
                       <MdEdit size={20} color="green" />
@@ -166,9 +159,7 @@ function AppointmentList() {
       {showAppointment && (
         <Popup appointmentId={appointmentId} onClose={handleCloseModal} />
       )}
-      {showEdit && (
-        <Edit appId={appId} onClose={CloseEdit} setRefetch={setRefetch} />
-      )}
+      {showEdit && <Edit appId={appId} onClose={CloseEdit} />}
       {showDelete && (
         <DeleteConfirmation item={appToBeDelete} onClose={handleCloseModal} />
       )}

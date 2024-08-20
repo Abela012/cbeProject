@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import SearchBar from "../components/searchBar/SearchBar";
 import Popup from "../components/Popup";
 import {
-  useGetCasesMutation,
+  useGetCasesQuery,
+  // useGetCasesMutation,
   useUpdateCaseMutation,
   useUpdateCaseStatusMutation,
 } from "../features/caseApiSlice";
@@ -29,7 +30,9 @@ function CaseList() {
   });
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
-  const [getCaseData] = useGetCasesMutation();
+
+  const location = useLocation();
+  const { data, refetch } = useGetCasesQuery(query);
   const [updateCase] = useUpdateCaseMutation();
   const [updateCaseStatus] = useUpdateCaseStatusMutation();
 
@@ -38,12 +41,12 @@ function CaseList() {
   }
 
   useEffect(() => {
-    async function getCases() {
-      const response = await getCaseData(query);
-      setCases(response.data);
-    }
-    getCases();
-  }, [query]);
+    setCases(data);
+  }, [data]);
+
+  useEffect(() => {
+    refetch();
+  }, [location]);
 
   const handleCloseModal = () => {
     setShowApp(false);

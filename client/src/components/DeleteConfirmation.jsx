@@ -12,8 +12,10 @@ function DeleteConfirmation({ item, onClose }) {
   const handleDelete = () => {
     if (item.title == "appointment") {
       deleteAppointment(item.itemId);
+      onClose();
     } else if (item.title == "case") {
       deleteCase(item.itemId);
+      onClose();
     }
   };
   return (

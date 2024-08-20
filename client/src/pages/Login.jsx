@@ -6,8 +6,11 @@ import { useLoginMutation } from "../features/authApiSlice.js";
 import { setCredentials } from "../features/authSlice.js";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { IoMdEye } from "react-icons/io";
+import { IoMdEyeOff } from "react-icons/io";
 
 function Login() {
+  const [showPassword, setShowPassword] = useState(false);
   const [userCredentials, setUserCredentials] = useState({
     email: "",
     password: "",
@@ -55,21 +58,27 @@ function Login() {
           name="email"
           required={true}
           lableName="Email"
-          inputName="email"
-          inputType="email"
+          type="email"
           value={userCredentials.email}
           onChange={handleChange}
         />
-        <FormInput
-          placeholder="Enter password"
-          name="password"
-          required={true}
-          lableName="Password"
-          inputName="password"
-          inputType="password"
-          value={userCredentials.password}
-          onChange={handleChange}
-        />
+        <div className="relative">
+          <FormInput
+            placeholder="Enter password"
+            name="password"
+            required={true}
+            lableName="Password"
+            type={showPassword ? "text" : "password"}
+            value={userCredentials.password}
+            onChange={handleChange}
+          />
+          <span
+            className=" cursor-pointer absolute right-2 top-[55%]"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {!showPassword ? <IoMdEye size={20} /> : <IoMdEyeOff size={20} />}
+          </span>
+        </div>
 
         <Button className="" btnName="Log in" type="submit" />
       </form>

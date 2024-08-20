@@ -1,40 +1,30 @@
-import React from "react";
-import "../App.css";
 import { useState } from "react";
 import { useEffect } from "react";
 import { IoIosClose } from "react-icons/io";
 import OverLay from "./OverLay";
-import { useGetAppointmentMutation } from "../features/appointmentApiSlice";
-import { useGetCaseMutation } from "../features/caseApiSlice";
+import { useGetAppointmentQuery } from "../features/appointmentApiSlice";
+import { useGetCaseQuery } from "../features/caseApiSlice";
 import Button from "./button/Button";
 
 function Popup({ appointmentId, caseId, onClose }) {
   const [pop, setPop] = useState([]);
-  const [getAppointmentData] = useGetAppointmentMutation();
-  const [getCaseData] = useGetCaseMutation();
-
-  useEffect(() => {
-    async function loadData() {
-      if (appointmentId) {
-        const response = await getAppointmentData(appointmentId);
-        // api
-        //   .get(`/get-appointment/${appointmentId}`)
-        //   .then((response) => {
-        setPop(response.data);
-        // })
-        // .catch((err) => console.log(err));
-      } else {
-        const response = await getCaseData(caseId);
-        // api
-        //   .get(`/get-case/${caseId}`)
-        //   .then((response) => {
-        setPop(response.data);
-        // })
-        // .catch((err) => console.log(err));
+  if (appointmentId) {
+    const { data: appointmentData, isSuccess: isSuccessAppointment } =
+      useGetAppointmentQuery(appointmentId);
+    useEffect(() => {
+      if (isSuccessAppointment) {
+        setPop(appointmentData);
       }
-    }
-    loadData();
-  }, []);
+    }, [appointmentData]);
+  } else {
+    const { data: caseData, isSuccess: isSuccessCase } =
+      useGetCaseQuery(caseId);
+    useEffect(() => {
+      if (isSuccessCase) {
+        setPop(caseData);
+      }
+    }, [caseData]);
+  }
 
   //   console.log(pop);
 

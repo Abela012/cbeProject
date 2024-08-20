@@ -22,7 +22,7 @@ function SideBar() {
     <div className="relative text-white flex flex-col gap-[5px] p-[5px] bg-primary min-w-[30px] sm:min-w-[150px] sm:max-w-[200px] ">
       <div className="sm:flex p-0 sm:py-5 sm:px-[5px] sm:gap-[5px]">
         <img
-          src="./logo.jpg"
+          src="./CBE.png"
           alt="logo image"
           className=" sm:w-[40px] sm:h-[40px] sm:mr-[5px] w-full h-[25px] mr-0"
         />
