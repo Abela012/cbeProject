@@ -1,14 +1,15 @@
 import Case from "../models/case.model.js";
-
+import { v4 as uuidv4 } from "uuid";
 const createCase = async (req, res) => {
   try {
-    const { caseCategory, customerId, subject } = req.body;
+    const { caseCategory, userId, customerId, subject } = req.body;
 
     const newCase = await Case.create({
+      userId,
       customerId: customerId,
       category: caseCategory,
       subject: subject,
-      caseNumber: "",
+      caseNumber: uuidv4(),
     });
     return res.status(201).json("Case created sucessfully");
   } catch (error) {
@@ -25,10 +26,12 @@ const getCases = async (req, res) => {
       req.query.q !== undefined
     ) {
       let query = req.query.q;
-      const cases = await Case.find({ caseNumber: query }).populate({
-        path: "customerId",
-        // select: "customerName email phone",
-      });
+      const cases = await Case.find({ caseNumber: new RegExp(query) }).populate(
+        {
+          path: "customerId",
+          // select: "customerName email phone",
+        }
+      );
 
       return res.json(cases);
     }

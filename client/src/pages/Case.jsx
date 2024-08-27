@@ -8,9 +8,13 @@ import { useCreateCaseMutation } from "../features/caseApiSlice";
 import { useGetCustomerMutation } from "../features/customerApiSlice";
 import { useGetCategoriesMutation } from "../features/categoryApiSlice";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { getCurrentUser } from "../features/authSlice";
 
 function Case() {
+  const user = useSelector(getCurrentUser);
   const [newCase, setNewCase] = useState({
+    userId: user._id,
     customerId: "",
     customerEmail: "",
     caseCategory: "",
@@ -80,6 +84,7 @@ function Case() {
       });
     } finally {
       setNewCase({
+        userId: "",
         customerId: "",
         customerEmail: "",
         caseCategory: "",
@@ -90,7 +95,7 @@ function Case() {
 
   return (
     <form
-      className=" flex flex-col gap-4 bg-white p-5 rounded-lg"
+      className=" flex flex-col gap-4 bg-white p-5 rounded-lg w-[80%] "
       onSubmit={handleSubmit}
     >
       <div>
@@ -129,7 +134,7 @@ function Case() {
         disabled={true}
         inputName="customer"
       />
-      <div className="forminput">
+      <div className="relative flex flex-col">
         <select
           className="case_category p-[10px] outline-none rounded-[5px] border-solid border-2 border-[#f1f1f1]"
           required={true}

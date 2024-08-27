@@ -18,6 +18,7 @@ import appointmentRouter from "./routes/appointment.route.js";
 import caseRouter from "./routes/case.route.js";
 import categoryRouter from "./routes/category.route.js";
 import customerRoute from "./routes/customer.route.js";
+import userRoute from "./routes/user.route.js";
 
 ConnectToDB();
 
@@ -43,6 +44,7 @@ app.use("/", appointmentRouter);
 app.use("/", caseRouter);
 app.use("/", categoryRouter);
 app.use("/", customerRoute);
+app.use("/", userRoute);
 
 // app.post("/create-appointment", async (req, res) => {
 //   try {

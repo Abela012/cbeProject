@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import SearchBar from "../components/searchBar/SearchBar";
 import Popup from "../components/Popup";
 import {
-  useGetCasesMutation,
+  useGetCasesQuery,
+  // useGetCasesMutation,
   useUpdateCaseMutation,
   useUpdateCaseStatusMutation,
 } from "../features/caseApiSlice";
@@ -13,8 +14,14 @@ import Appointment from "./Appointment";
 import Button from "../components/button/Button";
 import { toast } from "react-toastify";
 import DeleteConfirmation from "../components/DeleteConfirmation";
+import { useSelector } from "react-redux";
+import { getCurrentUser } from "../features/authSlice";
+import { rolesList } from "../util/userRoles";
+
+const CaseStatus = ["Pending", "Canceled", "Completed"];
 
 function CaseList() {
+  const user = useSelector(getCurrentUser);
   const [cases, setCases] = useState([]);
   const [caseId, setCaseId] = useState(""); // holde case id to show case detail
   const [customerId, setCustomerId] = useState(""); // holde customer id to associate customer with appointment
@@ -29,7 +36,9 @@ function CaseList() {
   });
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
-  const [getCaseData] = useGetCasesMutation();
+
+  const location = useLocation();
+  const { data, refetch } = useGetCasesQuery(query);
   const [updateCase] = useUpdateCaseMutation();
   const [updateCaseStatus] = useUpdateCaseStatusMutation();
 
@@ -38,12 +47,12 @@ function CaseList() {
   }
 
   useEffect(() => {
-    async function getCases() {
-      const response = await getCaseData(query);
-      setCases(response.data);
-    }
-    getCases();
-  }, [query]);
+    setCases(data);
+  }, [data]);
+
+  useEffect(() => {
+    refetch();
+  }, [location]);
 
   const handleCloseModal = () => {
     setShowApp(false);
@@ -68,7 +77,7 @@ function CaseList() {
   };
 
   return (
-    <div className=" flex flex-col gap-2">
+    <div className=" flex flex-col gap-2 w-full">
       <SearchBar className=" !w-full" placeholder="Search by case number" />
       <table className=" text-sm w-full bg-white p-5 rounded-lg border-collapse ">
         <thead className=" text-left">
@@ -77,8 +86,12 @@ function CaseList() {
             <th className="p-[10px]">Case Number</th>
             <th className="p-[10px]">Subject</th>
             <th className="p-[10px]">Status</th>
-            <th className="p-[10px]">Create Appointment</th>
-            <th className="p-[10px]">Actions</th>
+            {user.roleType !== rolesList.staff && (
+              <>
+                <th className="p-[10px]">Create Appointment</th>
+                <th className="p-[10px]">Actions</th>
+              </>
+            )}
           </tr>
         </thead>
         <tbody onClick={Show}>
@@ -97,60 +110,79 @@ function CaseList() {
                     className=" p-1 outline-none border-none cursor-pointer bg-transparent "
                     defaultValue={_case.status}
                     onChange={(e) => handleSCaseStateChange(_case._id, e)}
+                    disabled={
+                      user.roleType == rolesList.boredMembers ||
+                      user.roleType == rolesList.staff
+                    }
                   >
-                    <option value={_case.status}>{_case.status}</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Canceled">Canceled</option>
-                    <option value="Completed">Completed</option>
+                    {CaseStatus.map((value) => {
+                      if (value == _case.status) {
+                        return (
+                          <option key={value} value={_case.status}>
+                            {_case.status}
+                          </option>
+                        );
+                      } else {
+                        return (
+                          <option key={value} value={value}>
+                            {value}
+                          </option>
+                        );
+                      }
+                    })}
                   </select>
                 </td>
-                <td className="p-[10px]">
-                  <div
-                    className=" hover:underline font-bold text-center"
-                    title="Create Appointment"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowCreateAppointment(true);
-                      setCustomerId(_case.customerId._id);
-                    }}
-                  >
-                    Create
-                  </div>
-                </td>
-                <td className="p-[10px]">
-                  <div className="table_actions">
-                    <Button
-                      className=" !bg-transparent"
-                      title="Edit Appointment"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateCase(_case._id);
-                      }}
-                    >
-                      <MdEdit size={20} color="green" />
-                    </Button>
-                    <Button
-                      className=" !bg-transparent"
-                      title="Delete Appointment"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // setCases(
-                        //   cases.filter((appoint) => {
-                        //     return appoint._id !== _case._id;
-                        //   })
-                        // );
-                        setShowDelete(true);
-                        setCaseToBeDelete((prev) => ({
-                          ...prev,
-                          itemId: _case._id,
-                          name: _case.customerId?.fullName,
-                        }));
-                      }}
-                    >
-                      <MdDelete size={20} color="red" />
-                    </Button>
-                  </div>
-                </td>
+                {user.roleType !== rolesList.staff && (
+                  <>
+                    <td className="p-[10px]">
+                      <div
+                        className=" hover:underline font-bold text-center"
+                        title="Create Appointment"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowCreateAppointment(true);
+                          setCustomerId(_case.customerId._id);
+                        }}
+                      >
+                        Create
+                      </div>
+                    </td>
+                    <td className="p-[10px]">
+                      <div className="table_actions">
+                        <Button
+                          className=" !bg-transparent"
+                          title="Edit Appointment"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateCase(_case._id);
+                          }}
+                        >
+                          <MdEdit size={20} color="green" />
+                        </Button>
+                        <Button
+                          className=" !bg-transparent"
+                          title="Delete Appointment"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // setCases(
+                            //   cases.filter((appoint) => {
+                            //     return appoint._id !== _case._id;
+                            //   })
+                            // );
+                            setShowDelete(true);
+                            setCaseToBeDelete((prev) => ({
+                              ...prev,
+                              itemId: _case._id,
+                              name: _case.customerId?.fullName,
+                            }));
+                          }}
+                        >
+                          <MdDelete size={20} color="red" />
+                        </Button>
+                      </div>
+                    </td>
+                  </>
+                )}
               </tr>
             );
           })}

@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 .casenavlinks.active {
-  @apply rounded-b-none border-solid  border-t-2 border-primary;
+  @apply text-primary font-bold rounded-b-none border-solid  border-t-2 border-primary;
 }

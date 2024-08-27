@@ -24,7 +24,8 @@ function RequireAuth({ allowedRoles }) {
   // ) : (
   //   <Navigate to="/login" state={{ from: location }} replace />
   // );
-  return user?.roleType?.find((role) => allowedRoles?.includes(role)) ? (
+
+  return allowedRoles?.includes(user?.roleType) ? (
     <Outlet />
   ) : token ? (
     <Navigate to="/unautherized" state={{ from: location }} replace />

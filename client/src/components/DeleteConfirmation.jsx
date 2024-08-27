@@ -4,16 +4,23 @@ import OverLay from "./OverLay";
 import { capitalizeFirstLetter } from "../util/capitalize";
 import { useDeleteAppointmentMutation } from "../features/appointmentApiSlice";
 import { useDeleteCaseMutation } from "../features/caseApiSlice";
+import { useDeleteUserMutation } from "../features/userApiSlice";
 
 function DeleteConfirmation({ item, onClose }) {
   const [deleteAppointment] = useDeleteAppointmentMutation();
   const [deleteCase] = useDeleteCaseMutation();
+  const [deleteUser] = useDeleteUserMutation();
 
   const handleDelete = () => {
     if (item.title == "appointment") {
       deleteAppointment(item.itemId);
+      onClose();
     } else if (item.title == "case") {
       deleteCase(item.itemId);
+      onClose();
+    } else if (item.title == "user") {
+      deleteUser(item.itemId);
+      onClose();
     }
   };
   return (

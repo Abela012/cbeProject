@@ -1,4 +1,5 @@
 import Appointment from "../models/appointment.model.js";
+import Customer from "../models/customer.model.js";
 
 const createAppointment = async (req, res) => {
   try {
@@ -70,22 +71,22 @@ const updateAppointment = async (req, res) => {
       buissnessName,
       customerEmail,
       phoneNumber,
-      office_id,
-      start_time,
-      end_time,
+      officeId,
+      startTime,
+      endTime,
       category,
     } = req.body;
 
     const updatedappointment = await Appointment.findOneAndUpdate(
       { _id: id },
       {
-        officeId: office_id,
-        startTime: start_time,
-        endTime: end_time,
+        officeId,
+        startTime,
+        endTime,
         category: category,
       }
     );
-    const [firstName, middleName, lastName] = fullName.split(" ");
+    const [firstName, middleName, lastName] = fullName?.split(" ");
     const updatedCustomer = await Customer.findOneAndUpdate(
       { _id: updatedappointment.customerId },
       {

@@ -272,13 +272,15 @@ h2 {
   padding: 5px;
   margin-top: 4px;
 }
-.casenavlinks.active {
-  color: blueviolet;
+
+/* .casenavlinks.active { */
+/* color: blueviolet;
   border-top: solid blueviolet;
   height: 100%;
   border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
+  border-bottom-right-radius: 0; */
+/* } */
+
 .edit {
   max-width: 500px;
 }

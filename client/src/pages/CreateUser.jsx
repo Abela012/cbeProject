@@ -2,43 +2,33 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import FormInput from "../components/forminput/FormInput";
 import Button from "../components/button/Button";
+import { IoMdEye } from "react-icons/io";
+import { IoMdEyeOff } from "react-icons/io";
 import { useCreateUserMutation } from "../features/userApiSlice";
 
 const roles = [
   { name: "President", role: 1112 },
   { name: "VP", role: 8910 },
   { name: "Bored Members", role: 4567 },
+  { name: "COS", role: 9801 },
   { name: "Secretary", role: 1234 },
   { name: "Staff", role: 4321 },
-  { name: "COS", role: 9801 },
+  { name: "Admin", role: 1000 },
 ];
 function CreateUser() {
+  const [showPassword, setShowPassword] = useState(false);
   const [createUser, { error }] = useCreateUserMutation();
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
+    officeId: "",
     password: "",
-    roleType: [],
+    roleType: null,
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewUser((prev) => {
-      if (name === "roleType") {
-        const newRole = prev.roleType.slice(); // Create a copy of the array
-        if (e.target.checked === true) {
-          if (!newRole.includes(value)) {
-            newRole.push(value); // Add value if not already present
-            return { ...prev, [name]: newRole };
-          }
-        } else {
-          const index = newRole.indexOf(value); // Find the index of the value
-          if (index !== -1) {
-            newRole.splice(index, 1); // Remove value if it exists
-            return { ...prev, [name]: newRole };
-          }
-        }
-      }
       return { ...prev, [name]: value };
     });
   };
@@ -60,15 +50,16 @@ function CreateUser() {
       setNewUser({
         name: "",
         email: "",
+        officeId: "",
         password: "",
-        roleType: [],
+        roleType: null,
       });
     }
   };
 
   return (
     <form
-      className="flex flex-col gap-4 bg-white p-5 rounded-lg w-[98%]"
+      className="flex flex-col gap-2 bg-white p-5 rounded-lg w-[80%]"
       onSubmit={handleSubmit}
     >
       <h2 className="text-center font-bold text-lg">Create user</h2>
@@ -91,29 +82,48 @@ function CreateUser() {
         onChange={handleChange}
       />
       <FormInput
-        placeholder="Enter password"
-        lableName="Password"
-        type="password"
-        name="password"
-        value={newUser.password}
+        placeholder="Enter office id"
+        lableName="Office Id"
+        type="text"
+        name="officeId"
+        value={newUser.officeId}
         required
         onChange={handleChange}
       />
-      <div className="flex gap-4">
+      <div className="relative">
+        <FormInput
+          placeholder="Enter password"
+          lableName="Password"
+          type={showPassword ? "text" : "password"}
+          name="password"
+          value={newUser.password}
+          required
+          onChange={handleChange}
+        />
+        <span
+          className=" cursor-pointer absolute right-2 top-[55%]"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {!showPassword ? <IoMdEye size={20} /> : <IoMdEyeOff size={20} />}
+        </span>
+      </div>
+      <div className="flex gap-4 flex-wrap">
         {roles.map((role) => (
           <div className="flex gap-1" key={role.name}>
             <FormInput
-              type="checkbox"
+              type="radio"
               name="roleType"
-              // checked={newUser.roleType}
-              value={role.role}
+              checked={newUser.roleType == role.role}
+              value={role.role.toString()}
               onChange={handleChange}
             />
             <span>{role.name}</span>
           </div>
         ))}
       </div>
-      <Button btnName="Create" />
+      <div className=" w-full flex items-center justify-center font-bold ">
+        <Button className="w-full sm:w-1/2" btnName="Create" />
+      </div>
     </form>
   );
 }

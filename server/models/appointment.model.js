@@ -2,7 +2,7 @@ import { model, Schema } from "mongoose";
 
 const AppointmentSchema = new Schema(
   {
-    officeId: {},
+    officeId: { type: Schema.Types.ObjectId, ref: "OfficeManagement" },
     startTime: { type: Date },
     endTime: { type: Date },
     customerId: { type: Schema.Types.ObjectId, ref: "Customer" },
@@ -13,6 +13,13 @@ const AppointmentSchema = new Schema(
       default: "Pending",
     },
     caseId: { type: Schema.Types.ObjectId, ref: "Case" },
+    currentAssignedOfficeId: {
+      type: Schema.Types.ObjectId,
+      ref: "OfficeManagement",
+    },
+    assignedOfficeIdList: [
+      { type: Schema.Types.ObjectId, ref: "OfficeManagement" },
+    ],
     category: { type: String },
   },
   { timestamps: true }
