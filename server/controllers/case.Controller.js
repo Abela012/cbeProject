@@ -2,9 +2,10 @@ import Case from "../models/case.model.js";
 import { v4 as uuidv4 } from "uuid";
 const createCase = async (req, res) => {
   try {
-    const { caseCategory, customerId, subject } = req.body;
+    const { caseCategory, userId, customerId, subject } = req.body;
 
     const newCase = await Case.create({
+      userId,
       customerId: customerId,
       category: caseCategory,
       subject: subject,

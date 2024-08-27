@@ -10,9 +10,10 @@ const roles = [
   { name: "President", role: 1112 },
   { name: "VP", role: 8910 },
   { name: "Bored Members", role: 4567 },
+  { name: "COS", role: 9801 },
   { name: "Secretary", role: 1234 },
   { name: "Staff", role: 4321 },
-  { name: "COS", role: 9801 },
+  { name: "Admin", role: 1000 },
 ];
 function CreateUser() {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,28 +21,14 @@ function CreateUser() {
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
+    officeId: "",
     password: "",
-    roleType: [],
+    roleType: null,
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewUser((prev) => {
-      if (name === "roleType") {
-        const newRole = prev.roleType.slice(); // Create a copy of the array
-        if (e.target.checked === true) {
-          if (!newRole.includes(value)) {
-            newRole.push(value); // Add value if not already present
-            return { ...prev, [name]: newRole };
-          }
-        } else {
-          const index = newRole.indexOf(value); // Find the index of the value
-          if (index !== -1) {
-            newRole.splice(index, 1); // Remove value if it exists
-            return { ...prev, [name]: newRole };
-          }
-        }
-      }
       return { ...prev, [name]: value };
     });
   };
@@ -63,15 +50,16 @@ function CreateUser() {
       setNewUser({
         name: "",
         email: "",
+        officeId: "",
         password: "",
-        roleType: [],
+        roleType: null,
       });
     }
   };
 
   return (
     <form
-      className="flex flex-col gap-4 bg-white p-5 rounded-lg w-[80%]"
+      className="flex flex-col gap-2 bg-white p-5 rounded-lg w-[80%]"
       onSubmit={handleSubmit}
     >
       <h2 className="text-center font-bold text-lg">Create user</h2>
@@ -90,6 +78,15 @@ function CreateUser() {
         type="email"
         name="email"
         value={newUser.email}
+        required
+        onChange={handleChange}
+      />
+      <FormInput
+        placeholder="Enter office id"
+        lableName="Office Id"
+        type="text"
+        name="officeId"
+        value={newUser.officeId}
         required
         onChange={handleChange}
       />
@@ -114,9 +111,9 @@ function CreateUser() {
         {roles.map((role) => (
           <div className="flex gap-1" key={role.name}>
             <FormInput
-              type="checkbox"
+              type="radio"
               name="roleType"
-              checked={newUser.roleType.includes(role.role.toString())}
+              checked={newUser.roleType == role.role}
               value={role.role.toString()}
               onChange={handleChange}
             />

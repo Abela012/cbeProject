@@ -6,7 +6,10 @@ const UserSchema = new Schema(
     email: { type: String },
     profile: { type: String },
     password: { type: String },
-    roleType: [{ type: Number, enum: [1112, 1234, 4567, 8910, 4321, 9801] }],
+    roleType: {
+      type: Number,
+      enum: [1112, 1234, 4567, 8910, 4321, 9801, 1000],
+    },
     otp: { type: String },
     status: { type: String },
     officeId: { type: Schema.Types.ObjectId, ref: "OfficeManagement" },

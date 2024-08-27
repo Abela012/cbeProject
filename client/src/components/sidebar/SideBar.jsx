@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import { getCurrentUser } from "../../features/authSlice";
 import { useLogoutMutation } from "../../features/authApiSlice";
 import Button from "../button/Button";
+import { rolesList } from "../../util/userRoles";
+import CustNavLink from "../CustNavLink";
 
 function SideBar() {
   const user = useSelector(getCurrentUser);
@@ -24,35 +26,64 @@ function SideBar() {
         <img
           src="./CBE.png"
           alt="logo image"
-          className=" sm:w-[40px] sm:h-[40px] sm:mr-[5px] w-full h-[25px] mr-0"
+          className=" sm:w-[40px] sm:h-[40px] sm:mr-[5px] w-full h-[25px] max-w-10 mr-0"
         />
         <p className="hidden sm:inline-block">Commercial Bank of Ethiopia</p>
       </div>
 
       <div className="pt-5 flex flex-col gap-[15px] flex-1 border-t-[1px] border-b-[1px] border-solid border-t-white border-b-white">
-        <NavLink
-          to="/"
-          className=" text-sm text-black flex gap-[5px] items-center p-[5px] justify-center sm:justify-start"
-        >
-          <MdWindow size={20} />
-          <span className=" hidden sm:inline-block">Create User</span>
-        </NavLink>
+        {(user.roleType === rolesList.president ||
+          user.roleType === rolesList.vp ||
+          user.roleType === rolesList.cos) && (
+          <>
+            <CustNavLink
+              linkName="Manage Appointment"
+              linkPath="appointment-list"
+            >
+              <MdWindow size={20} />
+            </CustNavLink>
 
-        <NavLink
-          to="/appointment-list"
-          className="text-sm text-black flex gap-[5px] items-center p-[5px] justify-center sm:justify-start"
-        >
-          <MdWindow size={20} />
-          <span className=" hidden sm:inline-block">Manage Appointments</span>
-        </NavLink>
+            <CustNavLink linkName="Case Mangagement" linkPath="case-management">
+              <LuMenuSquare size={20} />
+            </CustNavLink>
+          </>
+        )}
+        {(user.roleType === rolesList.boredMembers ||
+          user.roleType === rolesList.staff) && (
+          <>
+            <CustNavLink
+              linkName="Manage Appointment"
+              linkPath="appointment-list"
+            >
+              <MdWindow size={20} />
+            </CustNavLink>
 
-        <NavLink
-          to="case-management"
-          className="text-sm text-black flex gap-[5px] items-center p-[5px] justify-center sm:justify-start"
-        >
-          <LuMenuSquare size={20} />
-          <span className=" hidden sm:inline-block">Case Managememt</span>
-        </NavLink>
+            <CustNavLink
+              linkName="Case Mangagement"
+              linkPath="case-management/case-list"
+            >
+              <LuMenuSquare size={20} />
+            </CustNavLink>
+          </>
+        )}
+        {user.roleType === rolesList.admin && (
+          <>
+            <CustNavLink linkName="Manage User" linkPath="user-mangement">
+              <MdWindow size={20} />
+            </CustNavLink>
+          </>
+        )}
+        {user.roleType === rolesList.secretary && (
+          <>
+            <NavLink
+              to="case-management"
+              className="text-sm text-black flex gap-[5px] items-center p-[5px] justify-center sm:justify-start"
+            >
+              <LuMenuSquare size={20} />
+              <span className=" hidden sm:inline-block">Case Managememt</span>
+            </NavLink>
+          </>
+        )}
       </div>
 
       <div className=" flex gap-[10px] sm:gap-[5px] flex-col pb-[15px]">

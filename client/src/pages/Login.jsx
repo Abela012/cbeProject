@@ -1,13 +1,15 @@
 import FormInput from "../components/forminput/FormInput";
 import Button from "../components/button/Button";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../features/authApiSlice.js";
-import { setCredentials } from "../features/authSlice.js";
+import { getCurrentUser, setCredentials } from "../features/authSlice.js";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
+import { getRoleBasedPath } from "../util/getRoleBasedPath.js";
+import { jwtDecode } from "jwt-decode";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,9 +17,10 @@ function Login() {
     email: "",
     password: "",
   });
+  const user = useSelector(getCurrentUser);
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathName || "/";
+  const from = location.state?.from?.pathName;
 
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useDispatch();
@@ -31,9 +34,11 @@ function Login() {
     e.preventDefault();
     try {
       const response = await login(userCredentials).unwrap();
-      // console.log(response);
+
       dispatch(setCredentials(response));
-      navigate(from, { replace: true });
+      navigate(from || getRoleBasedPath(jwtDecode(response.data).roleType), {
+        replace: true,
+      });
 
       toast.success("Successfully logged in", {
         position: "bottom-right",

@@ -11,8 +11,14 @@ import {
 } from "../features/appointmentApiSlice.js";
 import { toast } from "react-toastify";
 import DeleteConfirmation from "../components/DeleteConfirmation.jsx";
+import { useSelector } from "react-redux";
+import { getCurrentUser } from "../features/authSlice.js";
+import { rolesList } from "../util/userRoles.js";
+
+const AppointmentStatus = ["Pending", "Canceled", "Completed"];
 
 function AppointmentList() {
+  const user = useSelector(getCurrentUser);
   const [appointments, setAppointments] = useState([]);
   const [appointmentId, setappointmentId] = useState("");
   const [showAppointment, setShowAppointment] = useState(false);
@@ -56,7 +62,7 @@ function AppointmentList() {
     setShowEdit(false);
   };
 
-  const handleSCaseStateChange = async (appointmentid, e) => {
+  const handleAppointmentStateChange = async (appointmentid, e) => {
     try {
       const response = await updateAppointmentStatus({
         status: e.target.value,
@@ -84,7 +90,11 @@ function AppointmentList() {
             <th className="p-[10px]">Start Time</th>
             <th className="p-[10px]">End Time</th>
             <th className="p-[10px]">Status</th>
-            <th className="p-[10px]">Actions</th>
+            {user.roleType !== rolesList.staff && (
+              <>
+                <th className="p-[10px]">Actions</th>
+              </>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -110,47 +120,66 @@ function AppointmentList() {
                   <select
                     className=" p-1 outline-none border-none cursor-pointer bg-transparent "
                     defaultValue={appointment.status}
-                    onChange={(e) => handleSCaseStateChange(appointment._id, e)}
+                    onChange={(e) =>
+                      handleAppointmentStateChange(appointment._id, e)
+                    }
+                    disabled={
+                      user.roleType == rolesList.boredMembers ||
+                      user.roleType == rolesList.staff
+                    }
                   >
-                    <option value={appointment.status}>
-                      {appointment.status}
-                    </option>
-                    <option value="Pending">Pending</option>
-                    <option value="Canceled">Canceled</option>
-                    <option value="Completed">Completed</option>
+                    {AppointmentStatus.map((value) => {
+                      if (value == appointment.status) {
+                        return (
+                          <option key={value} value={appointment.status}>
+                            {appointment.status}
+                          </option>
+                        );
+                      } else {
+                        return (
+                          <option key={value} value={value}>
+                            {value}
+                          </option>
+                        );
+                      }
+                    })}
                   </select>
                 </td>
-                <td className="p-[10px]">
-                  <div className="table_actions">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setAppId(appointment._id);
-                        showEditModal();
-                      }}
-                    >
-                      <MdEdit size={20} color="green" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // setAppointments(
-                        //   appointments.filter((appoint) => {
-                        //     return appoint._id !== appointment._id;
-                        //   })
-                        // );
-                        setShowDelete(true);
-                        setAppToBeDelete((prev) => ({
-                          ...prev,
-                          itemId: appointment._id,
-                          name: appointment.customerId?.fullName,
-                        }));
-                      }}
-                    >
-                      <MdDelete size={20} color="red" />
-                    </button>
-                  </div>
-                </td>
+                {user.roleType !== rolesList.staff && (
+                  <>
+                    <td className="p-[10px]">
+                      <div className="table_actions">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setAppId(appointment._id);
+                            showEditModal();
+                          }}
+                        >
+                          <MdEdit size={20} color="green" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // setAppointments(
+                            //   appointments.filter((appoint) => {
+                            //     return appoint._id !== appointment._id;
+                            //   })
+                            // );
+                            setShowDelete(true);
+                            setAppToBeDelete((prev) => ({
+                              ...prev,
+                              itemId: appointment._id,
+                              name: appointment.customerId?.fullName,
+                            }));
+                          }}
+                        >
+                          <MdDelete size={20} color="red" />
+                        </button>
+                      </div>
+                    </td>
+                  </>
+                )}
               </tr>
             );
           })}
