@@ -1,28 +1,8 @@
-import React from "react";
 import Button from "./button/Button";
 import OverLay from "./OverLay";
 import { capitalizeFirstLetter } from "../util/capitalize";
-import { useDeleteAppointmentMutation } from "../features/appointmentApiSlice";
-import { useDeleteCaseMutation } from "../features/caseApiSlice";
-import { useDeleteUserMutation } from "../features/userApiSlice";
 
-function DeleteConfirmation({ item, onClose }) {
-  const [deleteAppointment] = useDeleteAppointmentMutation();
-  const [deleteCase] = useDeleteCaseMutation();
-  const [deleteUser] = useDeleteUserMutation();
-
-  const handleDelete = () => {
-    if (item.title == "appointment") {
-      deleteAppointment(item.itemId);
-      onClose();
-    } else if (item.title == "case") {
-      deleteCase(item.itemId);
-      onClose();
-    } else if (item.title == "user") {
-      deleteUser(item.itemId);
-      onClose();
-    }
-  };
+function DeleteConfirmation({ item, onClose, handleDeleteItem }) {
   return (
     <OverLay handleClick={onClose}>
       <div className="flex flex-col items-center gap-[10px] bg-white p-5 rounded-md relative">
@@ -45,7 +25,7 @@ function DeleteConfirmation({ item, onClose }) {
           >
             Cancel
           </Button>
-          <Button className="!bg-red-500" onClick={handleDelete}>
+          <Button className="!bg-red-500" onClick={handleDeleteItem}>
             Delete
           </Button>
         </div>

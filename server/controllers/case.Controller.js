@@ -2,13 +2,24 @@ import Case from "../models/case.model.js";
 import { v4 as uuidv4 } from "uuid";
 const createCase = async (req, res) => {
   try {
-    const { caseCategory, userId, customerId, subject } = req.body;
+    const {
+      caseCategory,
+      userId,
+      appointmentId,
+      officeId,
+      customerId,
+      subject,
+      description,
+    } = req.body;
 
     const newCase = await Case.create({
       userId,
       customerId: customerId,
+      appointmentId: appointmentId,
+      officeId: officeId,
       category: caseCategory,
       subject: subject,
+      description: description,
       caseNumber: uuidv4(),
     });
     return res.status(201).json("Case created sucessfully");
@@ -20,23 +31,25 @@ const createCase = async (req, res) => {
 
 const getCases = async (req, res) => {
   try {
+    const { officeId } = req.params;
+
     if (
       req.query.q !== "null" &&
       req.query.q !== "" &&
-      req.query.q !== undefined
+      req.query.q !== "undefined"
     ) {
       let query = req.query.q;
-      const cases = await Case.find({ caseNumber: new RegExp(query) }).populate(
-        {
-          path: "customerId",
-          // select: "customerName email phone",
-        }
-      );
+      const cases = await Case.find({
+        $and: [{ caseNumber: new RegExp(query) }, { officeId: officeId }],
+      }).populate({
+        path: "customerId",
+        // select: "customerName email phone",
+      });
 
       return res.json(cases);
     }
 
-    const cases = await Case.find({}).populate({
+    const cases = await Case.find({ officeId }).populate({
       path: "customerId",
       // select: "customerName email phone",
     });
@@ -51,7 +64,9 @@ const getCases = async (req, res) => {
 const getCaseById = async (req, res) => {
   try {
     const { id } = req.params;
-    const foundCase = await Case.findOne({ _id: id }).populate("customerId");
+    const foundCase = await Case.findOne({ _id: id }).populate(
+      "category customerId"
+    );
     res.json(foundCase);
   } catch (error) {
     console.log(error);
@@ -61,10 +76,17 @@ const getCaseById = async (req, res) => {
 
 const updateCase = async (req, res) => {
   try {
-    // const { id } = req.params;
-    // const {} = req.body;
+    const { id } = req.params;
+    const { subject, description, category } = req.body;
 
-    // const updatedCase = await Case.findOneAndUpdate({ _id: id }, {});
+    const updatedCase = await Case.findOneAndUpdate(
+      { _id: id },
+      {
+        subject,
+        description,
+        category,
+      }
+    );
 
     return res.status(200).json("Case updated");
   } catch (error) {

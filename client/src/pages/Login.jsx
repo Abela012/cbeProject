@@ -63,7 +63,9 @@ function Login() {
           name="email"
           required={true}
           lableName="Email"
+          inputName="email"
           type="email"
+          autoFocus={true}
           value={userCredentials.email}
           onChange={handleChange}
         />
@@ -73,6 +75,7 @@ function Login() {
             name="password"
             required={true}
             lableName="Password"
+            inputName="password"
             type={showPassword ? "text" : "password"}
             value={userCredentials.password}
             onChange={handleChange}

@@ -17,14 +17,14 @@ function SideBar() {
 
   const handeLogout = () => {
     logOut();
-    navigate("/login", { replace: true });
+    navigate("/", { replace: true });
   };
 
   return (
-    <div className="relative text-white flex flex-col gap-[5px] p-[5px] bg-primary min-w-[30px] sm:min-w-[150px] sm:max-w-[200px] ">
+    <div className="relative text-white flex flex-col gap-[5px] p-[5px] bg-primary-dark min-w-[30px] sm:min-w-[150px] sm:max-w-[200px] ">
       <div className="sm:flex p-0 sm:py-5 sm:px-[5px] sm:gap-[5px]">
         <img
-          src="./CBE.png"
+          src="../../CBE.png"
           alt="logo image"
           className=" sm:w-[40px] sm:h-[40px] sm:mr-[5px] w-full h-[25px] max-w-10 mr-0"
         />
@@ -38,7 +38,7 @@ function SideBar() {
           <>
             <CustNavLink
               linkName="Manage Appointment"
-              linkPath="appointment-list"
+              linkPath="manage-appointment"
             >
               <MdWindow size={20} />
             </CustNavLink>
@@ -53,7 +53,7 @@ function SideBar() {
           <>
             <CustNavLink
               linkName="Manage Appointment"
-              linkPath="appointment-list"
+              linkPath="manage-appointment"
             >
               <MdWindow size={20} />
             </CustNavLink>
@@ -71,31 +71,45 @@ function SideBar() {
             <CustNavLink linkName="Manage User" linkPath="user-mangement">
               <MdWindow size={20} />
             </CustNavLink>
+
+            <CustNavLink linkName="Manage Role" linkPath="role-mangement">
+              <MdWindow size={20} />
+            </CustNavLink>
+
+            <CustNavLink
+              linkName="Manage Category"
+              linkPath="category-mangement"
+            >
+              <MdWindow size={20} />
+            </CustNavLink>
+
+            <CustNavLink linkName="Manage Office" linkPath="office-mangement">
+              <MdWindow size={20} />
+            </CustNavLink>
           </>
         )}
         {user.roleType === rolesList.secretary && (
           <>
-            <NavLink
-              to="case-management"
-              className="text-sm text-black flex gap-[5px] items-center p-[5px] justify-center sm:justify-start"
+            <CustNavLink
+              linkName="Manage Appointment"
+              linkPath="manage-appointment"
             >
               <LuMenuSquare size={20} />
-              <span className=" hidden sm:inline-block">Case Managememt</span>
-            </NavLink>
+            </CustNavLink>
           </>
         )}
       </div>
 
       <div className=" flex gap-[10px] sm:gap-[5px] flex-col pb-[15px]">
         <div className="flex gap-[5px] flex-wrap leading-[1.5] text-sm">
-          <Avatar src="/secre.jpeg" size="" />
+          <Avatar src="../default_u.jfif" size="" />
           <div className=" hidden sm:block">
             <p className=" font-bold">{user.name}</p>
             <p className=" font-light">{user.email}</p>
           </div>
         </div>
         <Button
-          className="!p-1 sm:!p-[5px]"
+          className="!p-1 sm:!p-[5px] text-black font-semibold"
           title="logout"
           onClick={handeLogout}
         >

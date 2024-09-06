@@ -3,7 +3,6 @@ import "./App.css";
 import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import AppointmentList from "./pages/AppointmentList";
-import Case from "./pages/Case";
 import CaseList from "./pages/CaseList";
 
 import Registration from "./pages/Registration";
@@ -12,14 +11,20 @@ import PersistUser from "./components/PersistUser";
 import CaseManagement from "./pages/CaseManagement";
 import Unauthorized from "./pages/Unauthorized";
 import NotFound from "./pages/NotFound";
-import CreateUser from "./pages/CreateUser";
 import { rolesList } from "./util/userRoles";
 import UserMangement from "./pages/UserMangement";
 import UserList from "./pages/UserList";
+import CategoryManagement from "./pages/CategoryManagement";
+import OfficeManagement from "./pages/OfficeManagement";
+import CategoryList from "./pages/CategoryList";
+import OfficeList from "./pages/OfficeList";
+import AppointmentManagement from "./pages/AppointmentManagement";
+import RoleManagement from "./pages/RoleManagement";
+import RoleList from "./pages/RoleList";
 
 const router = createBrowserRouter([
   {
-    path: "/login",
+    path: "/",
     element: <Login />,
   },
   {
@@ -34,20 +39,16 @@ const router = createBrowserRouter([
             element: <Layout />,
             children: [
               {
-                path: "case-management",
-                element: <CaseManagement />,
+                path: "manage-appointment",
+                element: <AppointmentManagement />,
                 children: [
                   {
                     index: true,
                     element: <Registration />,
                   },
                   {
-                    path: "case",
-                    element: <Case />,
-                  },
-                  {
-                    path: "case-list",
-                    element: <CaseList />,
+                    path: "appointment-list",
+                    element: <AppointmentList />,
                   },
                 ],
               },
@@ -57,11 +58,9 @@ const router = createBrowserRouter([
       },
       // allow president, cos, vp
       {
-        path: "/pvc",
+        path: "/pv",
         element: (
-          <RequireAuth
-            allowedRoles={[rolesList.president, rolesList.cos, rolesList.vp]}
-          />
+          <RequireAuth allowedRoles={[rolesList.president, rolesList.vp]} />
         ),
         children: [
           {
@@ -69,8 +68,18 @@ const router = createBrowserRouter([
             element: <Layout />,
             children: [
               {
-                path: "appointment-list",
-                element: <AppointmentList />,
+                path: "manage-appointment",
+                element: <AppointmentManagement />,
+                children: [
+                  {
+                    index: true,
+                    element: <Registration />,
+                  },
+                  {
+                    path: "appointment-list",
+                    element: <AppointmentList />,
+                  },
+                ],
               },
               {
                 path: "case-management",
@@ -78,14 +87,43 @@ const router = createBrowserRouter([
                 children: [
                   {
                     index: true,
+                    element: <CaseList />,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      // allow chief of staff
+      {
+        path: "/cos",
+        element: <RequireAuth allowedRoles={[rolesList.cos]} />,
+        children: [
+          {
+            path: "",
+            element: <Layout />,
+            children: [
+              {
+                path: "manage-appointment",
+                element: <AppointmentManagement />,
+                children: [
+                  {
+                    index: true,
                     element: <Registration />,
                   },
                   {
-                    path: "case",
-                    element: <Case />,
+                    path: "appointment-list",
+                    element: <AppointmentList />,
                   },
+                ],
+              },
+              {
+                path: "case-management",
+                element: <CaseManagement />,
+                children: [
                   {
-                    path: "case-list",
+                    index: true,
                     element: <CaseList />,
                   },
                 ],
@@ -108,7 +146,7 @@ const router = createBrowserRouter([
             element: <Layout />,
             children: [
               {
-                path: "appointment-list",
+                path: "manage-appointment",
                 element: <AppointmentList />,
               },
               {
@@ -142,9 +180,35 @@ const router = createBrowserRouter([
                     index: true,
                     element: <UserList />,
                   },
+                ],
+              },
+              {
+                path: "role-mangement",
+                element: <RoleManagement />,
+                children: [
                   {
-                    path: "create-user",
-                    element: <CreateUser />,
+                    index: true,
+                    element: <RoleList />,
+                  },
+                ],
+              },
+              {
+                path: "category-mangement",
+                element: <CategoryManagement />,
+                children: [
+                  {
+                    index: true,
+                    element: <CategoryList />,
+                  },
+                ],
+              },
+              {
+                path: "office-mangement",
+                element: <OfficeManagement />,
+                children: [
+                  {
+                    index: true,
+                    element: <OfficeList />,
                   },
                 ],
               },

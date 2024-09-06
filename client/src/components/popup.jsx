@@ -7,7 +7,7 @@ import { useGetCaseQuery } from "../features/caseApiSlice";
 import Button from "./button/Button";
 
 function Popup({ appointmentId, caseId, onClose }) {
-  const [pop, setPop] = useState([]);
+  const [pop, setPop] = useState({});
   if (appointmentId) {
     const { data: appointmentData, isSuccess: isSuccessAppointment } =
       useGetAppointmentQuery(appointmentId);
@@ -26,11 +26,11 @@ function Popup({ appointmentId, caseId, onClose }) {
     }, [caseData]);
   }
 
-  //   console.log(pop);
+  // console.log(pop);
 
   return (
     <OverLay handleClick={onClose}>
-      <div className=" relative bg-white rounded-[5px] p-5 leading-[1.5] shadow-sm w-[400px] h-[300px] flex items-center justify-center ">
+      <div className=" relative bg-white rounded-[5px] p-5 leading-[1.5] shadow-sm w-[400px] h-max flex items-center justify-center ">
         <Button
           onClick={() => {
             onClose();
@@ -40,23 +40,47 @@ function Popup({ appointmentId, caseId, onClose }) {
           <IoIosClose size={26} />
         </Button>
 
-        <div className="">
-          <div>Name: {pop.customerId?.fullName}</div>
+        {caseId ? (
+          <div className="">
+            <div>Name: {pop.customerId?.fullName}</div>
 
-          <div>Business Name: {pop.customerId?.businessName}</div>
+            <div>Business Name: {pop.customerId?.businessName}</div>
 
-          <div>Email: {pop.customerId?.customerEmail}</div>
+            <div>Email: {pop.customerId?.customerEmail}</div>
 
-          <div>Phone: {pop.customerId?.phoneNumber}</div>
+            <div>Phone: {pop.customerId?.phoneNumber}</div>
 
-          <div>Office ID: {pop?.officeId}</div>
+            <div>Case number: {pop.caseNumber}</div>
 
-          <div>Start Time: {new Date(pop.startTime).toLocaleString()}</div>
+            <div>Subject: {pop.subject}</div>
 
-          <div>End Time: {new Date(pop.endTime).toLocaleString()}</div>
+            <div>Description: {pop.description}</div>
 
-          <div>Catagory: {pop.category}</div>
-        </div>
+            <div>Catagory: {pop.category?.categoryName}</div>
+          </div>
+        ) : (
+          <div className="">
+            <div>Name: {pop.customerId?.fullName}</div>
+
+            <div>Business Name: {pop.customerId?.businessName}</div>
+
+            <div>Email: {pop.customerId?.customerEmail}</div>
+
+            <div>Phone: {pop.customerId?.phoneNumber}</div>
+
+            <div>
+              Start Time:
+              {pop.startTime
+                ? new Date(pop.startTime).toLocaleString()
+                : "Not set"}
+            </div>
+
+            <div>
+              End Time:
+              {pop.endTime ? new Date(pop.endTime).toLocaleString() : "Not set"}
+            </div>
+          </div>
+        )}
       </div>
     </OverLay>
   );

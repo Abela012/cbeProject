@@ -7,8 +7,8 @@ const UserSchema = new Schema(
     profile: { type: String },
     password: { type: String },
     roleType: {
-      type: Number,
-      enum: [1112, 1234, 4567, 8910, 4321, 9801, 1000],
+      type: Schema.Types.ObjectId,
+      ref: "Role",
     },
     otp: { type: String },
     status: { type: String },

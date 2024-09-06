@@ -1,7 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import styles from "./textArea.module.css";
 
 export default function TextArea({
+  lableName,
+  inputName,
   placeholder,
   handleInputChange,
   isSuccess,
@@ -14,7 +15,7 @@ export default function TextArea({
 
   function adjustHeight() {
     if (textbox.current === null) return;
-    textbox.current.style.height = "2.5rem";
+    textbox.current.style.height = "4.5rem";
     textbox.current.style.height = `${textbox.current.scrollHeight}px`;
   }
 
@@ -22,15 +23,14 @@ export default function TextArea({
 
   function handleChange(event) {
     adjustHeight();
-    handleInputChange(event.target.value);
+    handleInputChange(event);
     setNewText(event.target.value);
   }
   // Reset the textarea to its
   function handleResetTextarea() {
     if (textbox.current === null) return;
-    textbox.current.style.height = size || "2.5rem";
+    textbox.current.style.height = size || "4.5rem";
     setNewText("");
-    textbox.current?.focus();
   }
   useEffect(() => {
     if (isSuccess) {
@@ -39,14 +39,23 @@ export default function TextArea({
   }, [isSuccess]);
 
   return (
-    <textarea
-      {...props}
-      ref={textbox}
-      id="post-textbox"
-      className={styles.text_area + " " + className}
-      value={newText}
-      onChange={handleChange}
-      placeholder={placeholder}
-    />
+    <div className=" relative flex flex-col">
+      <label className=" font-bold mb-[5px] text-sm" htmlFor={inputName}>
+        {lableName}
+      </label>
+
+      <textarea
+        ref={textbox}
+        id={inputName}
+        className={
+          " p-[10px] outline-none rounded-md border-solid border-2 border-br-gray resize-none " +
+          className
+        }
+        value={newText}
+        onChange={handleChange}
+        placeholder={placeholder}
+        {...props}
+      />
+    </div>
   );
 }

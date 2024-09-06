@@ -4,8 +4,9 @@ import bcrypt from "bcrypt";
 
 const generateAccount = async (req, res) => {
   try {
-    const { name, email, password, roleType } = req.body;
-    if ((!name || !email || !password, !roleType))
+    const { name, email, officeId, password, roleType } = req.body;
+
+    if ((!name || !email || !officeId || !password, !roleType))
       return res.status(400).json("All fields required");
 
     const foundUser = await User.findOne({ email });
@@ -16,6 +17,7 @@ const generateAccount = async (req, res) => {
     const newUser = await User.create({
       name,
       email,
+      officeId,
       password: hashedPassword,
       roleType: roleType,
     });
@@ -40,7 +42,10 @@ const sigIn = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json("All fields required");
-    const foundUser = await User.findOne({ email: email });
+    const foundUser = await User.findOne({ email: email }).populate({
+      path: "roleType",
+      select: "roleType -_id",
+    });
     if (!foundUser) return res.status(401).json("Invalid credentials");
 
     // CHECK IF THE PASSWORDS MATCH
@@ -50,7 +55,7 @@ const sigIn = async (req, res) => {
       _id: foundUser._id,
       name: foundUser.name,
       email: foundUser.email,
-      roleType: foundUser.roleType,
+      roleType: foundUser.roleType.roleType,
       officeId: foundUser.officeId,
     };
     // GENERATE ACCESS AND REFRESHTOKEN
@@ -125,13 +130,16 @@ const refreshToken = async (req, res) => {
     // FIND THE USER WITH THE REFRESHTOKEN AND
     // CREATE PAYLOAD FOR THE TOKEN
     const refreshToken = cookies.rjwt;
-    const foundUser = await User.findOne({ refreshToken });
+    const foundUser = await User.findOne({ refreshToken }).populate({
+      path: "roleType",
+      select: "roleType -_id",
+    });
     if (!foundUser) return res.sendStatus(403);
     const user = {
       _id: foundUser._id,
       name: foundUser.name,
       email: foundUser.email,
-      roleType: foundUser.roleType,
+      roleType: foundUser.roleType.roleType,
       officeId: foundUser.officeId,
     };
     // VERIFY THE REFRESHTOKEN AND

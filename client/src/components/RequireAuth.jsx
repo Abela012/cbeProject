@@ -30,7 +30,7 @@ function RequireAuth({ allowedRoles }) {
   ) : token ? (
     <Navigate to="/unautherized" state={{ from: location }} replace />
   ) : (
-    <Navigate to="/login" state={{ from: location }} replace />
+    <Navigate to="/" state={{ from: location }} replace />
   );
 }
 

@@ -11,7 +11,7 @@ const appointmentRouter = express.Router();
 
 appointmentRouter.post("/create-appointment", createAppointment);
 
-appointmentRouter.get("/get-appointments", getAppointments);
+appointmentRouter.get("/get-appointments/:officeId", getAppointments);
 
 appointmentRouter.get("/get-appointment/:id", getAppointmentById);
 
