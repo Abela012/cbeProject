@@ -7,12 +7,16 @@ import { MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
 import DeleteConfirmation from "../components/DeleteConfirmation.jsx";
 import {
+  useDeleteUserMutation,
   useGetUsersQuery,
   useUpdateUserRoleMutation,
 } from "../features/userApiSlice.js";
-import EditUser from "../components/EditAppointment/EditUser.jsx";
+import EditUser from "../components/Edit/EditUser.jsx";
 import { rolesList } from "../util/userRoles.js";
 import { capitalizeFirstLetter } from "../util/capitalize.js";
+import Button from "../components/button/Button.jsx";
+import CreateUser from "./CreateUser.jsx";
+import { useGetRolesQuery } from "../features/roleApiSlice.js";
 
 function UserList() {
   const [users, setUsers] = useState([]);
@@ -20,6 +24,8 @@ function UserList() {
 
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
+
+  const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [userToBeDelete, setUserToBeDelete] = useState({
@@ -29,7 +35,13 @@ function UserList() {
   }); // hold the user to be deleted
   const location = useLocation();
   const { data, refetch } = useGetUsersQuery(query);
+  const { data: roles } = useGetRolesQuery();
   const [updateUserRole] = useUpdateUserRoleMutation();
+  const [deleteUser] = useDeleteUserMutation();
+
+  const handleCreateClick = () => {
+    setShowCreate((prev) => !prev);
+  };
 
   function showEditModal() {
     setShowEdit(true);
@@ -65,9 +77,27 @@ function UserList() {
     }
   };
 
+  const handleDeleteUser = async () => {
+    try {
+      const response = await deleteUser(userToBeDelete.itemId).unwrap();
+      toast.success(response, {
+        position: "bottom-right",
+      });
+    } catch (error) {
+      toast.error(error.data, {
+        position: "bottom-right",
+      });
+    } finally {
+      handleCloseModal();
+    }
+  };
+
   return (
     <div className=" w-full h-full rounde-d-[10px] flex flex-col gap-2">
-      <SearchBar className=" !w-full" placeholder="Search by name or email" />
+      <div className="flex gap-3">
+        <SearchBar className=" !w-full" placeholder="Search by name or email" />
+        <Button onClick={handleCreateClick}>Create</Button>
+      </div>
       <table className=" text-sm w-full bg-white p-5 rounded-lg border-collapse ">
         <thead className=" text-left">
           <tr className=" border-solid border-2 border-gray-300">
@@ -90,20 +120,20 @@ function UserList() {
                 <td className="p-[10px]" onClick={(e) => e.stopPropagation()}>
                   <select
                     className=" p-1 outline-none border-none cursor-pointer bg-transparent "
-                    defaultValue={user.roleType}
+                    defaultValue={user.roleType?._id}
                     onChange={(e) => handleCaseStateChange(e, user._id)}
                   >
-                    {Object.entries(rolesList).map(([key, value]) => {
-                      if (value == user.roleType) {
+                    {roles?.map((role) => {
+                      if (role.roleType == user.roleType?.roleType) {
                         return (
-                          <option key={key} value={user.roleType}>
-                            {capitalizeFirstLetter(key)}
+                          <option key={role._id} value={role._id}>
+                            {role.roleName}
                           </option>
                         );
                       } else {
                         return (
-                          <option key={key} value={value}>
-                            {capitalizeFirstLetter(key)}
+                          <option key={role._id} value={role._id}>
+                            {role.roleName}
                           </option>
                         );
                       }
@@ -141,9 +171,14 @@ function UserList() {
           })}
         </tbody>
       </table>
+      {showCreate && <CreateUser handleClose={handleCreateClick} />}
       {showEdit && <EditUser userId={userId} onClose={CloseEdit} />}
       {showDelete && (
-        <DeleteConfirmation item={userToBeDelete} onClose={handleCloseModal} />
+        <DeleteConfirmation
+          item={userToBeDelete}
+          onClose={handleCloseModal}
+          handleDeleteItem={handleDeleteUser}
+        />
       )}
     </div>
   );

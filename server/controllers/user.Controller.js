@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import Role from "../models/role.model.js";
 
 const getUsers = async (req, res) => {
   try {
@@ -20,11 +21,13 @@ const getUsers = async (req, res) => {
       //     select: "customerName email phone",
       //   }
       // );
-      console.log("sdf");
 
       return res.json(user);
     }
-    const foundUsers = await User.find({});
+    const foundUsers = await User.find({}).populate({
+      path: "roleType",
+      select: "roleType",
+    });
     return res.status(200).json(foundUsers);
   } catch (error) {
     return res.status(500).json("Server error");
@@ -40,13 +43,14 @@ const getUser = async (req, res) => {
     return res.status(500).json("Server error");
   }
 };
+
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, officeId, roleType } = req.body;
+    const { name, email, officeId } = req.body;
     const updatedUser = await User.updateOne(
       { _id: id },
-      { name, email, roleType }
+      { name, email, officeId }
     );
 
     return res.status(200).json("User updated");
@@ -55,6 +59,7 @@ const updateUser = async (req, res) => {
     return res.status(500).json("Server error");
   }
 };
+
 const updateUserRole = async (req, res) => {
   try {
     const { id } = req.params;
@@ -71,13 +76,35 @@ const updateUserRole = async (req, res) => {
     return res.status(500).json("Server error");
   }
 };
+
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const {} = req.body;
+    const foundUser = await User.findOne({ _id: id });
+    const foundRole = await Role.findOne({ _id: foundUser.roleType });
+
+    if (foundRole.roleName == "Admin") {
+      const foundUser = await User.aggregate([
+        {
+          $match: {
+            roleType: foundRole._id,
+          },
+        },
+        {
+          $group: {
+            _id: "$roleType",
+            userCount: { $sum: 1 },
+          },
+        },
+      ]);
+      if (foundUser[0].userCount == 1)
+        return res.status(400).json("Can not all admin user");
+      const deleteUser = await User.deleteOne({ _id: id });
+    }
     const deleteUser = await User.deleteOne({ _id: id });
-    return res.status(200).json("");
+    return res.status(200).json("User deleted");
   } catch (error) {
+    console.log(error);
     return res.status(500).json("Server error");
   }
 };

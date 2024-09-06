@@ -15,6 +15,7 @@ export default function Registration() {
     customerEmail: "",
     phoneNumber: "",
     address: "",
+    file: "",
   });
 
   let handleSubmit = async (event) => {
@@ -39,6 +40,7 @@ export default function Registration() {
         customerEmail: "",
         phoneNumber: "",
         address: "",
+        file: "",
       });
     }
   };
@@ -55,19 +57,20 @@ export default function Registration() {
 
   return (
     <form
-      className=" flex flex-col gap-4 w-full bg-white p-5 rounded-lg "
+      className=" flex flex-col gap-2 w-full bg-white p-5 rounded-lg "
       onSubmit={handleSubmit}
     >
       <div className=" text-center">
         <h1 className=" font-bold">Customer Registration Page</h1>
       </div>
-      <div className=" w-full flex gap-5 flex-col sm:flex-row">
+      <div className=" w-full flex gap-3 flex-col sm:flex-row">
         <div className=" w-full">
           <h2 className=" font-bold">Personal Information</h2>
           <div className=" flex flex-col">
             <FormInput
               placeholder="Enter First Name"
               lableName="First Name"
+              inputName="firstName"
               inputType="text"
               name="firstName"
               onChange={handleChange}
@@ -77,6 +80,7 @@ export default function Registration() {
             <FormInput
               placeholder="Enter Middle Name"
               lableName="Middle Name"
+              inputName="middleName"
               inputType="text"
               name="middleName"
               onChange={handleChange}
@@ -86,6 +90,7 @@ export default function Registration() {
             <FormInput
               placeholder="Enter Last Name"
               lableName="Last Name"
+              inputName="lastName"
               inputType="text"
               name="lastName"
               onChange={handleChange}
@@ -101,6 +106,7 @@ export default function Registration() {
             <FormInput
               placeholder="Enter Customer's Email"
               lableName="Customer Email"
+              inputName="customerEmail"
               inputType="email"
               name="customerEmail"
               onChange={handleChange}
@@ -110,9 +116,10 @@ export default function Registration() {
             <FormInput
               placeholder="Enter Phone Number"
               lableName="Phone Number"
+              inputName="phoneNumber"
               inputType="number"
-              min={10}
               name="phoneNumber"
+              min={10}
               onChange={handleChange}
               value={customer.phoneNumber}
               required
@@ -120,6 +127,7 @@ export default function Registration() {
             <FormInput
               placeholder="Enter Address"
               lableName="Address"
+              inputName="address"
               inputType="text"
               name="address"
               onChange={handleChange}
@@ -130,15 +138,25 @@ export default function Registration() {
         </div>
       </div>
 
-      <div className="">
+      <div className="w-full flex flex-col ">
         <FormInput
           placeholder="Enter Business Name "
           lableName="Business Name"
+          inputName="businessName"
           inputType="text"
           name="businessName"
           onChange={handleChange}
           value={customer.businessName}
           required
+        />
+        <FormInput
+          placeholder="Select file "
+          lableName="Select file"
+          inputName="file"
+          inputType="file"
+          name="file"
+          onChange={handleChange}
+          value={customer.file}
         />
       </div>
       <div className=" w-full flex items-center justify-center font-bold ">

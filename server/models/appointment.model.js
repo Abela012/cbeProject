@@ -12,14 +12,8 @@ const AppointmentSchema = new Schema(
       enum: ["Pending", "Canceled", "Completed"],
       default: "Pending",
     },
+    file: { type: String },
     caseId: { type: Schema.Types.ObjectId, ref: "Case" },
-    currentAssignedOfficeId: {
-      type: Schema.Types.ObjectId,
-      ref: "OfficeManagement",
-    },
-    assignedOfficeIdList: [
-      { type: Schema.Types.ObjectId, ref: "OfficeManagement" },
-    ],
     category: { type: String },
   },
   { timestamps: true }

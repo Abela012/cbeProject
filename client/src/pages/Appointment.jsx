@@ -4,20 +4,32 @@ import Button from "../components/button/Button.jsx";
 import { toast } from "react-toastify";
 
 import { useCreateAppointmentMutation } from "../features/appointmentApiSlice.js";
+import { useGetCustomerMutation } from "../features/customerApiSlice.js";
 import OverLay from "../components/OverLay.jsx";
+import SearchBarWoutParams from "../components/searchBar/SearchBarWoutParams.jsx";
 import { useSelector } from "react-redux";
 import { getCurrentUser } from "../features/authSlice.js";
 
 function Appointment({ customerId, onClose }) {
   const user = useSelector(getCurrentUser);
+  const [customers, setCustomers] = useState([]);
   const [createAppointment] = useCreateAppointmentMutation();
+  const [customer] = useGetCustomerMutation();
+
   const [appointmentData, setAppointmentData] = useState({
     staffId: user._id,
-    customerId: customerId,
-    officeId: "",
-    startTime: "",
-    endTime: "",
+    officeId: user.officeId,
+    customerId: "",
+    customerEmail: "",
+    file: "",
   });
+
+  const [resetFilter, setResetFilter] = useState(false);
+
+  const handleSearch = async (query) => {
+    const response = await customer({ query });
+    setCustomers(response.data);
+  };
 
   const handleSubmit = async (e) => {
     try {
@@ -50,34 +62,56 @@ function Appointment({ customerId, onClose }) {
   return (
     <OverLay handleClick={onClose}>
       <form
-        className=" flex flex-col gap-[15px] w-full max-w-[380px] bg-white p-5 rounded-[10px] "
+        className=" flex flex-col gap-[15px] w-full max-w-[400px] bg-white p-5 rounded-[10px] "
         onSubmit={handleSubmit}
       >
+        <div>
+          <SearchBarWoutParams
+            className="!w-full"
+            placeholder="Search customer by phone or email"
+            reset={resetFilter}
+            autoFocus={true}
+            searchItem={handleSearch}
+          />
+          <div className=" flex flex-col gap-1 mt-1 max-h-48 overflow-y-auto">
+            {customers &&
+              customers?.map((customer) => {
+                return (
+                  <div
+                    className="flex flex-col bg-[rgb(241,241,241)] p-[5px] rounded-[5px] cursor-pointer"
+                    key={customer._id}
+                    onClick={() => {
+                      setAppointmentData((prev) => ({
+                        ...prev,
+                        customerId: customer._id,
+                        customerEmail: customer.customerEmail,
+                      }));
+                      setCustomers([]);
+                      setResetFilter(true);
+                    }}
+                  >
+                    <span>{customer.fullName}</span>
+                    <span>{customer.customerEmail}</span>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
         <FormInput
-          placeholder="Enter Office id"
-          lableName="Office Id"
           inputType="text"
-          required
-          name="officeId"
-          value={appointmentData.officeId}
-          onChange={handleChange}
+          required={true}
+          lableName="Customer"
+          value={appointmentData.customerEmail}
+          disabled={true}
+          inputName="customer"
         />
+
         <FormInput
-          placeholder="Enter Office id"
-          lableName="Start Time"
-          inputType="datetime-local"
-          required
-          name="startTime"
-          value={appointmentData.startTime}
-          onChange={handleChange}
-        />
-        <FormInput
-          placeholder="Enter Office id"
-          lableName="End Time"
-          inputType="datetime-local"
-          required
-          name="endTime"
-          value={appointmentData.endTime}
+          placeholder=""
+          lableName="Related file"
+          inputType="file"
+          name="file"
+          value={appointmentData.file}
           onChange={handleChange}
         />
 

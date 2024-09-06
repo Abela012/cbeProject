@@ -10,6 +10,7 @@ const CaseSchema = Schema(
     dueDate: { type: String },
     caseNumber: { type: String },
     subject: { type: String },
+    description: { type: String },
     caseId: { type: Schema.Types.ObjectId, ref: "Case" },
     category: { type: Schema.Types.ObjectId, ref: "Category" },
     status: {
@@ -17,6 +18,13 @@ const CaseSchema = Schema(
       enum: ["Pending", "Canceled", "Completed"],
       default: "Pending",
     },
+    currentAssignedOfficeId: {
+      type: Schema.Types.ObjectId,
+      ref: "OfficeManagement",
+    },
+    assignedOfficeIdList: [
+      { type: Schema.Types.ObjectId, ref: "OfficeManagement" },
+    ],
     assignee: { type: String },
     assigned: { type: String },
   },

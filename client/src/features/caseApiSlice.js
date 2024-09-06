@@ -8,10 +8,11 @@ export const caseApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...newCase },
       }),
+      invalidatesTags: ["Case"],
     }),
     getCases: builder.query({
       query: (query) => ({
-        url: `/get-cases?q=${query}`,
+        url: `/get-cases/${query.officeId}?q=${query.searchTerm}`,
         method: "GET",
       }),
       providesTags: ["Case"],
@@ -21,11 +22,13 @@ export const caseApiSlice = apiSlice.injectEndpoints({
         url: `/get-case/${query}`,
         method: "GET",
       }),
+      providesTags: ["Case"],
     }),
     updateCase: builder.mutation({
       query: (query) => ({
-        url: `/update-case/${query}`,
+        url: `/update-case/${query.id}`,
         method: "PATCH",
+        body: { ...query },
       }),
       invalidatesTags: ["Case"],
     }),
