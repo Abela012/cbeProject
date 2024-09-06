@@ -4,7 +4,7 @@ function Button({ children, className, btnName, ...props }) {
       {...props}
       type="submit"
       className={
-        " flex items-center justify-center gap-[5px] p-[10px] border-none bg-secondary rounded-md hover:cursor-pointer " +
+        " flex items-center justify-center gap-[5px] p-[10px] border-none bg-secondary-dark rounded-md hover:cursor-pointer " +
         className
       }
     >

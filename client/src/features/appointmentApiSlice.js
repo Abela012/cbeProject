@@ -1,6 +1,6 @@
 import { apiSlice } from "../app/api/apiSlice";
 
-const appointmentApiSlice = apiSlice.injectEndpoints({
+export const appointmentApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     createAppointment: builder.mutation({
       query: (appointment) => ({
@@ -8,10 +8,11 @@ const appointmentApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...appointment },
       }),
+      invalidatesTags: ["Appointment"],
     }),
     getAppointments: builder.query({
       query: (query) => ({
-        url: `/get-appointments?q=${query}`,
+        url: `/get-appointments/${query.officeId}?q=${query.searchTerm}`,
         method: "GET",
       }),
       providesTags: ["Appointment"],
@@ -21,6 +22,7 @@ const appointmentApiSlice = apiSlice.injectEndpoints({
         url: `/get-appointment/${id}`,
         method: "GET",
       }),
+      providesTags: ["Appointment"],
     }),
     updateAppointment: builder.mutation({
       query: ({ id, ...appointment }) => ({

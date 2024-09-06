@@ -17,7 +17,7 @@ function PersistUser() {
   }, [data, dispatch]);
 
   if (error) {
-    <Navigate to="/login" replace />;
+    <Navigate to="/" replace />;
   }
 
   return <>{isLoading ? <WrapperSpinner /> : <Outlet />}</>;

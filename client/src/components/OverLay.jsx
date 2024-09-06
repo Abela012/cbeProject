@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import "../App.css";
 
 function OverLay({ children, handleClick }) {
   const modalRef = useRef(null);
@@ -12,7 +11,7 @@ function OverLay({ children, handleClick }) {
     <div
       ref={modalRef}
       onClick={closeModal}
-      className=" fixed inset-0 bg-[rgba(16, 16, 16, 0.824)] backdrop-blur-sm flex flex-col items-center justify-center "
+      className=" fixed inset-0 bg-blacksh flex flex-col items-center justify-center z-20"
     >
       {children}
     </div>

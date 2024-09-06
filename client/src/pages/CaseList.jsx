@@ -5,18 +5,18 @@ import { MdDelete } from "react-icons/md";
 import SearchBar from "../components/searchBar/SearchBar";
 import Popup from "../components/Popup";
 import {
+  useDeleteCaseMutation,
   useGetCasesQuery,
-  // useGetCasesMutation,
   useUpdateCaseMutation,
   useUpdateCaseStatusMutation,
 } from "../features/caseApiSlice";
-import Appointment from "./Appointment";
 import Button from "../components/button/Button";
 import { toast } from "react-toastify";
 import DeleteConfirmation from "../components/DeleteConfirmation";
 import { useSelector } from "react-redux";
 import { getCurrentUser } from "../features/authSlice";
 import { rolesList } from "../util/userRoles";
+import EditCase from "../components/Edit/EditCase";
 
 const CaseStatus = ["Pending", "Canceled", "Completed"];
 
@@ -24,10 +24,9 @@ function CaseList() {
   const user = useSelector(getCurrentUser);
   const [cases, setCases] = useState([]);
   const [caseId, setCaseId] = useState(""); // holde case id to show case detail
-  const [customerId, setCustomerId] = useState(""); // holde customer id to associate customer with appointment
 
-  const [showApp, setShowApp] = useState(false);
-  const [showCreateAppointment, setShowCreateAppointment] = useState(false);
+  const [showCase, setShowCase] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [caseToBeDelete, setCaseToBeDelete] = useState({
     title: "case",
@@ -38,12 +37,20 @@ function CaseList() {
   const query = searchParams.get("q");
 
   const location = useLocation();
-  const { data, refetch } = useGetCasesQuery(query);
+  const { data, refetch } = useGetCasesQuery({
+    searchTerm: query,
+    officeId: user.officeId,
+  });
   const [updateCase] = useUpdateCaseMutation();
   const [updateCaseStatus] = useUpdateCaseStatusMutation();
+  const [deleteCase] = useDeleteCaseMutation();
 
-  function Show() {
-    setShowApp(true);
+  function showEditModal() {
+    setShowEdit(true);
+  }
+
+  function handleShowCase() {
+    setShowCase(true);
   }
 
   useEffect(() => {
@@ -55,9 +62,14 @@ function CaseList() {
   }, [location]);
 
   const handleCloseModal = () => {
-    setShowApp(false);
-    setShowCreateAppointment(false);
+    setShowCase(false);
+    setShowEdit(false);
     setShowDelete(false);
+  };
+
+  const handleDeleteCase = () => {
+    deleteCase(caseToBeDelete.itemId);
+    handleCloseModal();
   };
 
   const handleSCaseStateChange = async (caseid, e) => {
@@ -78,7 +90,9 @@ function CaseList() {
 
   return (
     <div className=" flex flex-col gap-2 w-full">
-      <SearchBar className=" !w-full" placeholder="Search by case number" />
+      <div className="flex gap-3">
+        <SearchBar className=" !w-full" placeholder="Search by case number" />
+      </div>
       <table className=" text-sm w-full bg-white p-5 rounded-lg border-collapse ">
         <thead className=" text-left">
           <tr className=" border-solid border-2 border-gray-300">
@@ -88,19 +102,21 @@ function CaseList() {
             <th className="p-[10px]">Status</th>
             {user.roleType !== rolesList.staff && (
               <>
-                <th className="p-[10px]">Create Appointment</th>
                 <th className="p-[10px]">Actions</th>
               </>
             )}
           </tr>
         </thead>
-        <tbody onClick={Show}>
+        <tbody>
           {cases?.map((_case, idx) => {
             return (
               <tr
                 className="hover:bg-light-gray hover:cursor-pointer border-solid border-2 border-gray-300"
                 key={_case._id}
-                onClick={() => setCaseId(_case._id)}
+                onClick={() => {
+                  setCaseId(_case._id);
+                  handleShowCase();
+                }}
               >
                 <td className="p-[10px]">{_case.customerId?.fullName}</td>
                 <td className="p-[10px]">{_case.caseNumber}</td>
@@ -116,37 +132,16 @@ function CaseList() {
                     }
                   >
                     {CaseStatus.map((value) => {
-                      if (value == _case.status) {
-                        return (
-                          <option key={value} value={_case.status}>
-                            {_case.status}
-                          </option>
-                        );
-                      } else {
-                        return (
-                          <option key={value} value={value}>
-                            {value}
-                          </option>
-                        );
-                      }
+                      return (
+                        <option key={value} value={value}>
+                          {value}
+                        </option>
+                      );
                     })}
                   </select>
                 </td>
                 {user.roleType !== rolesList.staff && (
                   <>
-                    <td className="p-[10px]">
-                      <div
-                        className=" hover:underline font-bold text-center"
-                        title="Create Appointment"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowCreateAppointment(true);
-                          setCustomerId(_case.customerId._id);
-                        }}
-                      >
-                        Create
-                      </div>
-                    </td>
                     <td className="p-[10px]">
                       <div className="table_actions">
                         <Button
@@ -154,7 +149,8 @@ function CaseList() {
                           title="Edit Appointment"
                           onClick={(e) => {
                             e.stopPropagation();
-                            updateCase(_case._id);
+                            setCaseId(_case._id);
+                            showEditModal();
                           }}
                         >
                           <MdEdit size={20} color="green" />
@@ -164,11 +160,7 @@ function CaseList() {
                           title="Delete Appointment"
                           onClick={(e) => {
                             e.stopPropagation();
-                            // setCases(
-                            //   cases.filter((appoint) => {
-                            //     return appoint._id !== _case._id;
-                            //   })
-                            // );
+
                             setShowDelete(true);
                             setCaseToBeDelete((prev) => ({
                               ...prev,
@@ -188,12 +180,14 @@ function CaseList() {
           })}
         </tbody>
       </table>
-      {showApp && <Popup caseId={caseId} onClose={handleCloseModal} />}
-      {showCreateAppointment && (
-        <Appointment customerId={customerId} onClose={handleCloseModal} />
-      )}
+      {showCase && <Popup caseId={caseId} onClose={handleCloseModal} />}
+      {showEdit && <EditCase caseId={caseId} onClose={handleCloseModal} />}
       {showDelete && (
-        <DeleteConfirmation item={caseToBeDelete} onClose={handleCloseModal} />
+        <DeleteConfirmation
+          item={caseToBeDelete}
+          onClose={handleCloseModal}
+          handleDeleteItem={handleDeleteCase}
+        />
       )}
     </div>
   );

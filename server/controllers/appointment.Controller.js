@@ -4,15 +4,13 @@ import Customer from "../models/customer.model.js";
 const createAppointment = async (req, res) => {
   try {
     // console.log(req.body);
-    const { staffId, customerId, officeId, startTime, endTime, category } =
-      req.body;
+    const { staffId, customerId, officeId, file } = req.body;
 
     const newAppointment = await Appointment.create({
       staffId,
       customerId,
       officeId,
-      startTime,
-      endTime,
+      file,
     });
     return res.status(201).json("Appointment created successfully");
   } catch (error) {
@@ -22,10 +20,12 @@ const createAppointment = async (req, res) => {
 
 const getAppointments = async (req, res) => {
   try {
+    const { officeId } = req.params;
+
     if (req.query.q != "null" && req.query.q !== undefined) {
       let query = req.query.q;
-      const appointments = await Appointment.find({}).populate({
-        path: "customerId",
+      const appointments = await Appointment.find({ officeId }).populate({
+        path: "customerId officeId",
         // select: "customerName email phone",
       });
       // console.log(appointments);
@@ -38,8 +38,8 @@ const getAppointments = async (req, res) => {
 
       return res.json(filterdAppointments);
     }
-    const appointments = await Appointment.find({}).populate({
-      path: "customerId",
+    const appointments = await Appointment.find({ officeId }).populate({
+      path: "customerId officeId",
       // select: "customerName email phone",
     });
     // console.log(appointments);
@@ -68,7 +68,7 @@ const updateAppointment = async (req, res) => {
     const { id } = req.params;
     const {
       fullName,
-      buissnessName,
+      businessName,
       customerEmail,
       phoneNumber,
       officeId,
@@ -94,7 +94,7 @@ const updateAppointment = async (req, res) => {
         middleName,
         lastName,
         fullName: fullName,
-        businessName: buissnessName,
+        businessName: businessName,
         customerEmail: customerEmail,
         phoneNumber: phoneNumber,
       }

@@ -1,21 +1,20 @@
 import { useEffect, useState } from "react";
-import styles from "./EditAppointment.module.css";
-import { useRef } from "react";
 import "../../App.css";
 import {
   useGetAppointmentQuery,
   useUpdateAppointmentMutation,
 } from "../../features/appointmentApiSlice.js";
 import FormInput from "../forminput/FormInput.jsx";
+import { toast } from "react-toastify";
+import OverLay from "../OverLay.jsx";
 
-function Edit({ appId, onClose }) {
+function EditAppointment({ appId, onClose }) {
   const [edit, setedit] = useState({
     _id: "",
     fullName: "",
     businessName: "",
     customerEmail: "",
     phoneNumber: "",
-    officeId: "",
     startTime: "",
     endTime: "",
     category: "",
@@ -31,7 +30,6 @@ function Edit({ appId, onClose }) {
         businessName: appointmentData.customerId.businessName,
         customerEmail: appointmentData.customerId.customerEmail,
         phoneNumber: appointmentData.customerId.phoneNumber,
-        officeId: appointmentData.officeId,
         startTime: appointmentData.startTime,
         endTime: appointmentData.endTime,
         category: appointmentData.category,
@@ -48,26 +46,27 @@ function Edit({ appId, onClose }) {
         ...edit,
       }).unwrap();
       onClose();
-      console.log(response);
+      toast.success(response, {
+        position: "bottom-right",
+      });
     } catch (error) {
-      console.log(response.data);
-    }
-  };
-
-  const modalRef = useRef(null);
-  const closeModal = (e) => {
-    if (modalRef.current === e.target) {
-      onClose();
+      toast.error(error.data, {
+        position: "bottom-right",
+      });
     }
   };
 
   return (
-    <div className={styles.edit} ref={modalRef} onClick={closeModal}>
-      <form action="" className="Hform edit" onSubmit={submit}>
-        <div className="inputs_wrapper">
-          <div className="personalinfo">
+    <OverLay handleClick={onClose}>
+      <form
+        className="flex flex-col gap-[15px] w-full max-w-[80%] bg-white p-5 rounded-[10px]"
+        onSubmit={submit}
+      >
+        <div className=" flex flex-wrap gap-3 ">
+          <div className="flex-1">
             <FormInput
               lableName="Customer Name"
+              inputName="customerName"
               placeholder="Enter customer name"
               type="text"
               value={edit.fullName}
@@ -79,9 +78,9 @@ function Edit({ appId, onClose }) {
               }
               required
             />
-
             <FormInput
               lableName="Buissness Name"
+              inputName="buissnessName"
               placeholder="Enter Buissness Name"
               type="text"
               value={edit.businessName}
@@ -93,9 +92,12 @@ function Edit({ appId, onClose }) {
               }
               required
             />
+          </div>
 
+          <div className="flex-1">
             <FormInput
               lableName="Email"
+              inputName="email"
               placeholder="Enter Email"
               type="text"
               value={edit.customerEmail}
@@ -110,6 +112,7 @@ function Edit({ appId, onClose }) {
 
             <FormInput
               lableName="Phone Number"
+              inputName="phoneNumber"
               placeholder="Enter Phone Number"
               type="tel"
               value={edit.phoneNumber}
@@ -122,72 +125,16 @@ function Edit({ appId, onClose }) {
               required
             />
           </div>
-
-          <div className="appointmentschedule">
-            <FormInput
-              lableName="Office Id"
-              placeholder="Enter Office Id"
-              type="text"
-              value={edit.officeId}
-              onChange={(e) =>
-                setedit({
-                  ...edit,
-                  officeId: e.target.value,
-                })
-              }
-              required
-            />
-
-            <FormInput
-              lableName="Start Time"
-              placeholder="Enter Start Time"
-              type="datetime-local"
-              value={edit.startTime}
-              onChange={(e) =>
-                setedit({
-                  ...edit,
-                  startTime: e.target.value,
-                })
-              }
-              required
-            />
-
-            <FormInput
-              lableName="End Time"
-              placeholder="Enter End Time"
-              type="datetime-local"
-              value={edit.endTime}
-              onChange={(e) =>
-                setedit({
-                  ...edit,
-                  endTime: e.target.value,
-                })
-              }
-              required
-            />
-
-            <FormInput
-              lableName="Catagory"
-              placeholder="Enter Catagory"
-              type="text"
-              value={edit.category}
-              onChange={(e) =>
-                setedit({
-                  ...edit,
-                  category: e.target.value,
-                })
-              }
-              required
-            />
-          </div>
         </div>
+
+        <div className="appointmentschedule">Scheduler</div>
 
         <button type="submit" className="btn btn-submit">
           Submit
         </button>
       </form>
-    </div>
+    </OverLay>
   );
 }
 
-export default Edit;
+export default EditAppointment;

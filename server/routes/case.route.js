@@ -14,11 +14,16 @@ const caseRouter = express.Router();
 
 caseRouter.post(
   "/create-case",
-  verifyRole(rolesList.secretary, rolesList.staff),
+  verifyRole(
+    rolesList.secretary,
+    rolesList.president,
+    rolesList.vp,
+    rolesList.cos
+  ),
   createCase
 );
 
-caseRouter.get("/get-cases", getCases);
+caseRouter.get("/get-cases/:officeId", getCases);
 
 caseRouter.get("/get-case/:id", getCaseById);
 
