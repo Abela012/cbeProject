@@ -18,15 +18,16 @@ import {
   useDeleteScheduleMutation,
   useGetScheduleListQuery,
 } from "../features/schedulerApiSlice";
+import EditEvent from "../components/EditEvent";
 
 function AppintmentScheduler({ appointmentId, handleClose }) {
   const user = useSelector(getCurrentUser);
   const { data: officeList } = useGetOfficesQuery();
   const [offices, setOffice] = useState();
   const [allEvents, setAllEvents] = useState([]);
-  const [idToDelete, setIdToDelete] = useState(null);
+  const [selecteAppointmentId, setSelecteAppointmentId] = useState(null);
   const [showmodal, setShowModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [eventChange, setEventChange] = useState(false);
 
   const [newSchedule, setNewSchedule] = useState({
     id: "",
@@ -79,11 +80,15 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
     };
     setAllEvents([...allEvents, event]);
   }
+  
+  function handleEventModal(data){
+    setEventChange(true);
+    setSelecteAppointmentId(data.event.id);
+ }
 
-  function handleDeleteModal(data) {
-    setShowDeleteModal(true);
-    setIdToDelete(data.event.id);
-  }
+ const handleCloseEdit = () => {
+  set
+ }
 
   function handleCloseModal() {
     setShowModal(false);
@@ -96,8 +101,7 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
       allDay: false,
       id: 0,
     });
-    setShowDeleteModal(false);
-    setIdToDelete(null);
+    setSelecteAppointmentId(null);
   }
 
   const handleChange = (e) => {
@@ -110,12 +114,6 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
     }));
   };
 
-  function handleDelete() {
-    setAllEvents(allEvents.filter((event) => event.id !== idToDelete));
-    deleteSchedule(idToDelete);
-    setShowDeleteModal(false);
-    setIdToDelete(null);
-  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -132,6 +130,10 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
       allDay: false,
       id: 0,
     });
+  }
+
+  const handleCloseEditSchedule =() => {
+    setEventChange(false)
   }
 
   return (
@@ -188,7 +190,7 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
             // }}
             dateClick={handleDateClick}
             // drop={(data) => addEvent(data)}
-            eventClick={(data) => handleDeleteModal(data)}
+            eventClick={(data) => handleEventModal(data)}
           />
         </div>
         {showmodal && (
@@ -199,12 +201,16 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
             handleCloseModal={handleCloseModal}
           />
         )}
-        {showDeleteModal && (
-          <DeleteEvent
-            handleDelete={handleDelete}
-            handleCloseModal={handleCloseModal}
-          />
-        )}
+        
+        {
+          eventChange && (
+             <EditEvent
+             selecteAppointmentId={selecteAppointmentId}
+             handleCloseModal={handleCloseEditSchedule}
+             />
+          )
+        }
+       
       </div>
     </OverLay>
   );

@@ -2,9 +2,9 @@ import React from "react";
 import OverLay from "./OverLay";
 import Button from "./button/Button";
 
-function DeleteEvent({ handleDelete, handleCloseModal }) {
+function DeleteEvent({ handleDelete, handleCloseModal, handleCloseDelete }) {
   return (
-    <OverLay handleClick={handleCloseModal}>
+    <OverLay handleClick={()=> {handleCloseModal(); handleCloseDelete()} }>
       <div className="bg-white p-5 rounded-lg sm:flex-row-reverse sm:px-6">
         <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
           <h3 className="text-base font-semibold leading-6 ">Delete Event</h3>

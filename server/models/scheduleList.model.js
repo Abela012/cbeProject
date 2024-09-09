@@ -4,6 +4,7 @@ const ScheduleListSchema = Schema(
   {
     appointmentId: { type: Schema.Types.ObjectId, ref: "Appointment" },
     officeId: { type: Schema.Types.ObjectId, ref: "OfficeManagement" },
+    title: {type: String},
     startTime: { type: Date },
     endTime: { type: Date },
     date: { type: Date },
