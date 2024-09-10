@@ -9,10 +9,10 @@ export const customerApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     registerCustomer: builder.mutation({
-      query: (customer) => ({
+      query: (formData) => ({
         url: "/customer-registration",
         method: "POST",
-        body: { ...customer },
+        body: formData,
       }),
     }),
   }),

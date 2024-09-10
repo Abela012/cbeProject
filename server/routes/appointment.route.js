@@ -1,4 +1,5 @@
 import express from "express";
+import upload from "../middleware/uploader.js";
 import {
   createAppointment,
   deleteAppointment,
@@ -9,7 +10,11 @@ import {
 } from "../controllers/appointment.Controller.js";
 const appointmentRouter = express.Router();
 
-appointmentRouter.post("/create-appointment", createAppointment);
+appointmentRouter.post(
+  "/create-appointment",
+  upload.single("file"),
+  createAppointment
+);
 
 appointmentRouter.get("/get-appointments/:officeId", getAppointments);
 

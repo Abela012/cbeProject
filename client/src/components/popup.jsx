@@ -30,7 +30,7 @@ function Popup({ appointmentId, caseId, onClose }) {
 
   return (
     <OverLay handleClick={onClose}>
-      <div className=" relative bg-white rounded-[5px] p-5 leading-[1.5] shadow-sm w-[400px] h-max flex items-center justify-center ">
+      <div className=" relative bg-white rounded-[5px] p-5 leading-[1.5] shadow-sm w-[400px] h-max flex items-center ">
         <Button
           onClick={() => {
             onClose();
@@ -56,6 +56,17 @@ function Popup({ appointmentId, caseId, onClose }) {
 
             <div>Description: {pop.description}</div>
 
+            <div>
+              Currently assigned to: {pop?.currentAssignedOfficeId?.officeName}
+            </div>
+
+            <div>
+              Assignment history:
+              {pop?.assignedOfficeIdList?.map((office) => (
+                <p key={office._id}>{office?.officeName}</p>
+              ))}
+            </div>
+
             <div>Catagory: {pop.category?.categoryName}</div>
           </div>
         ) : (
@@ -79,6 +90,12 @@ function Popup({ appointmentId, caseId, onClose }) {
               End Time:
               {pop.endTime ? new Date(pop.endTime).toLocaleString() : "Not set"}
             </div>
+            {pop.appointmentFile?.fileName && (
+              <div>
+                <p>{pop.appointmentFile?.fileName}</p>
+                <a href={pop.appointmentFile?.file.data}>file</a>
+              </div>
+            )}
           </div>
         )}
       </div>

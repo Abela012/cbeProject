@@ -94,7 +94,7 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
       officeId: "",
       appointmentId: "",
       allDay: false,
-      id: 0,
+      id: "",
     });
     setShowDeleteModal(false);
     setIdToDelete(null);
@@ -130,7 +130,7 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
       //   officeId: "",
       //   appointmentId: "",
       allDay: false,
-      id: 0,
+      id: "",
     });
   }
 

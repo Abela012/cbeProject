@@ -125,12 +125,14 @@ function AppointmentList() {
             <th className="p-[10px]">Office Id</th>
             <th className="p-[10px]">Start Time</th>
             <th className="p-[10px]">End Time</th>
-            {user.roleType !== rolesList.secretary && (
-              <th className="p-[10px]">Schedule Appointment</th>
-            )}
-            {user.roleType !== rolesList.secretary && (
-              <th className="p-[10px]">Create Case</th>
-            )}
+            {user.roleType !== rolesList.secretary &&
+              user.roleType !== rolesList.staff && (
+                <th className="p-[10px]">Schedule Appointment</th>
+              )}
+            {user.roleType !== rolesList.secretary &&
+              user.roleType !== rolesList.staff && (
+                <th className="p-[10px]">Create Case</th>
+              )}
             <th className="p-[10px]">Status</th>
             {user.roleType !== rolesList.staff && (
               <>
@@ -162,37 +164,39 @@ function AppointmentList() {
                     ? new Date(appointment.endTime).toLocaleString()
                     : "Not set"}
                 </td>
-                {user.roleType !== rolesList.secretary && (
-                  <td className="p-[10px]">
-                    <div
-                      className=" hover:underline font-bold text-center"
-                      title="Schedule Appointment"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowScheduler(true);
-                        setAppointmentId(appointment._id);
-                      }}
-                    >
-                      Schedule
-                    </div>
-                  </td>
-                )}
-                {user.roleType !== rolesList.secretary && (
-                  <td className="p-[10px]">
-                    <div
-                      className=" hover:underline font-bold text-center"
-                      title="Create case"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowCreateCase(true);
-                        setAppointmentId(appointment._id);
-                        setCustomerId(appointment.customerId._id);
-                      }}
-                    >
-                      Create case
-                    </div>
-                  </td>
-                )}
+                {user.roleType !== rolesList.secretary &&
+                  user.roleType !== rolesList.staff && (
+                    <td className="p-[10px]">
+                      <div
+                        className=" hover:underline font-bold text-center"
+                        title="Schedule Appointment"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowScheduler(true);
+                          setAppointmentId(appointment._id);
+                        }}
+                      >
+                        Schedule
+                      </div>
+                    </td>
+                  )}
+                {user.roleType !== rolesList.secretary &&
+                  user.roleType !== rolesList.staff && (
+                    <td className="p-[10px]">
+                      <div
+                        className=" hover:underline font-bold text-center"
+                        title="Create case"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowCreateCase(true);
+                          setAppointmentId(appointment._id);
+                          setCustomerId(appointment.customerId._id);
+                        }}
+                      >
+                        Create case
+                      </div>
+                    </td>
+                  )}
                 <td className="p-[10px]" onClick={(e) => e.stopPropagation()}>
                   <select
                     className=" p-1 outline-none border-none cursor-pointer bg-transparent "

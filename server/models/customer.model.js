@@ -10,7 +10,10 @@ const CustomerSchema = new Schema(
     customerEmail: { type: String },
     phoneNumber: { type: String },
     address: { type: String },
-    file: { type: String },
+    customerFile: {
+      fileName: { type: String },
+      file: { type: Buffer },
+    },
   },
   { timestamps: true }
 );

@@ -24,6 +24,12 @@ export const caseApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["Case"],
     }),
+    assigneCase: builder.mutation({
+      query: (query) => ({
+        url: `/assigne-case/${query.caseId}/${query.officeId}`,
+        method: "PATCH",
+      }),
+    }),
     updateCase: builder.mutation({
       query: (query) => ({
         url: `/update-case/${query.id}`,
@@ -53,6 +59,7 @@ export const {
   useCreateCaseMutation,
   useGetCasesQuery,
   useGetCaseQuery,
+  useAssigneCaseMutation,
   useUpdateCaseMutation,
   useUpdateCaseStatusMutation,
   useDeleteCaseMutation,

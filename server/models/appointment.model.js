@@ -12,7 +12,10 @@ const AppointmentSchema = new Schema(
       enum: ["Pending", "Canceled", "Completed"],
       default: "Pending",
     },
-    file: { type: String },
+    appointmentFile: {
+      fileName: { type: String },
+      file: { type: Buffer },
+    },
     caseId: { type: Schema.Types.ObjectId, ref: "Case" },
     category: { type: String },
   },

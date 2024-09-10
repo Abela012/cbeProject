@@ -10,7 +10,6 @@ export default function Registration() {
     firstName: "",
     middleName: "",
     lastName: "",
-    fullName: "",
     businessName: "",
     customerEmail: "",
     phoneNumber: "",
@@ -22,7 +21,16 @@ export default function Registration() {
     try {
       event.preventDefault();
       // console.log(customer);
-      const response = await registerCustomer({ ...customer }).unwrap();
+      const formData = new FormData();
+      formData.append("firstName", customer.firstName);
+      formData.append("middleName", customer.middleName);
+      formData.append("lastName", customer.lastName);
+      formData.append("businessName", customer.businessName);
+      formData.append("customerEmail", customer.customerEmail);
+      formData.append("phoneNuber", customer.phoneNumber);
+      formData.append("address", customer.address);
+      formData.append("file", customer.file);
+      const response = await registerCustomer(formData).unwrap();
       toast.success(response, {
         position: "bottom-right",
       });
@@ -35,7 +43,6 @@ export default function Registration() {
         firstName: "",
         middleName: "",
         lastName: "",
-        fullName: "",
         businessName: "",
         customerEmail: "",
         phoneNumber: "",
@@ -46,12 +53,19 @@ export default function Registration() {
   };
 
   let handleChange = (event) => {
-    let { name, value } = event.target;
-    setCustomer((prevValue) => {
-      return {
-        ...prevValue,
-        [name]: value,
-      };
+    let { name, value, files } = event.target;
+    setCustomer((prev) => {
+      if (name == "file") {
+        return {
+          ...prev,
+          [name]: files[0],
+        };
+      } else {
+        return {
+          ...prev,
+          [name]: value,
+        };
+      }
     });
   };
 
@@ -156,7 +170,7 @@ export default function Registration() {
           inputType="file"
           name="file"
           onChange={handleChange}
-          value={customer.file}
+          // value={customer.file}
         />
       </div>
       <div className=" w-full flex items-center justify-center font-bold ">
