@@ -6,7 +6,7 @@ export const appointmentApiSlice = apiSlice.injectEndpoints({
       query: (appointment) => ({
         url: "/create-appointment",
         method: "POST",
-        body: { ...appointment },
+        body: appointment,
       }),
       invalidatesTags: ["Appointment"],
     }),

@@ -8,7 +8,7 @@ export const scheduleSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { ...schedule },
       }),
-      invalidatesTags: ["Schedule"],
+      invalidatesTags: ["Schedule", "Appointment"],
     }),
     getScheduleList: builder.query({
       query: (query) => ({

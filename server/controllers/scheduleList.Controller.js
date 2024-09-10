@@ -32,13 +32,16 @@ const getScheduleList = async (req, res) => {
     const { officeId } = req.params;
     const foundSchedule = await ScheduleList.find({ officeId });
     const payload = foundSchedule.map(
-      ({ startTime, endTime, _id, ...rest }) => ({
-        ...rest,
+      ({ appointmentId, officeId, title, startTime, endTime, _id }) => ({
         id: _id,
+        appointmentId,
+        officeId,
+        title,
         start: startTime,
         end: endTime,
       })
     );
+
     return res.status(200).json(payload);
   } catch (error) {
     return res.status(500).json("Server error");

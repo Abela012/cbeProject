@@ -25,8 +25,8 @@ const CaseSchema = Schema(
     assignedOfficeIdList: [
       { type: Schema.Types.ObjectId, ref: "OfficeManagement" },
     ],
-    assignee: { type: String },
-    assigned: { type: String },
+    assignee: { type: Schema.Types.ObjectId, ref: "User" },
+    assigner: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

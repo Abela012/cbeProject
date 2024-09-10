@@ -99,7 +99,7 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
       officeId: "",
       appointmentId: "",
       allDay: false,
-      id: 0,
+      id: "",
     });
     setSelecteAppointmentId(null);
   }
@@ -128,7 +128,7 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
       //   officeId: "",
       //   appointmentId: "",
       allDay: false,
-      id: 0,
+      id: "",
     });
   }
 

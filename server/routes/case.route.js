@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  assigneCase,
   createCase,
   deleteCase,
   getCaseById,
@@ -26,6 +27,8 @@ caseRouter.post(
 caseRouter.get("/get-cases/:officeId", getCases);
 
 caseRouter.get("/get-case/:id", getCaseById);
+
+caseRouter.patch("/assigne-case/:caseId/:officeId", assigneCase);
 
 caseRouter.patch("/update-case/:id", updateCase);
 

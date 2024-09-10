@@ -31,7 +31,6 @@ const registreCustomer = async (req, res) => {
       customerEmail,
       phoneNumber,
       address,
-      catagory,
     } = req.body;
 
     let fullName = firstName + " " + middleName + " " + lastName;
@@ -45,11 +44,13 @@ const registreCustomer = async (req, res) => {
       customerEmail,
       phoneNumber,
       address,
-      catagory,
+      customerFile: { fileName: req.file.originalname, file: req.file.path },
     });
 
     return res.status(201).json("Customer registerd successfully");
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json("Server error");
   }
 };

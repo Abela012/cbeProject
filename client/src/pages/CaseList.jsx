@@ -5,6 +5,7 @@ import { MdDelete } from "react-icons/md";
 import SearchBar from "../components/searchBar/SearchBar";
 import Popup from "../components/Popup";
 import {
+  useAssigneCaseMutation,
   useDeleteCaseMutation,
   useGetCasesQuery,
   useUpdateCaseMutation,
@@ -17,12 +18,14 @@ import { useSelector } from "react-redux";
 import { getCurrentUser } from "../features/authSlice";
 import { rolesList } from "../util/userRoles";
 import EditCase from "../components/Edit/EditCase";
+import { useGetOfficesQuery } from "../features/officeApiSlice";
 
 const CaseStatus = ["Pending", "Canceled", "Completed"];
 
 function CaseList() {
   const user = useSelector(getCurrentUser);
   const [cases, setCases] = useState([]);
+  const [offices, setOffice] = useState();
   const [caseId, setCaseId] = useState(""); // holde case id to show case detail
 
   const [showCase, setShowCase] = useState(false);
@@ -41,7 +44,9 @@ function CaseList() {
     searchTerm: query,
     officeId: user.officeId,
   });
+  const { data: officeList } = useGetOfficesQuery();
   const [updateCase] = useUpdateCaseMutation();
+  const [updateCaseAssignement] = useAssigneCaseMutation();
   const [updateCaseStatus] = useUpdateCaseStatusMutation();
   const [deleteCase] = useDeleteCaseMutation();
 
@@ -61,6 +66,10 @@ function CaseList() {
     refetch();
   }, [location]);
 
+  useEffect(() => {
+    setOffice(officeList);
+  }, [officeList]);
+
   const handleCloseModal = () => {
     setShowCase(false);
     setShowEdit(false);
@@ -72,11 +81,27 @@ function CaseList() {
     handleCloseModal();
   };
 
-  const handleSCaseStateChange = async (caseid, e) => {
+  const handleSCaseAssignementChange = async (caseId, e) => {
+    try {
+      const response = await updateCaseAssignement({
+        officeId: e.target.value,
+        caseId: caseId,
+      }).unwrap();
+      toast.success(response, {
+        position: "bottom-right",
+      });
+    } catch (error) {
+      toast.error(error.data, {
+        position: "bottom-right",
+      });
+    }
+  };
+
+  const handleSCaseStateChange = async (caseId, e) => {
     try {
       const response = await updateCaseStatus({
         status: e.target.value,
-        id: caseid,
+        id: caseId,
       }).unwrap();
       toast.success(response, {
         position: "bottom-right",
@@ -102,6 +127,7 @@ function CaseList() {
             <th className="p-[10px]">Status</th>
             {user.roleType !== rolesList.staff && (
               <>
+                <th className="p-[10px]">Assigne/Assigned</th>
                 <th className="p-[10px]">Actions</th>
               </>
             )}
@@ -121,6 +147,7 @@ function CaseList() {
                 <td className="p-[10px]">{_case.customerId?.fullName}</td>
                 <td className="p-[10px]">{_case.caseNumber}</td>
                 <td className="p-[10px]">{_case.subject}</td>
+
                 <td className="p-[10px]" onClick={(e) => e.stopPropagation()}>
                   <select
                     className=" p-1 outline-none border-none cursor-pointer bg-transparent "
@@ -140,8 +167,29 @@ function CaseList() {
                     })}
                   </select>
                 </td>
+
                 {user.roleType !== rolesList.staff && (
                   <>
+                    <td
+                      className="p-[10px]"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <select
+                        className="p-1 outline-none border-none cursor-pointer bg-transparent "
+                        defaultValue={_case?.currentAssignedOfficeId}
+                        name="officeId"
+                        onChange={(e) =>
+                          handleSCaseAssignementChange(_case._id, e)
+                        }
+                      >
+                        <option value="">Select Office</option>
+                        {offices?.map((office) => (
+                          <option key={office._id} value={office._id}>
+                            {office.officeName}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
                     <td className="p-[10px]">
                       <div className="table_actions">
                         <Button

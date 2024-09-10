@@ -4,7 +4,7 @@ function CustNavLink({ linkName, children, linkPath, ...props }) {
   return (
     <NavLink
       to={linkPath}
-      className="text-sm flex gap-[5px] items-center p-[5px] justify-center sm:justify-start"
+      className="text-sm flex gap-[5px] items-center p-[10px] justify-center sm:justify-start"
       {...props}
     >
       {children}

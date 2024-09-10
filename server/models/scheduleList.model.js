@@ -2,6 +2,7 @@ import { model, Schema } from "mongoose";
 
 const ScheduleListSchema = Schema(
   {
+    title: { type: String },
     appointmentId: { type: Schema.Types.ObjectId, ref: "Appointment" },
     officeId: { type: Schema.Types.ObjectId, ref: "OfficeManagement" },
     title: {type: String},

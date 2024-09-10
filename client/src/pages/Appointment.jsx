@@ -34,7 +34,13 @@ function Appointment({ customerId, onClose }) {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      const resonse = await createAppointment(appointmentData).unwrap();
+      const formData = new FormData();
+      formData.append("staffId", appointmentData.staffId);
+      formData.append("officeId", appointmentData.officeId);
+      formData.append("customerId", appointmentData.customerId);
+      formData.append("customerEmail", appointmentData.customerEmail);
+      formData.append("file", appointmentData.file);
+      const resonse = await createAppointment(formData).unwrap();
       toast.success(resonse, {
         position: "bottom-right",
       });
@@ -49,14 +55,24 @@ function Appointment({ customerId, onClose }) {
         officeId: "",
         startTime: "",
         endTime: "",
+        file: "",
       });
       onClose();
     }
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setAppointmentData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, files } = e.target;
+    setAppointmentData((prev) => {
+      if (name == "file") {
+        return {
+          ...prev,
+          [name]: files[0],
+        };
+      } else {
+        return { ...prev, [name]: value };
+      }
+    });
   };
 
   return (
@@ -111,7 +127,7 @@ function Appointment({ customerId, onClose }) {
           lableName="Related file"
           inputType="file"
           name="file"
-          value={appointmentData.file}
+          // value={appointmentData.file}
           onChange={handleChange}
         />
 

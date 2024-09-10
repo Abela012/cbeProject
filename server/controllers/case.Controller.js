@@ -1,5 +1,6 @@
 import Case from "../models/case.model.js";
 import { v4 as uuidv4 } from "uuid";
+
 const createCase = async (req, res) => {
   try {
     const {
@@ -65,11 +66,29 @@ const getCaseById = async (req, res) => {
   try {
     const { id } = req.params;
     const foundCase = await Case.findOne({ _id: id }).populate(
-      "category customerId"
+      "category customerId currentAssignedOfficeId assignedOfficeIdList"
     );
     res.json(foundCase);
   } catch (error) {
     console.log(error);
+    return res.status(500).json("Server error");
+  }
+};
+
+const assigneCase = async (req, res) => {
+  try {
+    const { caseId, officeId } = req.params;
+
+    const updatedCaseAssignment = await Case.updateOne(
+      { _id: caseId },
+      {
+        assigner: req.user._id,
+        currentAssignedOfficeId: officeId,
+        $push: { assignedOfficeIdList: officeId },
+      }
+    );
+    return res.status(200).json("Case assigned successfully");
+  } catch (error) {
     return res.status(500).json("Server error");
   }
 };
@@ -125,6 +144,7 @@ export {
   createCase,
   getCases,
   getCaseById,
+  assigneCase,
   updateCase,
   updateCaseStatus,
   deleteCase,

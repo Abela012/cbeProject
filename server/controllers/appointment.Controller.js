@@ -10,7 +10,7 @@ const createAppointment = async (req, res) => {
       staffId,
       customerId,
       officeId,
-      file,
+      appointmentFile: { fileName: req.file.originalname, file: req.file.path },
     });
     return res.status(201).json("Appointment created successfully");
   } catch (error) {
