@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import Role from "../models/role.model.js";
+import bcrypt from "bcrypt";
 
 const getUsers = async (req, res) => {
   try {
@@ -60,12 +61,30 @@ const updateUser = async (req, res) => {
   }
 };
 
+const updateUserPassword = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { newPassword } = req.body;
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { password: hashedPassword }
+    );
+    return res.status(200).json("User password updated");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("Server error");
+  }
+};
+
 const updateUserRole = async (req, res) => {
   try {
     const { id } = req.params;
     const { role } = req.body;
 
-    const updatedCase = await User.findOneAndUpdate(
+    const updatedUser = await User.findOneAndUpdate(
       { _id: id },
       { roleType: role }
     );
@@ -109,4 +128,11 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { getUsers, getUser, updateUser, updateUserRole, deleteUser };
+export {
+  getUsers,
+  getUser,
+  updateUser,
+  updateUserPassword,
+  updateUserRole,
+  deleteUser,
+};

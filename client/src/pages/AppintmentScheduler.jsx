@@ -2,10 +2,7 @@ import { useEffect, useState } from "react";
 import OverLay from "../components/OverLay";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin, {
-  Draggable,
-  //   DropArg,
-} from "@fullcalendar/interaction";
+import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 
 import { useGetOfficesQuery } from "../features/officeApiSlice";
@@ -17,8 +14,12 @@ import {
   useCreateScheduleMutation,
   useDeleteScheduleMutation,
   useGetScheduleListQuery,
+  useUpdateScheduleMutation,
 } from "../features/schedulerApiSlice";
 import EditEvent from "../components/EditEvent";
+import Button from "../components/button/Button";
+import { IoIosClose } from "react-icons/io";
+import { toast } from "react-toastify";
 
 function AppintmentScheduler({ appointmentId, handleClose }) {
   const user = useSelector(getCurrentUser);
@@ -44,7 +45,7 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
     officeId: user.officeId,
   });
   const [createSchedules] = useCreateScheduleMutation();
-  const [deleteSchedule] = useDeleteScheduleMutation();
+  const [updateSchedule] = useUpdateScheduleMutation();
 
   useEffect(() => {
     setOffice(officeList);
@@ -68,27 +69,33 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
     setShowModal(true);
   }
 
-  function addEvent(data) {
-    console.log("data", data);
-
-    const event = {
-      ...newSchedule,
-      start: data.date.toISOString(),
-      title: data.draggedEl.innerText,
-      allDay: data.allDay,
-      id: new Date().getTime(),
-    };
-    setAllEvents([...allEvents, event]);
+  async function handleEventDrop(data) {
+    try {
+      const event = {
+        id: data.event.id,
+        title: data.event.title,
+        start: data.event.start,
+        end: data.event.end,
+      };
+      const response = await updateSchedule(event).unwrap();
+      toast.success(response, {
+        position: "bottom-right",
+      });
+    } catch (error) {
+      toast.error(error.data, {
+        position: "bottom-right",
+      });
+    }
   }
-  
-  function handleEventModal(data){
+
+  function handleEventModal(data) {
     setEventChange(true);
     setSelecteAppointmentId(data.event.id);
- }
+  }
 
- const handleCloseEdit = () => {
-  set
- }
+  // const handleCloseEdit = () => {
+
+  // };
 
   function handleCloseModal() {
     setShowModal(false);
@@ -114,32 +121,48 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
     }));
   };
 
-
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    createSchedules(newSchedule);
-
-    setAllEvents([...allEvents, newSchedule]);
-    setShowModal(false);
-    setNewSchedule({
-      title: "",
-      start: "",
-      end: "",
-      //   officeId: "",
-      //   appointmentId: "",
-      allDay: false,
-      id: "",
-    });
+    try {
+      const response = await createSchedules(newSchedule).unwrap();
+      toast.success(response, {
+        position: "bottom-right",
+      });
+      setAllEvents([...allEvents, newSchedule]);
+      setShowModal(false);
+      setNewSchedule({
+        title: "",
+        start: "",
+        end: "",
+        //   officeId: "",
+        //   appointmentId: "",
+        allDay: false,
+        id: "",
+      });
+    } catch (error) {
+      toast.error(error.data, {
+        position: "bottom-right",
+      });
+    }
   }
 
-  const handleCloseEditSchedule =() => {
-    setEventChange(false)
-  }
+  const handleCloseEditSchedule = () => {
+    setEventChange(false);
+  };
 
   return (
     <OverLay handleClick={handleClose}>
-      <div className=" flex flex-col gap-2 bg-white w-[95%] h-[95%] overflow-auto p-5 rounded">
-        <div className="relative flex flex-col">
+      <div className=" relative flex flex-col gap-2 bg-white w-[95%] h-[95%] overflow-auto p-5 pt-9 rounded">
+        <Button
+          onClick={() => {
+            handleClose();
+          }}
+          className=" absolute right-0 top-[5px] !p-0 z-20 border-none !bg-transparent"
+        >
+          <IoIosClose size={26} />
+        </Button>
+
+        {/* <div className="relative flex flex-col">
           <label className=" font-bold mb-[5px] text-sm" htmlFor="">
             Office
           </label>
@@ -157,7 +180,8 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
               </option>
             ))}
           </select>
-        </div>
+        </div> */}
+
         <div>
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
@@ -173,23 +197,25 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
             droppable={true}
             selectable={true}
             selectMirror={true}
+            eventResizableFromStart={true}
             eventColor="#a21caf"
             showNonCurrentDates={false}
             slotDuration="00:10:00"
-            slotMinTime="02:00:00"
+            slotMinTime="08:00:00"
             slotMaxTime="16:30:00"
+            // slotEventOverlap={false}
+            hiddenDays={[0]}
             eventTimeFormat={{
               hour: "numeric",
               minute: "2-digit",
               hour12: true,
             }}
-            // validRange={(nowDate) => {
-            //   return {
-            //     start: nowDate,
-            //   };
+            // eventMouseEnter={(arg) => {
+            //   console.log(arg.event);
             // }}
             dateClick={handleDateClick}
-            // drop={(data) => addEvent(data)}
+            eventDrop={(data) => handleEventDrop(data)}
+            eventResize={(data) => handleEventDrop(data)}
             eventClick={(data) => handleEventModal(data)}
           />
         </div>
@@ -201,16 +227,13 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
             handleCloseModal={handleCloseModal}
           />
         )}
-        
-        {
-          eventChange && (
-             <EditEvent
-             selecteAppointmentId={selecteAppointmentId}
-             handleCloseModal={handleCloseEditSchedule}
-             />
-          )
-        }
-       
+
+        {eventChange && (
+          <EditEvent
+            selecteAppointmentId={selecteAppointmentId}
+            handleCloseModal={handleCloseEditSchedule}
+          />
+        )}
       </div>
     </OverLay>
   );

@@ -8,6 +8,8 @@ import {
 import OverLay from "../OverLay.jsx";
 import { toast } from "react-toastify";
 import { useGetOfficesQuery } from "../../features/officeApiSlice.js";
+import Button from "../button/Button.jsx";
+import EditUserPassword from "./EditUserPassword.jsx";
 
 function EditUser({ userId, onClose }) {
   const [edit, setEdit] = useState({
@@ -21,6 +23,7 @@ function EditUser({ userId, onClose }) {
   const [updateUserData] = useUpdateUserMutation();
   const { data: officeList } = useGetOfficesQuery();
   const [offices, setOffice] = useState();
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   useEffect(() => {
     setOffice(officeList);
@@ -125,9 +128,28 @@ function EditUser({ userId, onClose }) {
           </select>
         </div>
 
-        <button type="submit" className="btn btn-submit">
+        <div>
+          <span
+            className="hover:underline"
+            onClick={() => {
+              setShowChangePassword(!showChangePassword);
+            }}
+          >
+            Change password
+          </span>
+          {showChangePassword && (
+            <EditUserPassword
+              handleCollapse={() => {
+                setShowChangePassword(!showChangePassword);
+              }}
+              userId={userId}
+            />
+          )}
+        </div>
+
+        <Button type="submit" className=" self-end">
           Submit
-        </button>
+        </Button>
       </form>
     </OverLay>
   );

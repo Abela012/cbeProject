@@ -32,9 +32,10 @@ export const scheduleSlice = apiSlice.injectEndpoints({
       providesTags: ["Schedule"],
     }),
     updateSchedule: builder.mutation({
-      query: (id) => ({
+      query: ({ id, ...schedule }) => ({
         url: `/update-schedule/${id}`,
         method: "PATCH",
+        body: { ...schedule },
       }),
       invalidatesTags: ["Schedule"],
     }),

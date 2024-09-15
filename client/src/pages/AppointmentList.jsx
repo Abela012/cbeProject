@@ -166,9 +166,9 @@ function AppointmentList() {
                 </td>
                 {user.roleType !== rolesList.secretary &&
                   user.roleType !== rolesList.staff && (
-                    <td className="p-[10px]">
+                    <td className=" h-12">
                       <div
-                        className=" hover:underline font-bold text-center"
+                        className=" hover:underline font-bold text-center h-full grid place-items-center"
                         title="Schedule Appointment"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -182,9 +182,9 @@ function AppointmentList() {
                   )}
                 {user.roleType !== rolesList.secretary &&
                   user.roleType !== rolesList.staff && (
-                    <td className="p-[10px]">
+                    <td className=" h-12">
                       <div
-                        className=" hover:underline font-bold text-center"
+                        className=" hover:underline font-bold text-center h-full grid place-items-center"
                         title="Create case"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -197,9 +197,9 @@ function AppointmentList() {
                       </div>
                     </td>
                   )}
-                <td className="p-[10px]" onClick={(e) => e.stopPropagation()}>
+                <td className=" h-12" onClick={(e) => e.stopPropagation()}>
                   <select
-                    className=" p-1 outline-none border-none cursor-pointer bg-transparent "
+                    className=" p-1 outline-none border-none cursor-pointer bg-transparent h-full grid place-items-center"
                     defaultValue={appointment.status}
                     onChange={(e) =>
                       handleAppointmentStateChange(appointment._id, e)

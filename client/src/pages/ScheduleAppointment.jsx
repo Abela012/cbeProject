@@ -14,13 +14,15 @@ function ScheduleAppointment({
         <h3 className="text-base font-semibold leading-6 text-gray-900">
           Add Event
         </h3>
-        <form action="submit" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <div className="mt-2">
             <FormInput
               lableName="Title"
               inputName="title"
               type="text"
               name="title"
+              autoFocus={true}
+              required={true}
               value={newSchedule.title}
               onChange={(e) => handleChange(e)}
               placeholder="Title"
@@ -29,7 +31,9 @@ function ScheduleAppointment({
               lableName="Start"
               inputName="start"
               name="start"
+              min={new Date().toISOString().slice(0, 16)}
               type="datetime-local"
+              required={true}
               value={newSchedule.start}
               onChange={(e) => handleChange(e)}
             />
@@ -37,7 +41,9 @@ function ScheduleAppointment({
               lableName="End"
               inputName="end"
               name="end"
+              min={new Date().toISOString().slice(0, 16)}
               type="datetime-local"
+              required={true}
               value={newSchedule.end}
               onChange={(e) => handleChange(e)}
             />

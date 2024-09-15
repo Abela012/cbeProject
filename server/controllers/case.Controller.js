@@ -41,7 +41,15 @@ const getCases = async (req, res) => {
     ) {
       let query = req.query.q;
       const cases = await Case.find({
-        $and: [{ caseNumber: new RegExp(query) }, { officeId: officeId }],
+        $and: [
+          { caseNumber: new RegExp(query) },
+          {
+            $or: [
+              { officeId: officeId },
+              { currentAssignedOfficeId: officeId },
+            ],
+          },
+        ],
       }).populate({
         path: "customerId",
         // select: "customerName email phone",
@@ -50,7 +58,9 @@ const getCases = async (req, res) => {
       return res.json(cases);
     }
 
-    const cases = await Case.find({ officeId }).populate({
+    const cases = await Case.find({
+      $or: [{ officeId: officeId }, { currentAssignedOfficeId: officeId }],
+    }).populate({
       path: "customerId",
       // select: "customerName email phone",
     });
