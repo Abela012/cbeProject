@@ -4,7 +4,7 @@ import Customer from "../models/customer.model.js";
 const createAppointment = async (req, res) => {
   try {
     // console.log(req.body);
-    const { staffId, customerId, officeId, file } = req.body;
+    const { staffId, customerId, officeId } = req.body;
 
     const newAppointment = await Appointment.create({
       staffId,
@@ -12,6 +12,8 @@ const createAppointment = async (req, res) => {
       officeId,
       appointmentFile: { fileName: req.file.originalname, file: req.file.path },
     });
+    console.log(req.file);
+
     return res.status(201).json("Appointment created successfully");
   } catch (error) {
     console.log(error);
@@ -56,7 +58,7 @@ const getAppointmentById = async (req, res) => {
     const appointement = await Appointment.findOne({ _id: id }).populate(
       "customerId"
     );
-    res.json(appointement);
+    return res.json(appointement);
   } catch (error) {
     console.log(error);
     return res.status(500).json("Server error");

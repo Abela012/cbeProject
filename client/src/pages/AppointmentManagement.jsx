@@ -20,7 +20,7 @@ function AppointmentManagement() {
             </>
           )}
       </nav>
-      <div className="flex items-center justify-center">
+      <div className="flex justify-center">
         <Outlet />
       </div>
     </div>

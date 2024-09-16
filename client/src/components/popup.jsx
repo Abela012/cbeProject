@@ -26,7 +26,39 @@ function Popup({ appointmentId, caseId, onClose }) {
     }, [caseData]);
   }
 
-  // console.log(pop);
+  console.log(pop);
+  function isValidBase64(base64String) {
+    // Regular expression to validate Base64 strings
+    const base64Regex =
+      /^(?:[A-Za-z0-9+/]{4})*?(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+    return base64Regex.test(base64String);
+  }
+  function base64ToBlob(base64Data) {
+    console.log(base64Data);
+    if (
+      !isValidBase64(
+        "QzpcUFJPR1JBfjFcS01TcGljb1x0ZW1wXDFmZjY0ZjI3ZmUxNDc4MWM3ZTMxYzliZGI4ZDkzNmM3"
+      )
+    ) {
+      throw new Error("Invalid Base64 string");
+    }
+    if (base64Data) {
+      const byteCharacters = atob(
+        "QzpcUFJPR1JBfjFcS01TcGljb1x0ZW1wXDFmZjY0ZjI3ZmUxNDc4MWM3ZTMxYzliZGI4ZDkzNmM3"
+      );
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      return new Blob([byteArray]);
+    }
+  }
+  function openFile(base64Data) {
+    const blob = base64ToBlob(base64Data);
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank");
+  }
 
   return (
     <OverLay handleClick={onClose}>
@@ -93,7 +125,14 @@ function Popup({ appointmentId, caseId, onClose }) {
             {pop.appointmentFile?.fileName && (
               <div>
                 <p>{pop.appointmentFile?.fileName}</p>
-                <a href={pop.appointmentFile?.file.data}>file</a>
+                <a
+                  href="#"
+                  onClick={() => {
+                    openFile(pop.appointmentFile?.file.data);
+                  }}
+                >
+                  File
+                </a>
               </div>
             )}
           </div>

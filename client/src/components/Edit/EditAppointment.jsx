@@ -7,6 +7,7 @@ import {
 import FormInput from "../forminput/FormInput.jsx";
 import { toast } from "react-toastify";
 import OverLay from "../OverLay.jsx";
+import Button from "../button/Button.jsx";
 
 function EditAppointment({ appId, onClose }) {
   const [edit, setedit] = useState({
@@ -126,12 +127,9 @@ function EditAppointment({ appId, onClose }) {
             />
           </div>
         </div>
-
-        <div className="appointmentschedule">Scheduler</div>
-
-        <button type="submit" className="btn btn-submit">
+        <Button type="submit" className="btn btn-submit">
           Submit
-        </button>
+        </Button>
       </form>
     </OverLay>
   );
