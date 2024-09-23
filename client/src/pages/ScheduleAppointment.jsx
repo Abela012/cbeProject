@@ -31,7 +31,7 @@ function ScheduleAppointment({
               lableName="Start"
               inputName="start"
               name="start"
-              min={new Date().toISOString().slice(0, 16)}
+              min={new Date().toISOString().slice(0, 11) + "08:00"}
               type="datetime-local"
               required={true}
               value={newSchedule.start}
@@ -41,7 +41,7 @@ function ScheduleAppointment({
               lableName="End"
               inputName="end"
               name="end"
-              min={new Date().toISOString().slice(0, 16)}
+              min={new Date().toISOString().slice(0, 11) + "08:00"}
               type="datetime-local"
               required={true}
               value={newSchedule.end}

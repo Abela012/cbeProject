@@ -7,7 +7,7 @@ import EditSchedule from "./EditSchedule";
 import { useDeleteScheduleMutation } from "../features/schedulerApiSlice";
 import { toast } from "react-toastify";
 
-const EditEvent = ({ handleCloseModal, selecteAppointmentId }) => {
+const EditEvent = ({ handleCloseModal, selecteAppointmentId, allEvents }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditEvent, setShowEditEvent] = useState(false);
   const [deleteSchedule] = useDeleteScheduleMutation();
@@ -76,6 +76,7 @@ const EditEvent = ({ handleCloseModal, selecteAppointmentId }) => {
 
       {showEditEvent && (
         <EditSchedule
+          allEvents={allEvents}
           handleCloseEdit={handleCloseEdit}
           handleCloseModal={handleCloseModal}
           selecteAppointmentId={selecteAppointmentId}

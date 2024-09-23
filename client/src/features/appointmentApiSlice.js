@@ -24,6 +24,13 @@ export const appointmentApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["Appointment"],
     }),
+    getAppointmentFile: builder.mutation({
+      query: ({ id }) => ({
+        url: `/view-file/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Appointment"],
+    }),
     updateAppointment: builder.mutation({
       query: ({ id, ...appointment }) => ({
         url: `/update-appointment/${id}`,
@@ -53,6 +60,7 @@ export const {
   useCreateAppointmentMutation,
   useGetAppointmentsQuery,
   useGetAppointmentQuery,
+  useGetAppointmentFileMutation,
   useUpdateAppointmentMutation,
   useUpdateAppointmentStatusMutation,
   useDeleteAppointmentMutation,

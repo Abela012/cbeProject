@@ -21,7 +21,7 @@ import OfficeList from "./pages/OfficeList";
 import AppointmentManagement from "./pages/AppointmentManagement";
 import RoleManagement from "./pages/RoleManagement";
 import RoleList from "./pages/RoleList";
-
+import Scheduler from "./pages/Scheduler";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -91,6 +91,10 @@ const router = createBrowserRouter([
                   },
                 ],
               },
+              {
+                path: "schedule",
+                element: <Scheduler />,
+              },
             ],
           },
         ],
@@ -128,6 +132,10 @@ const router = createBrowserRouter([
                   },
                 ],
               },
+              {
+                path: "scheduler",
+                element: <Scheduler />,
+              },
             ],
           },
         ],
@@ -145,10 +153,10 @@ const router = createBrowserRouter([
             path: "",
             element: <Layout />,
             children: [
-              {
-                path: "manage-appointment",
-                element: <AppointmentList />,
-              },
+              // {
+              //   path: "manage-appointment",
+              //   element: <AppointmentList />,
+              // },
               {
                 path: "case-management",
                 element: <CaseManagement />,

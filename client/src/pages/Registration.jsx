@@ -3,9 +3,11 @@ import Button from "../components/button/Button.jsx";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useRegisterCustomerMutation } from "../features/customerApiSlice.js";
+import { useNavigate } from "react-router-dom";
 
 export default function Registration() {
   const [registerCustomer] = useRegisterCustomerMutation();
+  const navigate = useNavigate();
   const [customer, setCustomer] = useState({
     firstName: "",
     middleName: "",
@@ -27,13 +29,14 @@ export default function Registration() {
       formData.append("lastName", customer.lastName);
       formData.append("businessName", customer.businessName);
       formData.append("customerEmail", customer.customerEmail);
-      formData.append("phoneNuber", customer.phoneNumber);
+      formData.append("phoneNumber", customer.phoneNumber);
       formData.append("address", customer.address);
       formData.append("file", customer.file);
       const response = await registerCustomer(formData).unwrap();
       toast.success(response, {
         position: "bottom-right",
       });
+      navigate("appointment-list");
     } catch (error) {
       toast.error(error.data, {
         position: "bottom-right",
@@ -169,8 +172,8 @@ export default function Registration() {
           inputName="file"
           inputType="file"
           name="file"
-          onChange={handleChange}
           // value={customer.file}
+          onChange={handleChange}
         />
       </div>
       <div className=" w-full flex items-center justify-center font-bold ">

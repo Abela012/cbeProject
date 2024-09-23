@@ -36,7 +36,7 @@ function EditAppointment({ appId, onClose }) {
         category: appointmentData.category,
       });
     }
-    // console.log(response.data);
+    // console.log(appointmentData);
   }, [appointmentData]);
 
   const submit = async (e) => {
@@ -120,7 +120,7 @@ function EditAppointment({ appId, onClose }) {
               onChange={(e) =>
                 setedit({
                   ...edit,
-                  phone: e.target.value,
+                  phoneNumber: e.target.value,
                 })
               }
               required

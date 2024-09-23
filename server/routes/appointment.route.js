@@ -4,6 +4,7 @@ import {
   createAppointment,
   deleteAppointment,
   getAppointmentById,
+  getAppointmentByIdForFileView,
   getAppointments,
   updateAppointment,
   updateAppointmentStatus,
@@ -44,6 +45,16 @@ appointmentRouter.get(
     rolesList.cos
   ),
   getAppointmentById
+);
+appointmentRouter.get(
+  "/view-file/:id",
+  verifyRole(
+    rolesList.secretary,
+    rolesList.president,
+    rolesList.vp,
+    rolesList.cos
+  ),
+  getAppointmentByIdForFileView
 );
 
 appointmentRouter.patch(

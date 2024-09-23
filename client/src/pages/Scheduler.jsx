@@ -1,27 +1,26 @@
 import { useEffect, useState } from "react";
-import OverLay from "../components/OverLay";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 
 import { useGetOfficesQuery } from "../features/officeApiSlice";
-import ScheduleAppointment from "./ScheduleAppointment";
 import { useSelector } from "react-redux";
 import { getCurrentUser } from "../features/authSlice";
 import {
   useCreateScheduleMutation,
-  useDeleteScheduleMutation,
   useGetScheduleListQuery,
   useUpdateScheduleMutation,
 } from "../features/schedulerApiSlice";
+
 import EditEvent from "../components/EditEvent";
+import ScheduleAppointment from "./ScheduleAppointment";
 import Button from "../components/button/Button";
 import { IoIosClose } from "react-icons/io";
 import { toast } from "react-toastify";
 import { formatTimeForEAT } from "../util/formatTime";
 
-function AppintmentScheduler({ appointmentId, handleClose }) {
+function Scheduler() {
   const user = useSelector(getCurrentUser);
   const { data: officeList } = useGetOfficesQuery();
   const [offices, setOffice] = useState();
@@ -37,7 +36,6 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
     date: "",
     title: "",
     allDay: false,
-    appointmentId: appointmentId,
     officeId: user.officeId,
   });
 
@@ -61,7 +59,6 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
       start: arg.date,
       allDay: false,
       id: new Date().getTime(),
-      appointmentId: appointmentId,
       officeId: user.officeId,
     });
     setShowModal(true);
@@ -92,10 +89,6 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
     setEventChange(true);
     setSelecteAppointmentId(data.event.id);
   }
-
-  // const handleCloseEdit = () => {
-
-  // };
 
   function handleCloseModal() {
     setShowModal(false);
@@ -181,98 +174,76 @@ function AppintmentScheduler({ appointmentId, handleClose }) {
   };
 
   return (
-    <OverLay handleClick={handleClose}>
-      <div className=" relative flex flex-col gap-2 bg-white w-[95%] h-[95%] overflow-auto p-5 pt-9 rounded">
-        <Button
-          onClick={() => {
-            handleClose();
+    <div className=" relative flex flex-col gap-2 bg-white w-[95%] h-[95%] overflow-auto p-5 pt-9 rounded">
+      <Button
+        onClick={() => {
+          handleClose();
+        }}
+        className=" absolute right-0 top-[5px] !p-0 z-20 border-none !bg-transparent"
+      >
+        <IoIosClose size={26} />
+      </Button>
+
+      <div>
+        <FullCalendar
+          plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+          forceEventDuration={true}
+          headerToolbar={{
+            left: "prev,next today",
+            center: "title",
+            right: "timeGridDay,dayGridMonth,timeGridWeek",
           }}
-          className=" absolute right-0 top-[5px] !p-0 z-20 border-none !bg-transparent"
-        >
-          <IoIosClose size={26} />
-        </Button>
-
-        {/* <div className="relative flex flex-col">
-          <label className=" font-bold mb-[5px] text-sm" htmlFor="">
-            Office
-          </label>
-          <select
-            className="case_category p-[10px] outline-none rounded-md border-solid border-2 border-br-gray"
-            required={true}
-            value={newSchedule?.officeId}
-            name="officeId"
-            onChange={() => {}}
-          >
-            <option value="">Select Office</option>
-            {offices?.map((office) => (
-              <option key={office._id} value={office._id}>
-                {office.officeName}
-              </option>
-            ))}
-          </select>
-        </div> */}
-
-        <div>
-          <FullCalendar
-            plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-            forceEventDuration={true}
-            headerToolbar={{
-              left: "prev,next today",
-              center: "title",
-              right: "timeGridDay,dayGridMonth,timeGridWeek",
-            }}
-            events={allEvents}
-            nowIndicator={true}
-            editable={true}
-            droppable={true}
-            selectable={true}
-            selectMirror={true}
-            eventResizableFromStart={true}
-            eventColor="#a21caf"
-            showNonCurrentDates={false}
-            slotDuration="00:10:00"
-            slotMinTime="08:00:00"
-            slotMaxTime="16:30:00"
-            slotEventOverlap={false}
-            eventOverlap={function (stillEvent, movingEvent) {
-              toast.warning("You can not overlap schedules", {
-                position: "bottom-right",
-              });
-            }}
-            hiddenDays={[0]}
-            eventTimeFormat={{
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: true,
-            }}
-            // eventMouseEnter={(arg) => {
-            //   console.log(arg.event);
-            // }}
-            dateClick={handleDateClick}
-            eventDrop={(data) => handleEventDrop(data)}
-            eventResize={(data) => handleEventDrop(data)}
-            eventClick={(data) => handleEventModal(data)}
-          />
-        </div>
-        {showmodal && (
-          <ScheduleAppointment
-            handleSubmit={handleSubmit}
-            handleChange={handleChange}
-            newSchedule={newSchedule}
-            handleCloseModal={handleCloseModal}
-          />
-        )}
-
-        {eventChange && (
-          <EditEvent
-            allEvents={allEvents} // use to check if there is overlap
-            selecteAppointmentId={selecteAppointmentId}
-            handleCloseModal={handleCloseEditSchedule}
-          />
-        )}
+          events={allEvents}
+          nowIndicator={true}
+          editable={true}
+          droppable={true}
+          selectable={true}
+          selectMirror={true}
+          eventResizableFromStart={true}
+          eventColor="#a21caf"
+          showNonCurrentDates={false}
+          slotDuration="00:10:00"
+          slotMinTime="08:00:00"
+          slotMaxTime="16:30:00"
+          slotEventOverlap={false}
+          eventOverlap={function (stillEvent, movingEvent) {
+            toast.warning("You can not overlap schedules", {
+              position: "bottom-right",
+            });
+          }}
+          hiddenDays={[0]}
+          eventTimeFormat={{
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          }}
+          // eventMouseEnter={(arg) => {
+          //   console.log(arg.event);
+          // }}
+          dateClick={handleDateClick}
+          eventDrop={(data) => handleEventDrop(data)}
+          eventResize={(data) => handleEventDrop(data)}
+          eventClick={(data) => handleEventModal(data)}
+        />
       </div>
-    </OverLay>
+      {showmodal && (
+        <ScheduleAppointment
+          handleSubmit={handleSubmit}
+          handleChange={handleChange}
+          newSchedule={newSchedule}
+          handleCloseModal={handleCloseModal}
+        />
+      )}
+
+      {eventChange && (
+        <EditEvent
+          allEvents={allEvents} // use to check if there is overlap
+          selecteAppointmentId={selecteAppointmentId}
+          handleCloseModal={handleCloseEditSchedule}
+        />
+      )}
+    </div>
   );
 }
 
-export default AppintmentScheduler;
+export default Scheduler;

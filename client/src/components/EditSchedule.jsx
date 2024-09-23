@@ -13,9 +13,11 @@ const EditSchedule = ({
   handleCloseModal,
   selecteAppointmentId,
   handleCloseEdit,
+  allEvents,
 }) => {
   //use
   const [newSchedule, setNewSchedule] = useState({
+    appointmentId: selecteAppointmentId,
     title: "",
     start: "",
     end: "",
@@ -37,11 +39,31 @@ const EditSchedule = ({
   async function handleUpdate(event) {
     event.preventDefault();
     try {
-      const response = await updateSchedule(newSchedule).unwrap();
-      toast.success(response, {
-        position: "bottom-right",
-      });
-      handleCloseModal();
+      if (allEvents.length > 0) {
+        const foundSchedule = allEvents.find(async (scheduel) => {
+          if (
+            formatTimeForEAT(scheduel.start) <
+              formatTimeForEAT(newSchedule.end) &&
+            formatTimeForEAT(newSchedule.start) < formatTimeForEAT(scheduel.end)
+          ) {
+            toast.warning("You can not overlap schedules", {
+              position: "bottom-right",
+            });
+          } else {
+            const response = await updateSchedule(newSchedule).unwrap();
+            toast.success(response, {
+              position: "bottom-right",
+            });
+            handleCloseModal();
+          }
+        });
+      } else {
+        const response = await updateSchedule(newSchedule).unwrap();
+        toast.success(response, {
+          position: "bottom-right",
+        });
+        handleCloseModal();
+      }
     } catch (error) {
       toast.error(error.data, {
         position: "bottom-right",
