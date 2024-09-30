@@ -148,9 +148,9 @@ function CaseList() {
                 <td className="p-[10px]">{_case.caseNumber}</td>
                 <td className="p-[10px]">{_case.subject}</td>
 
-                <td className="p-[10px]" onClick={(e) => e.stopPropagation()}>
+                <td className=" h-12" onClick={(e) => e.stopPropagation()}>
                   <select
-                    className=" p-1 outline-none border-none cursor-pointer bg-transparent "
+                    className=" p-1 h-full outline-none border-none cursor-pointer bg-transparent "
                     defaultValue={_case.status}
                     onChange={(e) => handleSCaseStateChange(_case._id, e)}
                     disabled={
@@ -170,12 +170,9 @@ function CaseList() {
 
                 {user.roleType !== rolesList.staff && (
                   <>
-                    <td
-                      className="p-[10px]"
-                      onClick={(e) => e.stopPropagation()}
-                    >
+                    <td className=" h-12" onClick={(e) => e.stopPropagation()}>
                       <select
-                        className="p-1 outline-none border-none cursor-pointer bg-transparent "
+                        className="p-1 h-full outline-none border-none cursor-pointer bg-transparent "
                         defaultValue={_case?.currentAssignedOfficeId}
                         name="officeId"
                         onChange={(e) =>

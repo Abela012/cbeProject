@@ -44,7 +44,7 @@ const registreCustomer = async (req, res) => {
       customerEmail,
       phoneNumber,
       address,
-      customerFile: { fileName: req.file.originalname, file: req.file.path },
+      customerFile: { fileName: req.file.filename, file: req.file.path },
     });
 
     return res.status(201).json("Customer registerd successfully");

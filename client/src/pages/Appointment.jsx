@@ -31,6 +31,19 @@ function Appointment({ customerId, onClose }) {
     setCustomers(response.data);
   };
 
+  const converToBase64 = async (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        resolve(fileReader);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
@@ -40,6 +53,7 @@ function Appointment({ customerId, onClose }) {
       formData.append("customerId", appointmentData.customerId);
       formData.append("customerEmail", appointmentData.customerEmail);
       formData.append("file", appointmentData.file);
+
       const resonse = await createAppointment(formData).unwrap();
       toast.success(resonse, {
         position: "bottom-right",
@@ -61,8 +75,9 @@ function Appointment({ customerId, onClose }) {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value, files } = e.target;
+
     setAppointmentData((prev) => {
       if (name == "file") {
         return {

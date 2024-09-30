@@ -43,6 +43,10 @@ function SideBar() {
               <MdWindow size={20} />
             </CustNavLink>
 
+            <CustNavLink linkName="Scheduler" linkPath="scheduler">
+              <LuMenuSquare size={20} />
+            </CustNavLink>
+
             <CustNavLink linkName="Case Mangagement" linkPath="case-management">
               <LuMenuSquare size={20} />
             </CustNavLink>
@@ -51,12 +55,12 @@ function SideBar() {
         {(user.roleType === rolesList.boredMembers ||
           user.roleType === rolesList.staff) && (
           <>
-            <CustNavLink
+            {/* <CustNavLink
               linkName="Manage Appointment"
               linkPath="manage-appointment"
             >
               <MdWindow size={20} />
-            </CustNavLink>
+            </CustNavLink> */}
 
             <CustNavLink
               linkName="Case Mangagement"
@@ -102,7 +106,7 @@ function SideBar() {
 
       <div className=" flex gap-[10px] sm:gap-[5px] flex-col pb-[15px]">
         <div className="flex gap-[5px] flex-wrap leading-[1.5] text-sm">
-          <Avatar src="../default_u.jfif" size="" />
+          <Avatar src="../usericon.png" size="" />
           <div className=" hidden sm:block">
             <p className=" font-bold">{user.name}</p>
             <p className=" font-light">{user.email}</p>
