@@ -1,6 +1,13 @@
 import { CiLogin } from "react-icons/ci";
 import { MdWindow } from "react-icons/md";
-import { NavLink, useNavigate } from "react-router-dom";
+import { FaUserAlt } from "react-icons/fa";
+import { FaUserPlus } from "react-icons/fa";
+import { BiSolidCategoryAlt } from "react-icons/bi";
+
+import { RiCalendarScheduleFill } from "react-icons/ri";
+import { AiFillSchedule } from "react-icons/ai";
+
+import { useNavigate } from "react-router-dom";
 import { LuMenuSquare } from "react-icons/lu";
 import Avatar from "../avatar/Avatar";
 import { useSelector } from "react-redux";
@@ -40,11 +47,11 @@ function SideBar() {
               linkName="Manage Appointment"
               linkPath="manage-appointment"
             >
-              <MdWindow size={20} />
+              <AiFillSchedule size={20} />
             </CustNavLink>
 
             <CustNavLink linkName="Scheduler" linkPath="scheduler">
-              <LuMenuSquare size={20} />
+              <RiCalendarScheduleFill size={20} />
             </CustNavLink>
 
             <CustNavLink linkName="Case Mangagement" linkPath="case-management">
@@ -73,18 +80,18 @@ function SideBar() {
         {user.roleType === rolesList.admin && (
           <>
             <CustNavLink linkName="Manage User" linkPath="user-mangement">
-              <MdWindow size={20} />
+              <FaUserAlt size={20} />
             </CustNavLink>
 
             <CustNavLink linkName="Manage Role" linkPath="role-mangement">
-              <MdWindow size={20} />
+              <FaUserPlus size={20} />
             </CustNavLink>
 
             <CustNavLink
               linkName="Manage Category"
               linkPath="category-mangement"
             >
-              <MdWindow size={20} />
+              <BiSolidCategoryAlt size={20} />
             </CustNavLink>
 
             <CustNavLink linkName="Manage Office" linkPath="office-mangement">
