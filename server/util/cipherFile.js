@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import fs from "fs";
+import path from "path";
 
 const algorithm = "aes-256-cbc";
 const key = crypto.randomBytes(32); // Generate a random key
@@ -58,13 +59,17 @@ export async function retrieveAndDecryptFile(fileDoc) {
 
   decryptedChunks.push(decipher.update(fileDoc.file));
   decryptedChunks.push(decipher.final());
-  console.log("decipher ", decryptedChunks);
 
   const decryptedBuffer = Buffer.concat(decryptedChunks);
+  const outputPath = "./temp/" + fileDoc.fileName;
 
   // Save the decrypted file locally
-  //   fs.writeFileSync(`decrypted_${filename}`, decryptedBuffer);
-  //   console.log(`File ${filename} decrypted and saved as decrypted_${filename}.`);
+  fs.writeFile(outputPath, decryptedBuffer, (err) => {
+    if (err) {
+      console.error("Error writing PDF file");
+    }
+    // console.error("PDF file created successfully");
+  });
   return decryptedBuffer;
 }
 

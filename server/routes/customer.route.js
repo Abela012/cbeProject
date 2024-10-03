@@ -2,6 +2,7 @@ import express from "express";
 import verifyRole from "../middleware/verifyRole.js";
 import rolesList from "../config/roles_list.js";
 import {
+  getAppointmentByIdForFileView,
   getCustomer,
   registreCustomer,
 } from "../controllers/customer.Controller.js";
@@ -21,5 +22,15 @@ customerRoute.post(
   registreCustomer
 );
 customerRoute.get("/get-customer", getCustomer);
+customerRoute.get(
+  "/view-customer-file/:id",
+  verifyRole(
+    rolesList.secretary,
+    rolesList.president,
+    rolesList.vp,
+    rolesList.cos
+  ),
+  getAppointmentByIdForFileView
+);
 
 export default customerRoute;

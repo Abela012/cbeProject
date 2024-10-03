@@ -12,7 +12,9 @@ const CustomerSchema = new Schema(
     address: { type: String },
     customerFile: {
       fileName: { type: String },
-      file: { type: String },
+      file: { type: Buffer },
+      key: { type: String },
+      iv: { type: String },
     },
   },
   { timestamps: true }
