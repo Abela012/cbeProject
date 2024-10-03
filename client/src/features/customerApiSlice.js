@@ -8,6 +8,13 @@ export const customerApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getCustomerFile: builder.mutation({
+      query: ({ id }) => ({
+        url: `/view-customer-file/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Appointment"],
+    }),
     registerCustomer: builder.mutation({
       query: (formData) => ({
         url: "/customer-registration",
@@ -18,5 +25,8 @@ export const customerApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetCustomerMutation, useRegisterCustomerMutation } =
-  customerApiSlice;
+export const {
+  useGetCustomerMutation,
+  useGetCustomerFileMutation,
+  useRegisterCustomerMutation,
+} = customerApiSlice;

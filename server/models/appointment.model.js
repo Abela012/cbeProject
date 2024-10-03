@@ -14,7 +14,9 @@ const AppointmentSchema = new Schema(
     },
     appointmentFile: {
       fileName: { type: String },
-      file: { type: String },
+      file: { type: Buffer },
+      key: { type: String },
+      iv: { type: String },
     },
     caseId: { type: Schema.Types.ObjectId, ref: "Case" },
     category: { type: String },

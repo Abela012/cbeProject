@@ -33,7 +33,7 @@ app.use(
 );
 
 app.use(helmet());
-app.use(express.static("./uploads"));
+app.use(express.static("./temp"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json({ limit: "100mb" }));
 

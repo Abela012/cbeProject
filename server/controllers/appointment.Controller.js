@@ -2,6 +2,10 @@ import { unlink } from "fs";
 import Appointment from "../models/appointment.model.js";
 import Customer from "../models/customer.model.js";
 import ScheduleList from "../models/scheduleList.model.js";
+import {
+  encryptAndStoreFile,
+  retrieveAndDecryptFile,
+} from "../util/cipherFile.js";
 
 const createAppointment = async (req, res) => {
   try {
@@ -15,6 +19,7 @@ const createAppointment = async (req, res) => {
       });
       return res.status(201).json("Appointment created successfully");
     }
+    const { content, key, iv } = await encryptAndStoreFile(req.file.path);
 
     const newAppointment = await Appointment.create({
       staffId,
@@ -22,7 +27,9 @@ const createAppointment = async (req, res) => {
       officeId,
       appointmentFile: {
         fileName: req.file.filename,
-        file: req.file.path,
+        file: content,
+        key,
+        iv,
       },
     });
 
@@ -70,8 +77,16 @@ const getAppointmentById = async (req, res) => {
     const { id } = req.params;
     const appointement = await Appointment.findOne(
       { _id: id },
-      { appointmentFile: 0 }
-    ).populate("customerId");
+      {
+        startTime: 1,
+        endTime: 1,
+        "appointmentFile.fileName": 1,
+      }
+    ).populate({
+      path: "customerId",
+      select:
+        "fullName phoneNumber customerEmail businessName address customerFile.fileName ",
+    });
     return res.json(appointement);
   } catch (error) {
     console.log(error);
@@ -82,13 +97,22 @@ const getAppointmentById = async (req, res) => {
 const getAppointmentByIdForFileView = async (req, res) => {
   try {
     const { id } = req.params;
-    const appointementFile = await Appointment.findOne(
+    const foundAppointmentFile = await Appointment.findOne(
       {
         _id: id,
       },
       { appointmentFile: 1, _id: 0 }
     );
-    return res.json(appointementFile);
+    const { appointmentFile } = foundAppointmentFile;
+    const result = await retrieveAndDecryptFile(appointmentFile);
+    // console.log(appointmentFile);
+    setTimeout(() => {
+      unlink("./temp/" + appointmentFile.fileName, (err) => {
+        if (err) throw err;
+        console.log(appointmentFile.fileName + " was deleted");
+      });
+    }, 60 * 60 * 1000);
+    return res.json(foundAppointmentFile);
   } catch (error) {
     console.log(error);
     return res.status(500).json("Server error");
@@ -161,11 +185,6 @@ const deleteAppointment = async (req, res) => {
     const { id } = req.params;
     const appointment = await Appointment.findOneAndDelete({ _id: id });
     const shcedule = await ScheduleList.findOneAndDelete({ appointmentId: id });
-    // Delete file related to the appointment
-    unlink(appointment.appointmentFile.file, (err) => {
-      if (err) throw err;
-      // console.log(appointment.appointmentFile.file + " was deleted");
-    });
     // console.log(appointment);
     return res.json(appointment);
   } catch (error) {

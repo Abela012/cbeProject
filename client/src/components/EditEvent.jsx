@@ -37,7 +37,7 @@ const EditEvent = ({ handleCloseModal, selecteAppointmentId, allEvents }) => {
         position: "bottom-right",
       });
     } catch (error) {
-      toast.success(error, {
+      toast.error(error, {
         position: "bottom-right",
       });
     }
