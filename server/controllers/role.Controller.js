@@ -9,7 +9,7 @@ const getRoles = async (req, res) => {
     ) {
       let query = req.query.q;
       const foundRoles = await Role.find({
-        roleType: new RegExp(query, "i"),
+        roleName: new RegExp(query, "i"),
       });
 
       return res.json(foundRoles);

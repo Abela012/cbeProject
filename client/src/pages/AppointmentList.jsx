@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Popup from "../components/Popup.jsx";
 import SearchBar from "../components/searchBar/SearchBar";
 import { useLocation, useSearchParams } from "react-router-dom";
@@ -19,6 +19,10 @@ import Button from "../components/button/Button.jsx";
 import Appointment from "./Appointment.jsx";
 import Case from "./Case.jsx";
 import AppintmentScheduler from "./AppintmentScheduler.jsx";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+} from "material-react-table";
 
 const AppointmentStatus = ["Pending", "Canceled", "Completed"];
 
@@ -45,13 +49,190 @@ function AppointmentList() {
     name: "",
   }); // hold the appointment to be deleted
   const location = useLocation();
-  const { data, refetch } = useGetAppointmentsQuery({
+  const { data, refetch, isLoading, isFetching } = useGetAppointmentsQuery({
     searchTerm: query,
     officeId: user.officeId,
   });
 
   const [updateAppointmentStatus] = useUpdateAppointmentStatusMutation();
   const [deleteAppointment] = useDeleteAppointmentMutation();
+
+  //
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "customerId.fullName", //simple recommended way to define a column
+        header: "Customer Name",
+        // muiTableHeadCellProps: { style: { color: "green" } }, //custom props
+        enableHiding: false, //disable a feature for this column
+      },
+      {
+        accessorKey: "startTime", //simple recommended way to define a column
+        header: "Start time",
+        accessorFn: (dataRow) => {
+          if (dataRow.startTime) {
+            return new Date(dataRow.startTime).toLocaleString();
+          } else {
+            return "Not set";
+          }
+        },
+        enableHiding: false, //disable a feature for this column
+      },
+      {
+        accessorKey: "endTime", //simple recommended way to define a column
+        header: "End time",
+        accessorFn: (dataRow) => {
+          if (dataRow.endTime) {
+            return new Date(dataRow.endTime).toLocaleString();
+          } else {
+            return "Not set";
+          }
+        },
+        enableHiding: false, //disable a feature for this column
+      },
+      {
+        id: "schedule", //id required if you use accessorFn instead of accessorKey
+        header: "Schedule Appointment",
+        enableColumnFilter: false,
+        Cell: ({ cell }) => (
+          <>
+            <div
+              className=" hover:underline font-bold text-center h-full grid place-items-center"
+              title="Schedule Appointment"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowScheduler(true);
+                setAppointmentId(cell.getValue());
+              }}
+            >
+              Schedule
+            </div>
+          </>
+        ),
+      },
+      {
+        id: "createCase", //id required if you use accessorFn instead of accessorKey
+        header: "Create case",
+        enableColumnFilter: false,
+        Cell: ({ row }) => (
+          <div
+            className=" hover:underline font-bold text-center h-full grid place-items-center"
+            title="Create case"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowCreateCase(true);
+              setAppointmentId(row.original._id);
+              setCustomerId(row.original.customerId._id);
+            }}
+          >
+            Create case
+          </div>
+        ),
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        filterFn: "equals",
+        filterSelectOptions: ["Pending", "Canceled", "Completed"],
+        filterVariant: "select",
+        Cell: ({ row }) => (
+          <select
+            className=" p-1 outline-none border-none cursor-pointer bg-transparent h-full grid place-items-center"
+            defaultValue={row.original.status}
+            onChange={(e) => handleAppointmentStateChange(row.original._id, e)}
+            disabled={
+              user.roleType == rolesList.boredMembers ||
+              user.roleType == rolesList.staff
+            }
+          >
+            {AppointmentStatus.map((value) => {
+              if (value == row.original.status) {
+                return (
+                  <option key={value} value={row.original.status}>
+                    {row.original.status}
+                  </option>
+                );
+              } else {
+                return (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                );
+              }
+            })}
+          </select>
+        ),
+      },
+      {
+        id: "actions",
+        header: "Actions",
+        enableColumnFilter: false,
+        Cell: ({ row }) => (
+          <div className="table_actions">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setAppId(row.original._id);
+                showEditModal();
+              }}
+            >
+              <MdEdit size={20} color="green" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDelete(true);
+                setAppToBeDelete((prev) => ({
+                  ...prev,
+                  itemId: row.original._id,
+                  name: row.original.customerId?.fullName,
+                }));
+              }}
+            >
+              <MdDelete size={20} color="red" />
+            </button>
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  const table = useMaterialReactTable({
+    columns,
+    data: appointments, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+    state: {
+      showProgressBars: isFetching,
+      columnVisibility: {
+        schedule:
+          user.roleType !== rolesList.secretary &&
+          user.roleType !== rolesList.staff
+            ? true
+            : false,
+        createCase:
+          user.roleType !== rolesList.secretary &&
+          user.roleType !== rolesList.staff
+            ? true
+            : false,
+        actions: user.roleType !== rolesList.staff ? true : false,
+      },
+    },
+    muiSkeletonProps: {
+      animation: "wave",
+    },
+    muiTableBodyRowProps: ({ row }) => ({
+      onClick: (event) => {
+        setAppointmentId(row.original._id);
+        Show();
+      },
+      sx: {
+        cursor: "pointer", //you might want to change the cursor too when adding an onClick
+      },
+    }),
+    enableRowSelection: false, //enable some features
+    enableColumnOrdering: true, //enable a feature for all columns
+    enableGlobalFilter: false, //turn off a feature
+  });
 
   function showEditModal() {
     setShowEdit(true);
@@ -118,149 +299,8 @@ function AppointmentList() {
           Create Appointment
         </Button>
       </div>
-      <table className=" text-sm w-full bg-white p-5 rounded-lg border-collapse ">
-        <thead className=" text-left">
-          <tr className=" border-solid border-2 border-gray-300">
-            <th className="p-[10px]">Customer Name</th>
-            <th className="p-[10px]">Office Id</th>
-            <th className="p-[10px]">Start Time</th>
-            <th className="p-[10px]">End Time</th>
-            {user.roleType !== rolesList.secretary &&
-              user.roleType !== rolesList.staff && (
-                <th className="p-[10px]">Schedule Appointment</th>
-              )}
-            {user.roleType !== rolesList.secretary &&
-              user.roleType !== rolesList.staff && (
-                <th className="p-[10px]">Create Case</th>
-              )}
-            <th className="p-[10px]">Status</th>
-            {user.roleType !== rolesList.staff && (
-              <>
-                <th className="p-[10px]">Actions</th>
-              </>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {appointments?.map((appointment, idx) => {
-            return (
-              <tr
-                className="hover:bg-light-gray hover:cursor-pointer border-solid border-2 border-gray-300"
-                key={appointment._id}
-                onClick={() => {
-                  setAppointmentId(appointment._id);
-                  Show();
-                }}
-              >
-                <td className="p-[10px]">{appointment.customerId?.fullName}</td>
-                <td className="p-[10px]">{appointment.officeId.officeName}</td>
-                <td className="p-[10px]">
-                  {appointment.startTime
-                    ? new Date(appointment.startTime).toLocaleString()
-                    : "Not set"}
-                </td>
-                <td className="p-[10px]">
-                  {appointment.endTime
-                    ? new Date(appointment.endTime).toLocaleString()
-                    : "Not set"}
-                </td>
-                {user.roleType !== rolesList.secretary &&
-                  user.roleType !== rolesList.staff && (
-                    <td className=" h-12">
-                      <div
-                        className=" hover:underline font-bold text-center h-full grid place-items-center"
-                        title="Schedule Appointment"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowScheduler(true);
-                          setAppointmentId(appointment._id);
-                        }}
-                      >
-                        Schedule
-                      </div>
-                    </td>
-                  )}
-                {user.roleType !== rolesList.secretary &&
-                  user.roleType !== rolesList.staff && (
-                    <td className=" h-12">
-                      <div
-                        className=" hover:underline font-bold text-center h-full grid place-items-center"
-                        title="Create case"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowCreateCase(true);
-                          setAppointmentId(appointment._id);
-                          setCustomerId(appointment.customerId._id);
-                        }}
-                      >
-                        Create case
-                      </div>
-                    </td>
-                  )}
-                <td className=" h-12" onClick={(e) => e.stopPropagation()}>
-                  <select
-                    className=" p-1 outline-none border-none cursor-pointer bg-transparent h-full grid place-items-center"
-                    defaultValue={appointment.status}
-                    onChange={(e) =>
-                      handleAppointmentStateChange(appointment._id, e)
-                    }
-                    disabled={
-                      user.roleType == rolesList.boredMembers ||
-                      user.roleType == rolesList.staff
-                    }
-                  >
-                    {AppointmentStatus.map((value) => {
-                      if (value == appointment.status) {
-                        return (
-                          <option key={value} value={appointment.status}>
-                            {appointment.status}
-                          </option>
-                        );
-                      } else {
-                        return (
-                          <option key={value} value={value}>
-                            {value}
-                          </option>
-                        );
-                      }
-                    })}
-                  </select>
-                </td>
-                {user.roleType !== rolesList.staff && (
-                  <>
-                    <td className="p-[10px]">
-                      <div className="table_actions">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setAppId(appointment._id);
-                            showEditModal();
-                          }}
-                        >
-                          <MdEdit size={20} color="green" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowDelete(true);
-                            setAppToBeDelete((prev) => ({
-                              ...prev,
-                              itemId: appointment._id,
-                              name: appointment.customerId?.fullName,
-                            }));
-                          }}
-                        >
-                          <MdDelete size={20} color="red" />
-                        </button>
-                      </div>
-                    </td>
-                  </>
-                )}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <MaterialReactTable table={table} />
+
       {showCreate && (
         <Appointment
           customerId={customerId}

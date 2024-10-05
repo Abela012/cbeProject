@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { MdDelete, MdEdit } from "react-icons/md";
 import {
@@ -6,12 +6,15 @@ import {
   useGetRolesQuery,
 } from "../features/roleApiSlice";
 
-import EditCategory from "../components/Edit/EditCategory";
 import DeleteConfirmation from "../components/DeleteConfirmation";
 import SearchBar from "../components/searchBar/SearchBar";
 import Button from "../components/button/Button";
 import CreateRole from "./CreateRole";
 import EditRole from "../components/Edit/EditRole";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+} from "material-react-table";
 
 function RoleList() {
   const [roles, setRoles] = useState([]);
@@ -29,8 +32,59 @@ function RoleList() {
     itemId: "",
     name: "",
   });
-  const { data, refetch } = useGetRolesQuery(query);
+  const { data, refetch, isFetching } = useGetRolesQuery(query);
   const [deleteRole] = useDeleteRoleMutation();
+
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "roleName",
+        header: "Role name",
+      },
+      {
+        id: "actions",
+        header: "Actions",
+        Cell: ({ row }) => (
+          <div className="table_actions">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setRoleId(row.original._id);
+                showEditModal();
+              }}
+            >
+              <MdEdit size={20} color="green" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDelete(true);
+                setRoleToBeDelete((prev) => ({
+                  ...prev,
+                  itemId: row.original._id,
+                  name: row.original.roleName,
+                }));
+              }}
+            >
+              <MdDelete size={20} color="red" />
+            </button>
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  const table = useMaterialReactTable({
+    columns,
+    data: roles,
+    state: {
+      showProgressBars: isFetching,
+    },
+    enableRowSelection: false,
+    enableColumnOrdering: true,
+    enableGlobalFilter: false,
+  });
 
   const handleCreateClick = () => {
     setShowCreate((prev) => !prev);
@@ -63,56 +117,11 @@ function RoleList() {
   return (
     <div className=" w-full h-full rounde-d-[10px] flex flex-col gap-2">
       <div className="flex gap-3">
-        <SearchBar className=" !w-full" placeholder="Search category" />
+        <SearchBar className=" !w-full" placeholder="Search role" />
         <Button onClick={handleCreateClick}>Create</Button>
       </div>
-      <table className=" text-sm w-full bg-white p-5 rounded-lg border-collapse ">
-        <thead className=" text-left">
-          <tr className=" border-solid border-2 border-gray-300">
-            <th className="p-[10px]">Role name</th>
-            <th className="p-[10px]">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {roles?.map((role, idx) => {
-            return (
-              <tr
-                className="hover:bg-light-gray hover:cursor-pointer border-solid border-2 border-gray-300"
-                key={role._id}
-              >
-                <td className="p-[10px]">{role.roleName}</td>
+      <MaterialReactTable table={table} />
 
-                <td className="p-[10px]">
-                  <div className="table_actions">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setRoleId(role._id);
-                        showEditModal();
-                      }}
-                    >
-                      <MdEdit size={20} color="green" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowDelete(true);
-                        setRoleToBeDelete((prev) => ({
-                          ...prev,
-                          itemId: role._id,
-                          name: role.roleName,
-                        }));
-                      }}
-                    >
-                      <MdDelete size={20} color="red" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
       {showCreate && <CreateRole handleClose={handleCreateClick} />}
       {showEdit && <EditRole roleId={roleId} handleClick={CloseEdit} />}
       {showDelete && (
