@@ -50,6 +50,7 @@ const getCases = async (req, res) => {
             ],
           },
         ],
+        isDeleted: false,
       }).populate({
         path: "customerId",
         // select: "customerName email phone",
@@ -60,6 +61,7 @@ const getCases = async (req, res) => {
 
     const cases = await Case.find({
       $or: [{ officeId: officeId }, { currentAssignedOfficeId: officeId }],
+      isDeleted: false,
     }).populate({
       path: "customerId",
       // select: "customerName email phone",
@@ -75,7 +77,10 @@ const getCases = async (req, res) => {
 const getCaseById = async (req, res) => {
   try {
     const { id } = req.params;
-    const foundCase = await Case.findOne({ _id: id }).populate(
+    const foundCase = await Case.findOne({
+      _id: id,
+      isDeleted: false,
+    }).populate(
       "category customerId currentAssignedOfficeId assignedOfficeIdList"
     );
     res.json(foundCase);
@@ -141,7 +146,11 @@ const updateCaseStatus = async (req, res) => {
 const deleteCase = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedCase = await Case.findOneAndDelete({ _id: id });
+    // const deletedCase = await Case.findOneAndDelete({ _id: id });
+    const deletedCase = await Case.findOneAndUpdate(
+      { _id: id },
+      { isDeleted: true }
+    );
     // console.log(deletedCase);
     return res.status(204).json("Case deleted");
   } catch (error) {

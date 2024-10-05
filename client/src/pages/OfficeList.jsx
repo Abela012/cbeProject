@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import SearchBar from "../components/searchBar/SearchBar";
 import { MdEdit } from "react-icons/md";
@@ -11,6 +11,10 @@ import {
 } from "../features/officeApiSlice";
 import DeleteConfirmation from "../components/DeleteConfirmation";
 import EditOffice from "../components/Edit/EditOffice";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+} from "material-react-table";
 
 function OfficeList() {
   const [offices, setOffices] = useState([]);
@@ -28,8 +32,59 @@ function OfficeList() {
     itemId: "",
     name: "",
   });
-  const { data, refetch } = useGetOfficesQuery(query);
+  const { data, refetch, isFetching } = useGetOfficesQuery(query);
   const [deleteOffice] = useDeleteOfficeMutation();
+
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "officeName",
+        header: "Office name",
+      },
+      {
+        id: "actions",
+        header: "Actions",
+        Cell: ({ row }) => (
+          <div className="table_actions">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setOfficeId(row.original._id);
+                showEditModal();
+              }}
+            >
+              <MdEdit size={20} color="green" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDelete(true);
+                setOfficeToBeDelete((prev) => ({
+                  ...prev,
+                  itemId: row.original._id,
+                  name: row.original.officeName,
+                }));
+              }}
+            >
+              <MdDelete size={20} color="red" />
+            </button>
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  const table = useMaterialReactTable({
+    columns,
+    data: offices,
+    state: {
+      showProgressBars: isFetching,
+    },
+    enableRowSelection: false,
+    enableColumnOrdering: true,
+    enableGlobalFilter: false,
+  });
 
   const handleCreateClick = () => {
     setShowCreate((prev) => !prev);
@@ -65,53 +120,8 @@ function OfficeList() {
         <SearchBar className=" !w-full" placeholder="Search office" />
         <Button onClick={handleCreateClick}>Create</Button>
       </div>
-      <table className=" text-sm w-full bg-white p-5 rounded-lg border-collapse ">
-        <thead className=" text-left">
-          <tr className=" border-solid border-2 border-gray-300">
-            <th className="p-[10px]">Office name</th>
-            <th className="p-[10px]">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {offices?.map((office, idx) => {
-            return (
-              <tr
-                className="hover:bg-light-gray hover:cursor-pointer border-solid border-2 border-gray-300"
-                key={office._id}
-              >
-                <td className="p-[10px]">{office.officeName}</td>
+      <MaterialReactTable table={table} />
 
-                <td className="p-[10px]">
-                  <div className="table_actions">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setOfficeId(office._id);
-                        showEditModal();
-                      }}
-                    >
-                      <MdEdit size={20} color="green" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowDelete(true);
-                        setOfficeToBeDelete((prev) => ({
-                          ...prev,
-                          itemId: office._id,
-                          name: office.officeName,
-                        }));
-                      }}
-                    >
-                      <MdDelete size={20} color="red" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
       {showCreate && <CreateOffice handleClick={handleCreateClick} />}
       {showEdit && <EditOffice officeId={officeId} handleClick={CloseEdit} />}
       {showDelete && (

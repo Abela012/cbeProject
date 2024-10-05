@@ -8,7 +8,7 @@ export function getRoleBasedPath(role) {
   } else if (rolesList.cos == role) {
     return "/cos/manage-appointment";
   } else if (rolesList.boredMembers == role || rolesList.staff == role) {
-    return "/bs/manage-appointment/case-management/case-list";
+    return "/bs/case-management/case-list";
   } else if (rolesList.admin == role) {
     return "/admin/user-mangement";
   }

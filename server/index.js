@@ -39,35 +39,6 @@ app.use(express.json({ limit: "100mb" }));
 
 app.use("/auth", authRouter);
 
-// //#region Test
-// import fs from "fs";
-// import path from "path";
-// import { fileURLToPath } from "url";
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-// const PORT = 3000;
-
-// // Middleware to parse JSON
-// app.use(express.json({ limit: "10mb" }));
-
-// // Define the Base64 string directly in the code
-// const base64String = "";
-
-// const buffer = Buffer.from(base64String, "base64");
-
-// // Define the output file path
-// const outputPath = path.join(__dirname, "output.pdf");
-
-// // Write the buffer to a PDF file
-// fs.writeFile(outputPath, buffer, (err) => {
-//   if (err) {
-//     //return res.status(500).send("Error writing PDF file");
-//   }
-//   //res.send("PDF file created successfully");
-// });
-
-// //#endregion test end
-
 app.use(isAuthenticated);
 app.use("/", appointmentRouter);
 app.use("/", caseRouter);

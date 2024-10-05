@@ -20,6 +20,7 @@ const AppointmentSchema = new Schema(
     },
     caseId: { type: Schema.Types.ObjectId, ref: "Case" },
     category: { type: String },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

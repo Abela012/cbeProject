@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { MdDelete, MdEdit } from "react-icons/md";
 import {
@@ -10,6 +10,10 @@ import EditCategory from "../components/Edit/EditCategory";
 import DeleteConfirmation from "../components/DeleteConfirmation";
 import SearchBar from "../components/searchBar/SearchBar";
 import Button from "../components/button/Button";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+} from "material-react-table";
 
 function CategoryList() {
   const [categorys, setCategories] = useState([]);
@@ -27,8 +31,59 @@ function CategoryList() {
     itemId: "",
     name: "",
   });
-  const { data, refetch } = useGetCategoriesQuery(query);
+  const { data, refetch, isFetching } = useGetCategoriesQuery(query);
   const [deleteCategory] = useDeleteCategoryMutation();
+
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "categoryName",
+        header: "category name",
+      },
+      {
+        id: "actions",
+        header: "Actions",
+        Cell: ({ row }) => (
+          <div className="table_actions">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setCategoryId(row.original._id);
+                showEditModal();
+              }}
+            >
+              <MdEdit size={20} color="green" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDelete(true);
+                setCategoryToBeDelete((prev) => ({
+                  ...prev,
+                  itemId: row.original._id,
+                  name: row.original.categoryName,
+                }));
+              }}
+            >
+              <MdDelete size={20} color="red" />
+            </button>
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  const table = useMaterialReactTable({
+    columns,
+    data: categorys,
+    state: {
+      showProgressBars: isFetching,
+    },
+    enableRowSelection: false,
+    enableColumnOrdering: true,
+    enableGlobalFilter: false,
+  });
 
   const handleCreateClick = () => {
     setShowCreate((prev) => !prev);
@@ -64,53 +119,8 @@ function CategoryList() {
         <SearchBar className=" !w-full" placeholder="Search category" />
         <Button onClick={handleCreateClick}>Create</Button>
       </div>
-      <table className=" text-sm w-full bg-white p-5 rounded-lg border-collapse ">
-        <thead className=" text-left">
-          <tr className=" border-solid border-2 border-gray-300">
-            <th className="p-[10px]">Category name</th>
-            <th className="p-[10px]">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categorys?.map((category, idx) => {
-            return (
-              <tr
-                className="hover:bg-light-gray hover:cursor-pointer border-solid border-2 border-gray-300"
-                key={category._id}
-              >
-                <td className="p-[10px]">{category.categoryName}</td>
+      <MaterialReactTable table={table} />
 
-                <td className="p-[10px]">
-                  <div className="table_actions">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCategoryId(category._id);
-                        showEditModal();
-                      }}
-                    >
-                      <MdEdit size={20} color="green" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowDelete(true);
-                        setCategoryToBeDelete((prev) => ({
-                          ...prev,
-                          itemId: category._id,
-                          name: category.categoryName,
-                        }));
-                      }}
-                    >
-                      <MdDelete size={20} color="red" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
       {showCreate && <CreateCategory handleClose={handleCreateClick} />}
       {showEdit && (
         <EditCategory categoryId={categoryId} handleClick={CloseEdit} />

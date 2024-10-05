@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SearchBar from "../components/searchBar/SearchBar.jsx";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
@@ -17,6 +17,10 @@ import { capitalizeFirstLetter } from "../util/capitalize.js";
 import Button from "../components/button/Button.jsx";
 import CreateUser from "./CreateUser.jsx";
 import { useGetRolesQuery } from "../features/roleApiSlice.js";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+} from "material-react-table";
 
 function UserList() {
   const [users, setUsers] = useState([]);
@@ -34,10 +38,92 @@ function UserList() {
     name: "",
   }); // hold the user to be deleted
   const location = useLocation();
-  const { data, refetch } = useGetUsersQuery(query);
+  const { data, refetch, isFetching } = useGetUsersQuery(query);
   const { data: roles } = useGetRolesQuery();
   const [updateUserRole] = useUpdateUserRoleMutation();
   const [deleteUser] = useDeleteUserMutation();
+
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "name",
+        header: "User name",
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+      },
+      {
+        accessorKey: "roleType",
+        header: "Role",
+        Cell: ({ row }) => (
+          <select
+            className=" p-1 outline-none border-none cursor-pointer bg-transparent "
+            defaultValue={row.original.roleType?._id}
+            onChange={(e) => handleCaseStateChange(e, row.original._id)}
+          >
+            {roles?.map((role) => {
+              if (role.roleType == row.original.roleType?.roleType) {
+                return (
+                  <option key={role._id} value={role._id}>
+                    {role.roleName}
+                  </option>
+                );
+              } else {
+                return (
+                  <option key={role._id} value={role._id}>
+                    {role.roleName}
+                  </option>
+                );
+              }
+            })}
+          </select>
+        ),
+      },
+      {
+        id: "actions",
+        header: "Actions",
+        Cell: ({ row }) => (
+          <div className="table_actions">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setUserId(row.original._id);
+                showEditModal();
+              }}
+            >
+              <MdEdit size={20} color="green" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDelete(true);
+                setUserToBeDelete((prev) => ({
+                  ...prev,
+                  itemId: row.original._id,
+                  name: row.original.name,
+                }));
+              }}
+            >
+              <MdDelete size={20} color="red" />
+            </button>
+          </div>
+        ),
+      },
+    ],
+    [roles]
+  );
+
+  const table = useMaterialReactTable({
+    columns,
+    data: users,
+    state: {
+      showProgressBars: isFetching,
+    },
+    enableRowSelection: false,
+    enableColumnOrdering: true,
+    enableGlobalFilter: false,
+  });
 
   const handleCreateClick = () => {
     setShowCreate((prev) => !prev);
@@ -98,79 +184,8 @@ function UserList() {
         <SearchBar className=" !w-full" placeholder="Search by name or email" />
         <Button onClick={handleCreateClick}>Create</Button>
       </div>
-      <table className=" text-sm w-full bg-white p-5 rounded-lg border-collapse ">
-        <thead className=" text-left">
-          <tr className=" border-solid border-2 border-gray-300">
-            <th className="p-[10px]">User Name</th>
-            <th className="p-[10px]">Email</th>
-            <th className="p-[10px]">Role</th>
-            <th className="p-[10px]">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users?.map((user, idx) => {
-            return (
-              <tr
-                className="hover:bg-light-gray hover:cursor-pointer border-solid border-2 border-gray-300"
-                key={user._id}
-              >
-                <td className="p-[10px]">{user.name}</td>
-                <td className="p-[10px]">{user.email}</td>
+      <MaterialReactTable table={table} />
 
-                <td className="p-[10px]" onClick={(e) => e.stopPropagation()}>
-                  <select
-                    className=" p-1 outline-none border-none cursor-pointer bg-transparent "
-                    defaultValue={user.roleType?._id}
-                    onChange={(e) => handleCaseStateChange(e, user._id)}
-                  >
-                    {roles?.map((role) => {
-                      if (role.roleType == user.roleType?.roleType) {
-                        return (
-                          <option key={role._id} value={role._id}>
-                            {role.roleName}
-                          </option>
-                        );
-                      } else {
-                        return (
-                          <option key={role._id} value={role._id}>
-                            {role.roleName}
-                          </option>
-                        );
-                      }
-                    })}
-                  </select>
-                </td>
-                <td className="p-[10px]">
-                  <div className="table_actions">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setUserId(user._id);
-                        showEditModal();
-                      }}
-                    >
-                      <MdEdit size={20} color="green" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowDelete(true);
-                        setUserToBeDelete((prev) => ({
-                          ...prev,
-                          itemId: user._id,
-                          name: user.name,
-                        }));
-                      }}
-                    >
-                      <MdDelete size={20} color="red" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
       {showCreate && <CreateUser handleClose={handleCreateClick} />}
       {showEdit && <EditUser userId={userId} onClose={CloseEdit} />}
       {showDelete && (

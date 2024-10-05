@@ -36,10 +36,14 @@ const createSchedule = async (req, res) => {
     return res.status(500).json("Server error");
   }
 };
+
 const getScheduleList = async (req, res) => {
   try {
     const { officeId } = req.params;
-    const foundSchedule = await ScheduleList.find({ officeId });
+    const foundSchedule = await ScheduleList.find({
+      officeId,
+      isDeleted: false,
+    });
     const payload = foundSchedule.map(
       ({ appointmentId, officeId, title, startTime, endTime, _id }) => ({
         id: _id,
@@ -60,7 +64,10 @@ const getScheduleList = async (req, res) => {
 const getSchedule = async (req, res) => {
   try {
     const { id } = req.params;
-    const foundSchedule = await ScheduleList.findOne({ _id: id });
+    const foundSchedule = await ScheduleList.findOne({
+      _id: id,
+      isDeleted: false,
+    });
     const payload = {
       id: foundSchedule._id,
       title: foundSchedule.title,
@@ -96,10 +103,14 @@ const updateSchedule = async (req, res) => {
     return res.status(500).json("Server error");
   }
 };
+
 const deleteSchedule = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedSchedule = await ScheduleList.deleteOne({ _id: id });
+    const deletedSchedule = await ScheduleList.updateOne(
+      { _id: id },
+      { isDeleted: true }
+    );
     return res.json("Schedule deleted");
   } catch (error) {
     return res.status(500).json("Server error");

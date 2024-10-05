@@ -46,7 +46,10 @@ const getAppointments = async (req, res) => {
 
     if (req.query.q != "null" && req.query.q !== undefined) {
       let query = req.query.q;
-      const appointments = await Appointment.find({ officeId }).populate({
+      const appointments = await Appointment.find({
+        officeId,
+        isDeleted: false,
+      }).populate({
         path: "customerId officeId",
         // select: "customerName email phone",
       });
@@ -60,7 +63,10 @@ const getAppointments = async (req, res) => {
 
       return res.json(filterdAppointments);
     }
-    const appointments = await Appointment.find({ officeId }).populate({
+    const appointments = await Appointment.find({
+      officeId,
+      isDeleted: false,
+    }).populate({
       path: "customerId officeId",
       // select: "customerName email phone",
     });
@@ -76,7 +82,7 @@ const getAppointmentById = async (req, res) => {
   try {
     const { id } = req.params;
     const appointement = await Appointment.findOne(
-      { _id: id },
+      { _id: id, isDeleted: false },
       {
         startTime: 1,
         endTime: 1,
@@ -183,8 +189,16 @@ const updateAppointmentStatus = async (req, res) => {
 const deleteAppointment = async (req, res) => {
   try {
     const { id } = req.params;
-    const appointment = await Appointment.findOneAndDelete({ _id: id });
-    const shcedule = await ScheduleList.findOneAndDelete({ appointmentId: id });
+    // const appointment = await Appointment.findOneAndDelete({ _id: id });
+    const appointment = await Appointment.findOneAndUpdate(
+      { _id: id },
+      { isDeleted: true }
+    );
+    // const shcedule = await ScheduleList.findOneAndDelete({ appointmentId: id });
+    const shcedule = await ScheduleList.findOneAndUpdate(
+      { appointmentId: id },
+      { isDeleted: true }
+    );
     // console.log(appointment);
     return res.json(appointment);
   } catch (error) {

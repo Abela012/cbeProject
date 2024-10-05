@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
@@ -19,6 +19,10 @@ import { getCurrentUser } from "../features/authSlice";
 import { rolesList } from "../util/userRoles";
 import EditCase from "../components/Edit/EditCase";
 import { useGetOfficesQuery } from "../features/officeApiSlice";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+} from "material-react-table";
 
 const CaseStatus = ["Pending", "Canceled", "Completed"];
 
@@ -40,23 +44,19 @@ function CaseList() {
   const query = searchParams.get("q");
 
   const location = useLocation();
-  const { data, refetch } = useGetCasesQuery({
+  const { data: officeList, isFetching: officeFetching } = useGetOfficesQuery();
+  const { data, refetch, isFetching } = useGetCasesQuery({
     searchTerm: query,
     officeId: user.officeId,
   });
-  const { data: officeList } = useGetOfficesQuery();
   const [updateCase] = useUpdateCaseMutation();
   const [updateCaseAssignement] = useAssigneCaseMutation();
   const [updateCaseStatus] = useUpdateCaseStatusMutation();
   const [deleteCase] = useDeleteCaseMutation();
 
-  function showEditModal() {
-    setShowEdit(true);
-  }
-
-  function handleShowCase() {
-    setShowCase(true);
-  }
+  useEffect(() => {
+    setOffice(officeList);
+  }, [officeList]);
 
   useEffect(() => {
     setCases(data);
@@ -66,9 +66,151 @@ function CaseList() {
     refetch();
   }, [location]);
 
-  useEffect(() => {
-    setOffice(officeList);
-  }, [officeList]);
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "customerId.fullName", //simple recommended way to define a column
+        header: "Customer Name",
+        // muiTableHeadCellProps: { style: { color: "green" } }, //custom props
+        enableHiding: false, //disable a feature for this column
+      },
+      {
+        accessorKey: "caseNumber", //simple recommended way to define a column
+        header: "Case Number",
+        enableHiding: false, //disable a feature for this column
+      },
+      {
+        accessorKey: "subject", //simple recommended way to define a column
+        header: "Subject",
+      },
+      {
+        accessorKey: "status", //id required if you use accessorFn instead of accessorKey
+        header: "Status",
+        filterFn: "equals",
+        filterSelectOptions: ["Pending", "Canceled", "Completed"],
+        filterVariant: "select",
+        Cell: ({ row }) => (
+          <select
+            onClick={(e) => e.stopPropagation()}
+            className=" p-1 h-full outline-none border-none cursor-pointer bg-transparent "
+            defaultValue={row.original.status}
+            onChange={(e) => handleSCaseStateChange(row.original._id, e)}
+            disabled={
+              user.roleType == rolesList.boredMembers ||
+              user.roleType == rolesList.staff
+            }
+          >
+            {CaseStatus.map((value) => {
+              return (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              );
+            })}
+          </select>
+        ),
+      },
+      {
+        accessorKey: "currentAssignedOfficeId", //id required if you use accessorFn instead of accessorKey
+        header: "Assigne/Assigned",
+        enableColumnFilter: false,
+        Cell: ({ row }) => (
+          <select
+            onClick={(e) => e.stopPropagation()}
+            className="p-1 h-full outline-none border-none cursor-pointer bg-transparent "
+            defaultValue={row.original.currentAssignedOfficeId}
+            name="officeId"
+            onChange={(e) => handleSCaseAssignementChange(row.original._id, e)}
+          >
+            <option value="">Select Office</option>
+            {offices?.map((office) => (
+              <option key={office._id} value={office._id}>
+                {office.officeName}
+              </option>
+            ))}
+          </select>
+        ),
+      },
+
+      {
+        id: "actions",
+        header: "Actions",
+        enableColumnFilter: false,
+        Cell: ({ row }) => (
+          <div className="table_actions">
+            <Button
+              className=" !bg-transparent"
+              title="Edit Appointment"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCaseId(row.original._id);
+                showEditModal();
+              }}
+            >
+              <MdEdit size={20} color="green" />
+            </Button>
+            <Button
+              className=" !bg-transparent"
+              title="Delete Appointment"
+              onClick={(e) => {
+                e.stopPropagation();
+
+                setShowDelete(true);
+                setCaseToBeDelete((prev) => ({
+                  ...prev,
+                  itemId: row.original._id,
+                  name: row.original.customerId?.fullName,
+                }));
+              }}
+            >
+              <MdDelete size={20} color="red" />
+            </Button>
+          </div>
+        ),
+      },
+    ],
+    [officeFetching, offices]
+  );
+
+  const table = useMaterialReactTable({
+    columns,
+    data: cases, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+    state: {
+      showProgressBars: isFetching,
+      columnVisibility: {
+        currentAssignedOfficeId:
+          user.roleType !== rolesList.boredMembers &&
+          user.roleType !== rolesList.staff
+            ? true
+            : false,
+        actions:
+          user.roleType !== rolesList.boredMembers &&
+          user.roleType !== rolesList.staff
+            ? true
+            : false,
+      },
+    },
+    muiTableBodyRowProps: ({ row }) => ({
+      onClick: (event) => {
+        setCaseId(row.original._id);
+        handleShowCase();
+      },
+      sx: {
+        cursor: "pointer", //you might want to change the cursor too when adding an onClick
+      },
+    }),
+    enableRowSelection: false, //enable some features
+    enableColumnOrdering: true, //enable a feature for all columns
+    enableGlobalFilter: false, //turn off a feature
+  });
+
+  function showEditModal() {
+    setShowEdit(true);
+  }
+
+  function handleShowCase() {
+    setShowCase(true);
+  }
 
   const handleCloseModal = () => {
     setShowCase(false);
@@ -118,7 +260,9 @@ function CaseList() {
       <div className="flex gap-3">
         <SearchBar className=" !w-full" placeholder="Search by case number" />
       </div>
-      <table className=" text-sm w-full bg-white p-5 rounded-lg border-collapse ">
+      <MaterialReactTable table={table} />
+
+      {/* <table className=" text-sm w-full bg-white p-5 rounded-lg border-collapse ">
         <thead className=" text-left">
           <tr className=" border-solid border-2 border-gray-300">
             <th className="p-[10px]">Customer Name</th>
@@ -224,7 +368,8 @@ function CaseList() {
             );
           })}
         </tbody>
-      </table>
+      </table> */}
+
       {showCase && <Popup caseId={caseId} onClose={handleCloseModal} />}
       {showEdit && <EditCase caseId={caseId} onClose={handleCloseModal} />}
       {showDelete && (
