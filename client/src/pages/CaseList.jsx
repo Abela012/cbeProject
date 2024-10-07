@@ -23,6 +23,7 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from "material-react-table";
+import AssignCase from "../components/AssignCase";
 
 const CaseStatus = ["Pending", "Canceled", "Completed"];
 
@@ -33,6 +34,7 @@ function CaseList() {
   const [caseId, setCaseId] = useState(""); // holde case id to show case detail
 
   const [showCase, setShowCase] = useState(false);
+  const [showAssignCase, setShowAssignCase] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [caseToBeDelete, setCaseToBeDelete] = useState({
@@ -115,20 +117,17 @@ function CaseList() {
         header: "Assigne/Assigned",
         enableColumnFilter: false,
         Cell: ({ row }) => (
-          <select
-            onClick={(e) => e.stopPropagation()}
-            className="p-1 h-full outline-none border-none cursor-pointer bg-transparent "
-            defaultValue={row.original.currentAssignedOfficeId}
-            name="officeId"
-            onChange={(e) => handleSCaseAssignementChange(row.original._id, e)}
+         <div
+            className=" hover:underline font-bold text-center h-full grid place-items-center"
+            title="Assign case"
+            onClick={(e) => {
+              e.stopPropagation();
+              setCaseId(row.original._id);
+              setShowAssignCase(true)
+            }}
           >
-            <option value="">Select Office</option>
-            {offices?.map((office) => (
-              <option key={office._id} value={office._id}>
-                {office.officeName}
-              </option>
-            ))}
-          </select>
+            Assign case
+          </div>
         ),
       },
 
@@ -214,6 +213,7 @@ function CaseList() {
 
   const handleCloseModal = () => {
     setShowCase(false);
+    setShowAssignCase(false);
     setShowEdit(false);
     setShowDelete(false);
   };
@@ -262,115 +262,8 @@ function CaseList() {
       </div>
       <MaterialReactTable table={table} />
 
-      {/* <table className=" text-sm w-full bg-white p-5 rounded-lg border-collapse ">
-        <thead className=" text-left">
-          <tr className=" border-solid border-2 border-gray-300">
-            <th className="p-[10px]">Customer Name</th>
-            <th className="p-[10px]">Case Number</th>
-            <th className="p-[10px]">Subject</th>
-            <th className="p-[10px]">Status</th>
-            {user.roleType !== rolesList.staff && (
-              <>
-                <th className="p-[10px]">Assigne/Assigned</th>
-                <th className="p-[10px]">Actions</th>
-              </>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {cases?.map((_case, idx) => {
-            return (
-              <tr
-                className="hover:bg-light-gray hover:cursor-pointer border-solid border-2 border-gray-300"
-                key={_case._id}
-                onClick={() => {
-                  setCaseId(_case._id);
-                  handleShowCase();
-                }}
-              >
-                <td className="p-[10px]">{_case.customerId?.fullName}</td>
-                <td className="p-[10px]">{_case.caseNumber}</td>
-                <td className="p-[10px]">{_case.subject}</td>
-
-                <td className=" h-12" onClick={(e) => e.stopPropagation()}>
-                  <select
-                    className=" p-1 h-full outline-none border-none cursor-pointer bg-transparent "
-                    defaultValue={_case.status}
-                    onChange={(e) => handleSCaseStateChange(_case._id, e)}
-                    disabled={
-                      user.roleType == rolesList.boredMembers ||
-                      user.roleType == rolesList.staff
-                    }
-                  >
-                    {CaseStatus.map((value) => {
-                      return (
-                        <option key={value} value={value}>
-                          {value}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </td>
-
-                {user.roleType !== rolesList.staff && (
-                  <>
-                    <td className=" h-12" onClick={(e) => e.stopPropagation()}>
-                      <select
-                        className="p-1 h-full outline-none border-none cursor-pointer bg-transparent "
-                        defaultValue={_case?.currentAssignedOfficeId}
-                        name="officeId"
-                        onChange={(e) =>
-                          handleSCaseAssignementChange(_case._id, e)
-                        }
-                      >
-                        <option value="">Select Office</option>
-                        {offices?.map((office) => (
-                          <option key={office._id} value={office._id}>
-                            {office.officeName}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="p-[10px]">
-                      <div className="table_actions">
-                        <Button
-                          className=" !bg-transparent"
-                          title="Edit Appointment"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setCaseId(_case._id);
-                            showEditModal();
-                          }}
-                        >
-                          <MdEdit size={20} color="green" />
-                        </Button>
-                        <Button
-                          className=" !bg-transparent"
-                          title="Delete Appointment"
-                          onClick={(e) => {
-                            e.stopPropagation();
-
-                            setShowDelete(true);
-                            setCaseToBeDelete((prev) => ({
-                              ...prev,
-                              itemId: _case._id,
-                              name: _case.customerId?.fullName,
-                            }));
-                          }}
-                        >
-                          <MdDelete size={20} color="red" />
-                        </Button>
-                      </div>
-                    </td>
-                  </>
-                )}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table> */}
-
       {showCase && <Popup caseId={caseId} onClose={handleCloseModal} />}
+      {showAssignCase && <AssignCase caseId={caseId} handleClose={handleCloseModal} />}
       {showEdit && <EditCase caseId={caseId} onClose={handleCloseModal} />}
       {showDelete && (
         <DeleteConfirmation

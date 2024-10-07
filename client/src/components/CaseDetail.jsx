@@ -55,18 +55,9 @@ function CaseDetail({ detail }) {
               {detail.description}
             </dd>
           </div>
+          
           <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt className=" font-medium text-gray-500">
-              Currently assigned to
-            </dt>
-            <dd className="mt-1  text-gray-900 sm:mt-0 sm:col-span-2">
-              {!detail.currentAssignedOfficeId
-                ? "Not assigned"
-                : detail?.currentAssignedOfficeId?.officeName}
-            </dd>
-          </div>
-          <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt className=" font-medium text-gray-500">Assignment history</dt>
+            <dt className=" font-medium text-gray-500">Assignment list</dt>
             <dd className="mt-1  text-gray-900 sm:mt-0 sm:col-span-2">
               {!detail?.assignedOfficeIdList?.length
                 ? "No history"
@@ -74,8 +65,10 @@ function CaseDetail({ detail }) {
                     <span
                       className="bg-secondary-dark py-1 px-2 rounded-full mx-1"
                       key={idx}
+                      onMouseOver={()=>{}}
                     >
                       {office?.officeName}
+                      <span></span>
                     </span>
                   ))}
             </dd>

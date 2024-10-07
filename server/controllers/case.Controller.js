@@ -1,5 +1,6 @@
 import Case from "../models/case.model.js";
 import { v4 as uuidv4 } from "uuid";
+import Task from "../models/task.model.js";
 
 const createCase = async (req, res) => {
   try {
@@ -92,16 +93,21 @@ const getCaseById = async (req, res) => {
 
 const assigneCase = async (req, res) => {
   try {
-    const { caseId, officeId } = req.params;
+    const { caseId } = req.params;
+    const {officeId, description} = req.body;
 
     const updatedCaseAssignment = await Case.updateOne(
       { _id: caseId },
       {
         assigner: req.user._id,
-        currentAssignedOfficeId: officeId,
         $push: { assignedOfficeIdList: officeId },
       }
     );
+    const newTask = await Task.create({
+      caseId: caseId,
+      officeId: officeId,
+      description: description
+    })
     return res.status(200).json("Case assigned successfully");
   } catch (error) {
     return res.status(500).json("Server error");
@@ -146,12 +152,15 @@ const updateCaseStatus = async (req, res) => {
 const deleteCase = async (req, res) => {
   try {
     const { id } = req.params;
-    // const deletedCase = await Case.findOneAndDelete({ _id: id });
+    
     const deletedCase = await Case.findOneAndUpdate(
       { _id: id },
       { isDeleted: true }
     );
-    // console.log(deletedCase);
+    const deletedTask = await Task.findOneAndUpdate(
+      { _id: id },
+      { isDeleted: true }
+    )
     return res.status(204).json("Case deleted");
   } catch (error) {
     console.log(error);

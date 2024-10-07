@@ -37,10 +37,14 @@ caseRouter.get(
 );
 
 caseRouter.patch(
-  "/assigne-case/:caseId/:officeId",
+  "/assigne-case/:caseId",
   verifyRole(rolesList.president, rolesList.vp, rolesList.cos),
   assigneCase
 );
+
+caseRouter.get("/get-task",(req, res)=>{
+
+})
 
 caseRouter.patch(
   "/update-case/:id",
