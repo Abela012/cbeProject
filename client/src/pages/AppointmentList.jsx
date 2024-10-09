@@ -200,6 +200,7 @@ function AppointmentList() {
 
   const table = useMaterialReactTable({
     columns,
+
     data: appointments, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
     state: {
       showProgressBars: isFetching,
@@ -301,12 +302,7 @@ function AppointmentList() {
       </div>
       <MaterialReactTable table={table} />
 
-      {showCreate && (
-        <Appointment
-          customerId={customerId}
-          onClose={handleCreateAppointmentClick}
-        />
-      )}
+      {showCreate && <Appointment onClose={handleCreateAppointmentClick} />}
       {showScheduler && (
         <AppintmentScheduler
           appointmentId={appointmentId}

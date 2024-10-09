@@ -6,6 +6,7 @@ import {
   getAppointmentById,
   getAppointmentByIdForFileView,
   getAppointments,
+  getAppointmentStati,
   updateAppointment,
   updateAppointmentStatus,
 } from "../controllers/appointment.Controller.js";
@@ -23,6 +24,17 @@ appointmentRouter.post(
     rolesList.cos
   ),
   createAppointment
+);
+
+appointmentRouter.get(
+  "/get-appointment-stati",
+  verifyRole(
+    rolesList.secretary,
+    rolesList.president,
+    rolesList.vp,
+    rolesList.cos
+  ),
+  getAppointmentStati
 );
 
 appointmentRouter.get(

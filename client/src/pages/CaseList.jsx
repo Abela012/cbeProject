@@ -8,7 +8,6 @@ import {
   useAssigneCaseMutation,
   useDeleteCaseMutation,
   useGetCasesQuery,
-  useUpdateCaseMutation,
   useUpdateCaseStatusMutation,
 } from "../features/caseApiSlice";
 import Button from "../components/button/Button";
@@ -51,7 +50,7 @@ function CaseList() {
     searchTerm: query,
     officeId: user.officeId,
   });
-  const [updateCase] = useUpdateCaseMutation();
+
   const [updateCaseAssignement] = useAssigneCaseMutation();
   const [updateCaseStatus] = useUpdateCaseStatusMutation();
   const [deleteCase] = useDeleteCaseMutation();
@@ -117,13 +116,13 @@ function CaseList() {
         header: "Assigne/Assigned",
         enableColumnFilter: false,
         Cell: ({ row }) => (
-         <div
+          <div
             className=" hover:underline font-bold text-center h-full grid place-items-center"
             title="Assign case"
             onClick={(e) => {
               e.stopPropagation();
               setCaseId(row.original._id);
-              setShowAssignCase(true)
+              setShowAssignCase(true);
             }}
           >
             Assign case
@@ -263,7 +262,9 @@ function CaseList() {
       <MaterialReactTable table={table} />
 
       {showCase && <Popup caseId={caseId} onClose={handleCloseModal} />}
-      {showAssignCase && <AssignCase caseId={caseId} handleClose={handleCloseModal} />}
+      {showAssignCase && (
+        <AssignCase caseId={caseId} handleClose={handleCloseModal} />
+      )}
       {showEdit && <EditCase caseId={caseId} onClose={handleCloseModal} />}
       {showDelete && (
         <DeleteConfirmation

@@ -43,6 +43,9 @@ function SideBar() {
           user.roleType === rolesList.vp ||
           user.roleType === rolesList.cos) && (
           <>
+            <CustNavLink linkName="Dashboard" linkPath="" end>
+              <AiFillSchedule size={20} />
+            </CustNavLink>
             <CustNavLink
               linkName="Manage Appointment"
               linkPath="manage-appointment"

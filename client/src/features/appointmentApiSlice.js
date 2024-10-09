@@ -10,6 +10,12 @@ export const appointmentApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Appointment"],
     }),
+    getAppointmentStati: builder.query({
+      query: () => ({
+        url: "/get-appointment-stati",
+        method: "GET",
+      }),
+    }),
     getAppointments: builder.query({
       query: (query) => ({
         url: `/get-appointments/${query.officeId}?q=${query.searchTerm}`,
@@ -58,6 +64,7 @@ export const appointmentApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useCreateAppointmentMutation,
+  useGetAppointmentStatiQuery,
   useGetAppointmentsQuery,
   useGetAppointmentQuery,
   useGetAppointmentFileMutation,

@@ -1,6 +1,16 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import { useGetCaseTaskQuery } from "../features/caseApiSlice";
+import { skipToken } from "@reduxjs/toolkit/query";
 
 function CaseDetail({ detail }) {
+  const [hoveredOfficeId, setHoveredOfficeId] = useState(null);
+  const [taskData, setTaskData] = useState(null);
+  const [taskIdentifier, setTaskIdentifier] = useState(skipToken);
+  const { data: taskDescription } = useGetCaseTaskQuery(taskIdentifier);
+  useEffect(() => {
+    setTaskData(taskDescription);
+  }, [taskDescription]);
+
   return (
     <div className="bg-white overflow-auto rounded border h-full">
       <div className="px-4 py-5 sm:px-6 sticky top-0 bg-white">
@@ -55,7 +65,7 @@ function CaseDetail({ detail }) {
               {detail.description}
             </dd>
           </div>
-          
+
           <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className=" font-medium text-gray-500">Assignment list</dt>
             <dd className="mt-1  text-gray-900 sm:mt-0 sm:col-span-2">
@@ -63,12 +73,32 @@ function CaseDetail({ detail }) {
                 ? "No history"
                 : detail?.assignedOfficeIdList?.map((office, idx) => (
                     <span
-                      className="bg-secondary-dark py-1 px-2 rounded-full mx-1"
+                      className="bg-secondary-dark py-1 px-2 rounded-full mx-1 relative"
                       key={idx}
-                      onMouseOver={()=>{}}
+                      onMouseOver={() => {
+                        setTaskIdentifier({
+                          caseId: detail._id,
+                          officeId: office._id,
+                        });
+                        setHoveredOfficeId(office._id);
+                      }}
+                      onMouseOut={() => {
+                        setHoveredOfficeId(null);
+                      }}
                     >
                       {office?.officeName}
-                      <span></span>
+                      {hoveredOfficeId == office._id && (
+                        <div className="casetask absolute left-1/2 bottom-full -translate-x-1/2 mb-1 bg-secondary-dark px-1 py-2 transition-opacity opacity-100 rounded flex flex-col gap-1 max-h-24 min-w-[200px] overflow-auto ">
+                          {taskData?.map((task) => (
+                            <span
+                              key={task._id}
+                              className="w-full inline-block border-b "
+                            >
+                              {task?.description}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </span>
                   ))}
             </dd>
