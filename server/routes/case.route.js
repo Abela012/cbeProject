@@ -5,6 +5,8 @@ import {
   deleteCase,
   getCaseById,
   getCases,
+  getCaseStati,
+  getCaseTask,
   updateCase,
   updateCaseStatus,
 } from "../controllers/case.Controller.js";
@@ -25,6 +27,17 @@ caseRouter.post(
 );
 
 caseRouter.get(
+  "/get-case-stati",
+  verifyRole(
+    rolesList.secretary,
+    rolesList.president,
+    rolesList.vp,
+    rolesList.cos
+  ),
+  getCaseStati
+);
+
+caseRouter.get(
   "/get-cases/:officeId",
   verifyRole(rolesList.president, rolesList.vp, rolesList.cos),
   getCases
@@ -36,15 +49,17 @@ caseRouter.get(
   getCaseById
 );
 
+caseRouter.get(
+  "/get-case-task/:caseId/:officeId",
+  verifyRole(rolesList.president, rolesList.vp, rolesList.cos, rolesList.staff),
+  getCaseTask
+);
+
 caseRouter.patch(
   "/assigne-case/:caseId",
   verifyRole(rolesList.president, rolesList.vp, rolesList.cos),
   assigneCase
 );
-
-caseRouter.get("/get-task",(req, res)=>{
-
-})
 
 caseRouter.patch(
   "/update-case/:id",

@@ -28,3 +28,11 @@
 .fc-v-event {
   @apply bg-primary-dark border border-primary-light;
 }
+
+.casetask::-webkit-scrollbar {
+  display: none;
+}
+.casetask {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -31,6 +31,73 @@ const createCase = async (req, res) => {
   }
 };
 
+const getCaseStati = async (req, res) => {
+  try {
+    const result = await Case.aggregate([
+      {
+        $match: { isDeleted: false }, // Optional: Filter out deleted cases
+      },
+      {
+        $group: {
+          _id: "$status", // Group by the status field
+          count: { $sum: 1 }, // Count each case in the group
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Exclude the _id field
+          status: "$_id", // Rename _id to status
+          count: 1, // Keep the count
+        },
+      },
+      {
+        $group: {
+          _id: null, // Group all results into a single document
+          counts: { $push: { status: "$status", count: "$count" } }, // Push status and count into an array
+          total: { $sum: "$count" }, // Calculate the total count
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Exclude the _id field
+          counts: 1, // Include the counts array
+          total: 1, // Include the total count
+        },
+      },
+    ]);
+
+    // If there are no cases, return zero counts
+    if (result.length === 0) {
+      return {
+        counts: [
+          { status: "Pending", count: 0 },
+          { status: "Canceled", count: 0 },
+          { status: "Completed", count: 0 },
+        ],
+        total: 0,
+      };
+    }
+
+    // Format the result to include all statuses even if count is 0
+    const counts = result[0].counts;
+    const statuses = ["Pending", "Canceled", "Completed"];
+    const formattedCounts = statuses.map((status) => {
+      const found = counts.find((item) => item.status === status);
+      return {
+        status,
+        count: found ? found.count : 0,
+      };
+    });
+
+    return res.json({
+      counts: formattedCounts,
+      total: result[0].total, // Total count of all appointments
+    });
+  } catch (error) {
+    return res.status(500).json("Server error");
+  }
+};
+
 const getCases = async (req, res) => {
   try {
     const { officeId } = req.params;
@@ -91,23 +158,33 @@ const getCaseById = async (req, res) => {
   }
 };
 
+const getCaseTask = async (req, res) => {
+  try {
+    const { caseId, officeId } = req.params;
+    const tasks = await Task.find({ caseId, officeId });
+    return res.json(tasks);
+  } catch (error) {
+    return res.status(500).json("Server error");
+  }
+};
+
 const assigneCase = async (req, res) => {
   try {
     const { caseId } = req.params;
-    const {officeId, description} = req.body;
+    const { officeId, description } = req.body;
 
     const updatedCaseAssignment = await Case.updateOne(
       { _id: caseId },
       {
         assigner: req.user._id,
-        $push: { assignedOfficeIdList: officeId },
+        $addToSet: { assignedOfficeIdList: officeId },
       }
     );
     const newTask = await Task.create({
       caseId: caseId,
       officeId: officeId,
-      description: description
-    })
+      description: description,
+    });
     return res.status(200).json("Case assigned successfully");
   } catch (error) {
     return res.status(500).json("Server error");
@@ -152,7 +229,7 @@ const updateCaseStatus = async (req, res) => {
 const deleteCase = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const deletedCase = await Case.findOneAndUpdate(
       { _id: id },
       { isDeleted: true }
@@ -160,7 +237,7 @@ const deleteCase = async (req, res) => {
     const deletedTask = await Task.findOneAndUpdate(
       { _id: id },
       { isDeleted: true }
-    )
+    );
     return res.status(204).json("Case deleted");
   } catch (error) {
     console.log(error);
@@ -170,8 +247,10 @@ const deleteCase = async (req, res) => {
 
 export {
   createCase,
+  getCaseStati,
   getCases,
   getCaseById,
+  getCaseTask,
   assigneCase,
   updateCase,
   updateCaseStatus,

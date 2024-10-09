@@ -4,9 +4,9 @@ export function getRoleBasedPath(role) {
   if (rolesList.secretary == role) {
     return "/secretary/manage-appointment";
   } else if (rolesList.president == role || rolesList.vp == role) {
-    return "/pv/manage-appointment";
+    return "/pv";
   } else if (rolesList.cos == role) {
-    return "/cos/manage-appointment";
+    return "/cos";
   } else if (rolesList.boredMembers == role || rolesList.staff == role) {
     return "/bs/case-management/case-list";
   } else if (rolesList.admin == role) {

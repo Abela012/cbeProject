@@ -40,16 +40,86 @@ const createAppointment = async (req, res) => {
   }
 };
 
+const getAppointmentStati = async (req, res) => {
+  try {
+    const result = await Appointment.aggregate([
+      {
+        $match: { isDeleted: false }, // Optional: Filter out deleted appointments
+      },
+      {
+        $group: {
+          _id: "$status", // Group by the status field
+          count: { $sum: 1 }, // Count each appointment in the group
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Exclude the _id field
+          status: "$_id", // Rename _id to status
+          count: 1, // Keep the count
+        },
+      },
+      {
+        $group: {
+          _id: null, // Group all results into a single document
+          counts: { $push: { status: "$status", count: "$count" } }, // Push status and count into an array
+          total: { $sum: "$count" }, // Calculate the total count
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Exclude the _id field
+          counts: 1, // Include the counts array
+          total: 1, // Include the total count
+        },
+      },
+    ]);
+
+    // If there are no appointments, return zero counts
+    if (result.length === 0) {
+      return {
+        counts: [
+          { status: "Pending", count: 0 },
+          { status: "Canceled", count: 0 },
+          { status: "Completed", count: 0 },
+        ],
+        total: 0,
+      };
+    }
+
+    // Format the result to include all statuses even if count is 0
+    const counts = result[0].counts;
+    const statuses = ["Pending", "Canceled", "Completed"];
+    const formattedCounts = statuses.map((status) => {
+      const found = counts.find((item) => item.status === status);
+      return {
+        status,
+        count: found ? found.count : 0,
+      };
+    });
+
+    return res.json({
+      counts: formattedCounts,
+      total: result[0].total, // Total count of all appointments
+    });
+  } catch (error) {
+    return res.status(500).json("Server error");
+  }
+};
+
 const getAppointments = async (req, res) => {
   try {
     const { officeId } = req.params;
 
     if (req.query.q != "null" && req.query.q !== undefined) {
       let query = req.query.q;
-      const appointments = await Appointment.find({
-        officeId,
-        isDeleted: false,
-      }).populate({
+      const appointments = await Appointment.find(
+        {
+          officeId,
+          isDeleted: false,
+        },
+        { appointmentFile: 0 }
+      ).populate({
         path: "customerId officeId",
         // select: "customerName email phone",
       });
@@ -63,10 +133,13 @@ const getAppointments = async (req, res) => {
 
       return res.json(filterdAppointments);
     }
-    const appointments = await Appointment.find({
-      officeId,
-      isDeleted: false,
-    }).populate({
+    const appointments = await Appointment.find(
+      {
+        officeId,
+        isDeleted: false,
+      },
+      { appointmentFile: 0 }
+    ).populate({
       path: "customerId officeId",
       // select: "customerName email phone",
     });
@@ -189,12 +262,10 @@ const updateAppointmentStatus = async (req, res) => {
 const deleteAppointment = async (req, res) => {
   try {
     const { id } = req.params;
-    // const appointment = await Appointment.findOneAndDelete({ _id: id });
     const appointment = await Appointment.findOneAndUpdate(
       { _id: id },
       { isDeleted: true }
     );
-    // const shcedule = await ScheduleList.findOneAndDelete({ appointmentId: id });
     const shcedule = await ScheduleList.findOneAndUpdate(
       { appointmentId: id },
       { isDeleted: true }
@@ -208,6 +279,7 @@ const deleteAppointment = async (req, res) => {
 
 export {
   createAppointment,
+  getAppointmentStati,
   getAppointments,
   getAppointmentById,
   updateAppointment,

@@ -10,7 +10,7 @@ import SearchBarWoutParams from "../components/searchBar/SearchBarWoutParams.jsx
 import { useSelector } from "react-redux";
 import { getCurrentUser } from "../features/authSlice.js";
 
-function Appointment({ customerId, onClose }) {
+function Appointment({ onClose }) {
   const user = useSelector(getCurrentUser);
   const [customers, setCustomers] = useState([]);
   const [createAppointment] = useCreateAppointmentMutation();
