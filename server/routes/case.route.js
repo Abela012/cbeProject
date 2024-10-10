@@ -39,7 +39,7 @@ caseRouter.get(
 
 caseRouter.get(
   "/get-cases/:officeId",
-  verifyRole(rolesList.president, rolesList.vp, rolesList.cos),
+  verifyRole(rolesList.president, rolesList.vp, rolesList.cos, rolesList.staff),
   getCases
 );
 

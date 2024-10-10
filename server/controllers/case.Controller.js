@@ -68,14 +68,14 @@ const getCaseStati = async (req, res) => {
 
     // If there are no cases, return zero counts
     if (result.length === 0) {
-      return {
+      return res.json({
         counts: [
           { status: "Pending", count: 0 },
           { status: "Canceled", count: 0 },
           { status: "Completed", count: 0 },
         ],
         total: 0,
-      };
+      });
     }
 
     // Format the result to include all statuses even if count is 0
@@ -114,7 +114,7 @@ const getCases = async (req, res) => {
           {
             $or: [
               { officeId: officeId },
-              { currentAssignedOfficeId: officeId },
+              { assignedOfficeIdList: { $in: [officeId] } },
             ],
           },
         ],
@@ -128,7 +128,10 @@ const getCases = async (req, res) => {
     }
 
     const cases = await Case.find({
-      $or: [{ officeId: officeId }, { currentAssignedOfficeId: officeId }],
+      $or: [
+        { officeId: officeId },
+        { assignedOfficeIdList: { $in: [officeId] } },
+      ],
       isDeleted: false,
     }).populate({
       path: "customerId",

@@ -113,7 +113,7 @@ function CaseList() {
       },
       {
         accessorKey: "currentAssignedOfficeId", //id required if you use accessorFn instead of accessorKey
-        header: "Assigne/Assigned",
+        header: "Assign",
         enableColumnFilter: false,
         Cell: ({ row }) => (
           <div

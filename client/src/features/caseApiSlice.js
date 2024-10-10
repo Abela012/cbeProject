@@ -43,6 +43,7 @@ export const caseApiSlice = apiSlice.injectEndpoints({
         method: "PATCH",
         body: { ...query.newAssignment },
       }),
+      invalidatesTags: ["Case"],
     }),
     updateCase: builder.mutation({
       query: (query) => ({

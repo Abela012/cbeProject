@@ -37,6 +37,7 @@ export const apiSlice = createApi({
   tagTypes: [
     "Case",
     "Appointment",
+    "Stati",
     "User",
     "Office",
     "Category",

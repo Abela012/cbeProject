@@ -7,6 +7,7 @@ import {
 import { getCurrentUser } from "../features/authSlice";
 import {
   useGetAppointmentsQuery,
+  useGetAppointmentStatiQuery,
   useUpdateAppointmentStatusMutation,
 } from "../features/appointmentApiSlice";
 import { toast } from "react-toastify";
@@ -18,6 +19,8 @@ function DashboardAppointmentTable() {
   const [appointments, setAppointments] = useState([]);
 
   const [updateAppointmentStatus] = useUpdateAppointmentStatusMutation();
+  const { refetch } = useGetAppointmentStatiQuery();
+
   const { data, isFetching } = useGetAppointmentsQuery({
     searchTerm: "",
     officeId: user.officeId,
@@ -142,7 +145,7 @@ function DashboardAppointmentTable() {
         status: e.target.value,
         id: appointmentid,
       }).unwrap();
-
+      refetch();
       toast.success(response, {
         position: "bottom-right",
       });

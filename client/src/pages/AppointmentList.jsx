@@ -137,6 +137,7 @@ function AppointmentList() {
         filterVariant: "select",
         Cell: ({ row }) => (
           <select
+            onClick={(e) => e.stopPropagation()}
             className=" p-1 outline-none border-none cursor-pointer bg-transparent h-full grid place-items-center"
             defaultValue={row.original.status}
             onChange={(e) => handleAppointmentStateChange(row.original._id, e)}

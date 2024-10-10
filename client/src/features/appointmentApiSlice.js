@@ -15,6 +15,7 @@ export const appointmentApiSlice = apiSlice.injectEndpoints({
         url: "/get-appointment-stati",
         method: "GET",
       }),
+      providesTags: ["Stati"],
     }),
     getAppointments: builder.query({
       query: (query) => ({
@@ -51,6 +52,7 @@ export const appointmentApiSlice = apiSlice.injectEndpoints({
         method: "PATCH",
         body: { status: query.status },
       }),
+      invalidatesTags: ["Stati"],
     }),
     deleteAppointment: builder.mutation({
       query: (id) => ({

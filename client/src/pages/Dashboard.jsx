@@ -11,8 +11,15 @@ import { useGetCaseStatiQuery } from "../features/caseApiSlice";
 
 function Dashboard() {
   const [showCreate, setShowCreate] = useState(false);
+  const [appointmentStatiData, setAppointmentStatiData] = useState(null);
+  const [caseStatiData, setCaseStatiData] = useState(null);
   const { data: appointmentStati } = useGetAppointmentStatiQuery();
   const { data: caseStati } = useGetCaseStatiQuery();
+
+  useEffect(() => {
+    setAppointmentStatiData(appointmentStati);
+    setCaseStatiData(caseStati);
+  }, [appointmentStati, caseStati]);
 
   const handleCreateAppointmentClick = () => {
     setShowCreate((prev) => !prev);
@@ -32,27 +39,27 @@ function Dashboard() {
               <MdOutlinePendingActions size={25} />
               <p className="font-bold text-sm">Pending Appointment</p>
               <p className="font-bold text-lg">
-                {appointmentStati?.counts[0].count}
+                {appointmentStatiData?.counts[0].count}
               </p>
             </div>
             <div className="flex flex-col gap-1 justify-between p-5 rounded min-w-40 max-w-80 bg-white flex-wrap">
               <MdFreeCancellation size={25} />
               <p className="font-bold text-sm">Canceled Appointment</p>
               <p className="font-bold text-lg">
-                {appointmentStati?.counts[1].count}
+                {appointmentStatiData?.counts[1].count}
               </p>
             </div>
             <div className="flex flex-col gap-1 justify-between p-5 rounded min-w-40 max-w-80 bg-white flex-wrap">
               <MdIncompleteCircle size={25} />
               <p className="font-bold text-sm">Completed Appointment</p>
               <p className="font-bold text-lg">
-                {appointmentStati?.counts[2].count}
+                {appointmentStatiData?.counts[2].count}
               </p>
             </div>
             <div className="flex flex-col gap-1 justify-between p-5 rounded min-w-40 max-w-80 bg-white flex-wrap">
               <FaBorderAll size={25} />
               <p className="font-bold text-sm">Total Appointment</p>
-              <p className="font-bold text-lg">{appointmentStati?.total}</p>
+              <p className="font-bold text-lg">{appointmentStatiData?.total}</p>
             </div>
           </div>
           <DashboardAppointmentTable />
@@ -65,23 +72,27 @@ function Dashboard() {
               <MdOutlinePendingActions size={25} />
               <p className=" font-bold text-sm ">Pending Case</p>
               <p className=" font-bold text-lg ">
-                {caseStati?.counts[0].count}
+                {caseStatiData?.counts[0].count}
               </p>
             </div>
             <div className="flex flex-col gap-1 justify-between p-5 rounded min-w-40 max-w-80 bg-white flex-wrap">
               <MdFreeCancellation size={25} />
               <p className="font-bold text-sm">Canceled Case</p>
-              <p className="font-bold text-lg">{caseStati?.counts[1].count}</p>
+              <p className="font-bold text-lg">
+                {caseStatiData?.counts[1].count}
+              </p>
             </div>
             <div className="flex flex-col gap-1 justify-between p-5 rounded min-w-40 max-w-80 bg-white flex-wrap">
               <MdIncompleteCircle size={25} />
               <p className="font-bold text-sm">Completed Case</p>
-              <p className="font-bold text-lg">{caseStati?.counts[2].count}</p>
+              <p className="font-bold text-lg">
+                {caseStatiData?.counts[2].count}
+              </p>
             </div>
             <div className="flex flex-col gap-1 justify-between p-5 rounded min-w-40 max-w-80 bg-white flex-wrap">
               <FaBorderAll size={25} />
               <p className="font-bold text-sm">Total Case</p>
-              <p className="font-bold text-lg">{caseStati?.total}</p>
+              <p className="font-bold text-lg">{caseStatiData?.total}</p>
             </div>
           </div>
         </div>
