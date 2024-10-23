@@ -1,6 +1,7 @@
 import Case from "../models/case.model.js";
 import { v4 as uuidv4 } from "uuid";
 import Task from "../models/task.model.js";
+import WorkflowManagement from "../models/workflowManagement.model.js";
 
 const createCase = async (req, res) => {
   try {
@@ -12,8 +13,23 @@ const createCase = async (req, res) => {
       customerId,
       subject,
       description,
+      dueDate,
+      priority,
     } = req.body;
 
+    if (!customerId) {
+      const newCase = await Case.create({
+        userId,
+        officeId: officeId,
+        category: caseCategory,
+        subject: subject,
+        description: description,
+        dueDate: dueDate,
+        priority: priority,
+        caseNumber: uuidv4(),
+      });
+      return res.status(201).json("Case created sucessfully");
+    }
     const newCase = await Case.create({
       userId,
       customerId: customerId,
@@ -22,6 +38,8 @@ const createCase = async (req, res) => {
       category: caseCategory,
       subject: subject,
       description: description,
+      dueDate: dueDate,
+      priority: priority,
       caseNumber: uuidv4(),
     });
     return res.status(201).json("Case created sucessfully");
@@ -120,7 +138,7 @@ const getCases = async (req, res) => {
         ],
         isDeleted: false,
       }).populate({
-        path: "customerId",
+        path: "customerId officeId",
         // select: "customerName email phone",
       });
 
@@ -134,7 +152,7 @@ const getCases = async (req, res) => {
       ],
       isDeleted: false,
     }).populate({
-      path: "customerId",
+      path: "customerId officeId",
       // select: "customerName email phone",
     });
 
@@ -174,7 +192,7 @@ const getCaseTask = async (req, res) => {
 const assigneCase = async (req, res) => {
   try {
     const { caseId } = req.params;
-    const { officeId, description } = req.body;
+    const { officeId, description, dueDate } = req.body;
 
     const updatedCaseAssignment = await Case.updateOne(
       { _id: caseId },
@@ -187,6 +205,11 @@ const assigneCase = async (req, res) => {
       caseId: caseId,
       officeId: officeId,
       description: description,
+      dueDate: dueDate,
+      assigner: req.user._id,
+    });
+    const initWorkFollowUp = await WorkflowManagement.create({
+      taskId: newTask._id,
     });
     return res.status(200).json("Case assigned successfully");
   } catch (error) {
@@ -197,13 +220,14 @@ const assigneCase = async (req, res) => {
 const updateCase = async (req, res) => {
   try {
     const { id } = req.params;
-    const { subject, description, category } = req.body;
+    const { subject, description, category, dueDate } = req.body;
 
     const updatedCase = await Case.findOneAndUpdate(
       { _id: id },
       {
         subject,
         description,
+        dueDate,
         category,
       }
     );
@@ -221,6 +245,20 @@ const updateCaseStatus = async (req, res) => {
     const { status } = req.body;
 
     const updatedCase = await Case.findOneAndUpdate({ _id: id }, { status });
+
+    return res.status(200).json("Case updated");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("Server error");
+  }
+};
+
+const updateCasePriority = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { priority } = req.body;
+
+    const updatedCase = await Case.findOneAndUpdate({ _id: id }, { priority });
 
     return res.status(200).json("Case updated");
   } catch (error) {
@@ -257,5 +295,6 @@ export {
   assigneCase,
   updateCase,
   updateCaseStatus,
+  updateCasePriority,
   deleteCase,
 };

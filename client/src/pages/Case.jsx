@@ -9,6 +9,8 @@ import { useSelector } from "react-redux";
 import { getCurrentUser } from "../features/authSlice";
 import OverLay from "../components/OverLay";
 
+const CasePriority = ["Low", "Medium", "High"];
+
 function Case({ customerId, appointmentId, handleClose }) {
   const user = useSelector(getCurrentUser);
   const [newCase, setNewCase] = useState({
@@ -19,6 +21,8 @@ function Case({ customerId, appointmentId, handleClose }) {
     caseCategory: "",
     subject: "",
     description: "",
+    dueDate: "",
+    priority: "",
   });
 
   const [categories, setCategories] = useState([
@@ -58,6 +62,9 @@ function Case({ customerId, appointmentId, handleClose }) {
         customerEmail: "",
         caseCategory: "",
         subject: "",
+        description: "",
+        dueDate: "",
+        priority: "",
       });
       handleClose();
     }
@@ -104,6 +111,37 @@ function Case({ customerId, appointmentId, handleClose }) {
           lableName="Description"
           inputName="description"
         />
+
+        <FormInput
+          lableName="Due Date"
+          inputName="dueDate"
+          name="dueDate"
+          min={new Date().toISOString().slice(0, 11) + "08:00"}
+          type="datetime-local"
+          required={true}
+          value={newCase.dueDate}
+          onChange={handleChange}
+        />
+
+        <div className={" relative flex flex-col "}>
+          <label className=" font-bold mb-[5px] text-sm" htmlFor="priority">
+            Priority
+          </label>
+          <select
+            className="case_category p-[10px] outline-none rounded-[5px] border-solid border-2 border-[#f1f1f1]"
+            value={newCase.priority}
+            name="priority"
+            onChange={handleChange}
+          >
+            {CasePriority.map((value) => {
+              return (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              );
+            })}
+          </select>
+        </div>
         <div className=" w-full flex items-center justify-center font-bold ">
           <Button className="w-full sm:w-1/2" btnName="Create" type="submit" />
         </div>

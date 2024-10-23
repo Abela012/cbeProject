@@ -54,6 +54,14 @@ export const appointmentApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Stati"],
     }),
+    updateAppointmentPriority: builder.mutation({
+      query: (query) => ({
+        url: `/update-appointment-priority/${query.id}`,
+        method: "PATCH",
+        body: { priority: query.priority },
+      }),
+      invalidatesTags: ["Appointment"],
+    }),
     deleteAppointment: builder.mutation({
       query: (id) => ({
         url: `/delete-appointments/${id}`,
@@ -72,5 +80,6 @@ export const {
   useGetAppointmentFileMutation,
   useUpdateAppointmentMutation,
   useUpdateAppointmentStatusMutation,
+  useUpdateAppointmentPriorityMutation,
   useDeleteAppointmentMutation,
 } = appointmentApiSlice;

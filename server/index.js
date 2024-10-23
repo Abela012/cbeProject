@@ -18,6 +18,7 @@ import userRoute from "./routes/user.route.js";
 import officeManagementRouter from "./routes/officeManagement.route.js";
 import roleRouter from "./routes/role.route.js";
 import scheduleListRoute from "./routes/scheduleList.route.js";
+import taskRouter from "./routes/task.route.js";
 
 ConnectToDB();
 
@@ -42,6 +43,7 @@ app.use("/auth", authRouter);
 app.use(isAuthenticated);
 app.use("/", appointmentRouter);
 app.use("/", caseRouter);
+app.use("/", taskRouter);
 app.use("/", categoryRouter);
 app.use("/", officeManagementRouter);
 app.use("/", customerRoute);

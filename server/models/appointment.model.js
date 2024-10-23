@@ -21,6 +21,7 @@ const AppointmentSchema = new Schema(
     caseId: { type: Schema.Types.ObjectId, ref: "Case" },
     category: { type: String },
     isDeleted: { type: Boolean, default: false },
+    priority: { type: String, enum: ["Low", "Medium", "High"], default: "Low" },
   },
   { timestamps: true }
 );

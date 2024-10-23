@@ -60,6 +60,14 @@ export const caseApiSlice = apiSlice.injectEndpoints({
         body: { status: query.status },
       }),
     }),
+    updateCasePriority: builder.mutation({
+      query: (query) => ({
+        url: `/update-case-priority/${query.id}`,
+        method: "PATCH",
+        body: { priority: query.priority },
+      }),
+      invalidatesTags: ["Case"],
+    }),
     deleteCase: builder.mutation({
       query: (query) => ({
         url: `/delete-case/${query}`,
@@ -79,5 +87,6 @@ export const {
   useAssigneCaseMutation,
   useUpdateCaseMutation,
   useUpdateCaseStatusMutation,
+  useUpdateCasePriorityMutation,
   useDeleteCaseMutation,
 } = caseApiSlice;

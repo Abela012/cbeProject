@@ -15,6 +15,7 @@ function EditCase({ caseId, onClose }) {
   const [editCase, setEditCase] = useState({
     subject: "",
     description: "",
+    dueDate: "",
   });
   const { data: caseData, isSuccess } = useGetCaseQuery(caseId);
   const [updateCaseData] = useUpdateCaseMutation();
@@ -25,10 +26,11 @@ function EditCase({ caseId, onClose }) {
         id: caseData._id,
         subject: caseData.subject,
         description: caseData.description,
+        dueDate: caseData.dueDate,
         category: caseData.category,
       });
     }
-    // console.log(caseData);
+    console.log(caseData);
   }, [caseData]);
 
   const [categories, setCategories] = useState([
@@ -113,6 +115,17 @@ function EditCase({ caseId, onClose }) {
           lableName="Description"
           inputName="description"
           value={editCase.description}
+        />
+
+        <FormInput
+          lableName="Due Date"
+          inputName="dueDate"
+          name="dueDate"
+          min={new Date().toISOString().slice(0, 11) + "08:00"}
+          type="datetime-local"
+          required={true}
+          value={editCase.dueDate}
+          onChange={handleChange}
         />
 
         <Button type="submit">Edit</Button>

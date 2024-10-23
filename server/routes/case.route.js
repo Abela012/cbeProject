@@ -8,6 +8,7 @@ import {
   getCaseStati,
   getCaseTask,
   updateCase,
+  updateCasePriority,
   updateCaseStatus,
 } from "../controllers/case.Controller.js";
 import verifyRole from "../middleware/verifyRole.js";
@@ -71,6 +72,12 @@ caseRouter.patch(
   "/update-case-status/:id",
   verifyRole(rolesList.president, rolesList.vp, rolesList.cos),
   updateCaseStatus
+);
+
+caseRouter.patch(
+  "/update-case-priority/:id",
+  verifyRole(rolesList.president, rolesList.vp, rolesList.cos),
+  updateCasePriority
 );
 
 caseRouter.delete(

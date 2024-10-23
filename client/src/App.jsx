@@ -23,6 +23,8 @@ import RoleManagement from "./pages/RoleManagement";
 import RoleList from "./pages/RoleList";
 import Scheduler from "./pages/Scheduler";
 import Dashboard from "./pages/Dashboard";
+import UpcomingCase from "./pages/UpcomingCase";
+import UpcomingTask from "./pages/UpcomingTask";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -139,6 +141,14 @@ const router = createBrowserRouter([
                     index: true,
                     element: <CaseList />,
                   },
+                  {
+                    path: "upcoming-case",
+                    element: <UpcomingCase />,
+                  },
+                  {
+                    path: "upcoming-task",
+                    element: <UpcomingTask />,
+                  },
                 ],
               },
               {
@@ -171,8 +181,16 @@ const router = createBrowserRouter([
                 element: <CaseManagement />,
                 children: [
                   {
-                    path: "case-list",
+                    index: true,
                     element: <CaseList />,
+                  },
+                  {
+                    path: "upcoming-case",
+                    element: <UpcomingCase />,
+                  },
+                  {
+                    path: "upcoming-task",
+                    element: <UpcomingTask />,
                   },
                 ],
               },

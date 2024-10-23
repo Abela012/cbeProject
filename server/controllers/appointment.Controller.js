@@ -259,6 +259,24 @@ const updateAppointmentStatus = async (req, res) => {
   }
 };
 
+const updateAppointmentPriority = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { priority } = req.body;
+
+    const updatedappointment = await Appointment.findOneAndUpdate(
+      { _id: id },
+      {
+        priority,
+      }
+    );
+    return res.json("Appointment updated");
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Server error");
+  }
+};
+
 const deleteAppointment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -284,6 +302,7 @@ export {
   getAppointmentById,
   updateAppointment,
   updateAppointmentStatus,
+  updateAppointmentPriority,
   getAppointmentByIdForFileView,
   deleteAppointment,
 };
