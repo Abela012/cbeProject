@@ -28,6 +28,7 @@ const CaseSchema = Schema(
     assignee: { type: Schema.Types.ObjectId, ref: "User" },
     assigner: { type: Schema.Types.ObjectId, ref: "User" },
     isDeleted: { type: Boolean, default: false },
+    priority: { type: String, enum: ["Low", "Medium", "High"], default: "Low" },
   },
   { timestamps: true }
 );

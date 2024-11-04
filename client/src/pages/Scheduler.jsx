@@ -15,8 +15,6 @@ import {
 
 import EditEvent from "../components/EditEvent";
 import ScheduleAppointment from "./ScheduleAppointment";
-import Button from "../components/button/Button";
-import { IoIosClose } from "react-icons/io";
 import { toast } from "react-toastify";
 import { formatTimeForEAT } from "../util/formatTime";
 
@@ -175,15 +173,6 @@ function Scheduler() {
 
   return (
     <div className=" relative flex flex-col gap-2 bg-white w-[95%] h-[95%] overflow-auto p-5 pt-9 rounded">
-      <Button
-        onClick={() => {
-          handleClose();
-        }}
-        className=" absolute right-0 top-[5px] !p-0 z-20 border-none !bg-transparent"
-      >
-        <IoIosClose size={26} />
-      </Button>
-
       <div>
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}

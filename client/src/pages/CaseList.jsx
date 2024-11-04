@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import SearchBar from "../components/searchBar/SearchBar";
 import Popup from "../components/Popup";
 import {
-  useAssigneCaseMutation,
   useDeleteCaseMutation,
   useGetCasesQuery,
+  useUpdateCasePriorityMutation,
   useUpdateCaseStatusMutation,
 } from "../features/caseApiSlice";
 import Button from "../components/button/Button";
@@ -23,17 +23,28 @@ import {
   useMaterialReactTable,
 } from "material-react-table";
 import AssignCase from "../components/AssignCase";
+import Case from "./Case";
+import { IoIosNotifications } from "react-icons/io";
+import { calcDaysUntilDue } from "../util/dueDate";
+import { useGetTasksQuery } from "../features/taskApiSlice";
+import FollowUp from "./FollowUp";
 
 const CaseStatus = ["Pending", "Canceled", "Completed"];
+const CasePriority = ["Low", "Medium", "High"];
 
 function CaseList() {
   const user = useSelector(getCurrentUser);
   const [cases, setCases] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [upcomingCases, setUpcomingCases] = useState([]);
+  const [upcomingTasks, setUpcomingTasks] = useState([]);
   const [offices, setOffice] = useState();
   const [caseId, setCaseId] = useState(""); // holde case id to show case detail
 
   const [showCase, setShowCase] = useState(false);
+  const [showCreateCase, setShowCreateCase] = useState(false);
   const [showAssignCase, setShowAssignCase] = useState(false);
+  const [showFollowUpCase, setShowFollowUpCase] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [caseToBeDelete, setCaseToBeDelete] = useState({
@@ -50,9 +61,10 @@ function CaseList() {
     searchTerm: query,
     officeId: user.officeId,
   });
+  const { data: taskList } = useGetTasksQuery({ officeId: user.officeId });
 
-  const [updateCaseAssignement] = useAssigneCaseMutation();
   const [updateCaseStatus] = useUpdateCaseStatusMutation();
+  const [updateCasePriority] = useUpdateCasePriorityMutation();
   const [deleteCase] = useDeleteCaseMutation();
 
   useEffect(() => {
@@ -62,6 +74,42 @@ function CaseList() {
   useEffect(() => {
     setCases(data);
   }, [data]);
+
+  useEffect(() => {
+    setTasks(taskList);
+  }, [taskList]);
+
+  // show upcoming cases
+  useEffect(() => {
+    const now = new Date();
+    cases?.forEach((task) => {
+      if (task.status == "Pending") {
+        const due = calcDaysUntilDue(new Date(task?.dueDate), now);
+        if (
+          due !== "" &&
+          !upcomingCases.some((existingCase) => existingCase._id === task._id)
+        ) {
+          setUpcomingCases((prev) => [...prev, task]);
+        }
+      }
+    });
+  }, [cases]);
+
+  // show upcoming tasks
+  useEffect(() => {
+    const now = new Date();
+    tasks?.forEach((task) => {
+      if (task.status == "Pending") {
+        const due = calcDaysUntilDue(new Date(task?.dueDate), now);
+        if (
+          due !== "" &&
+          !upcomingTasks.some((existingTask) => existingTask._id === task._id)
+        ) {
+          setUpcomingTasks((prev) => [...prev, task]);
+        }
+      }
+    });
+  }, [tasks]);
 
   useEffect(() => {
     refetch();
@@ -112,8 +160,52 @@ function CaseList() {
         ),
       },
       {
+        accessorKey: "priority", //id required if you use accessorFn instead of accessorKey
+        header: "Priority",
+        filterFn: "equals",
+        filterSelectOptions: ["Low", "Medium", "High"],
+        filterVariant: "select",
+        Cell: ({ row }) => (
+          <select
+            onClick={(e) => e.stopPropagation()}
+            className={` p-2 h-full outline-none border-none rounded cursor-pointer bg-transparent  +
+                ${
+                  row.original.priority == "Low"
+                    ? "bg-green-400"
+                    : row.original.priority == "Medium"
+                    ? "bg-yellow-400"
+                    : row.original.priority == "High"
+                    ? "bg-red-400"
+                    : null
+                }`}
+            defaultValue={row.original.priority}
+            onChange={(e) => handleCasePriorityChange(row.original._id, e)}
+            disabled={
+              user.roleType == rolesList.boredMembers ||
+              user.roleType == rolesList.staff
+            }
+          >
+            {CasePriority.map((value) => {
+              if (value == row.original.priority) {
+                return (
+                  <option key={value} value={row.original.priority}>
+                    {row.original.priority}
+                  </option>
+                );
+              } else {
+                return (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                );
+              }
+            })}
+          </select>
+        ),
+      },
+      {
         accessorKey: "currentAssignedOfficeId", //id required if you use accessorFn instead of accessorKey
-        header: "Assigne/Assigned",
+        header: "Assign",
         enableColumnFilter: false,
         Cell: ({ row }) => (
           <div
@@ -126,6 +218,24 @@ function CaseList() {
             }}
           >
             Assign case
+          </div>
+        ),
+      },
+      {
+        accessorKey: "followup", //id required if you use accessorFn instead of accessorKey
+        header: "Follow up",
+        enableColumnFilter: false,
+        Cell: ({ row }) => (
+          <div
+            className=" hover:underline font-bold text-center h-full grid place-items-center"
+            title="Follow up case"
+            onClick={(e) => {
+              e.stopPropagation();
+              setCaseId(row.original._id);
+              setShowFollowUpCase(true);
+            }}
+          >
+            Follow up
           </div>
         ),
       },
@@ -213,6 +323,7 @@ function CaseList() {
   const handleCloseModal = () => {
     setShowCase(false);
     setShowAssignCase(false);
+    setShowFollowUpCase(false);
     setShowEdit(false);
     setShowDelete(false);
   };
@@ -222,20 +333,8 @@ function CaseList() {
     handleCloseModal();
   };
 
-  const handleSCaseAssignementChange = async (caseId, e) => {
-    try {
-      const response = await updateCaseAssignement({
-        officeId: e.target.value,
-        caseId: caseId,
-      }).unwrap();
-      toast.success(response, {
-        position: "bottom-right",
-      });
-    } catch (error) {
-      toast.error(error.data, {
-        position: "bottom-right",
-      });
-    }
+  const handleCreateClick = () => {
+    setShowCreateCase((prev) => !prev);
   };
 
   const handleSCaseStateChange = async (caseId, e) => {
@@ -253,17 +352,65 @@ function CaseList() {
       });
     }
   };
+  const handleCasePriorityChange = async (caseId, e) => {
+    try {
+      const response = await updateCasePriority({
+        priority: e.target.value,
+        id: caseId,
+      }).unwrap();
+      toast.success(response, {
+        position: "bottom-right",
+      });
+    } catch (error) {
+      toast.error(error.data, {
+        position: "bottom-right",
+      });
+    }
+  };
 
   return (
     <div className=" flex flex-col gap-2 w-full">
       <div className="flex gap-3">
         <SearchBar className=" !w-full" placeholder="Search by case number" />
+        <div className="flex gap-2">
+          <Link
+            to="upcoming-case"
+            className=" flex flex-col items-center justify-center relative"
+          >
+            <span className="relative">
+              <IoIosNotifications size={25} />
+              <span className="absolute -right-2 -top-2 bg-red-500 rounded-full w-5 h-5 min-w-fit flex items-center justify-center text-sm font-bold">
+                {upcomingCases.length}
+              </span>
+            </span>
+            <span className=" text-xs font-bold ">Upcoming cases</span>
+          </Link>
+          <Link
+            to="upcoming-task"
+            className=" flex flex-col items-center justify-center relative"
+          >
+            <span className="relative">
+              <IoIosNotifications size={25} />
+              <span className="absolute -right-2 -top-2 bg-red-500 rounded-full w-5 h-5 min-w-fit flex items-center justify-center text-sm font-bold">
+                {upcomingTasks.length}
+              </span>
+            </span>
+            <span className=" text-xs font-bold ">Upcoming tasks</span>
+          </Link>
+          <Button className="!p-0" onClick={handleCreateClick}>
+            Create case
+          </Button>
+        </div>
       </div>
       <MaterialReactTable table={table} />
 
       {showCase && <Popup caseId={caseId} onClose={handleCloseModal} />}
+      {showCreateCase && <Case handleClose={handleCreateClick} />}
       {showAssignCase && (
         <AssignCase caseId={caseId} handleClose={handleCloseModal} />
+      )}
+      {showFollowUpCase && (
+        <FollowUp caseId={caseId} handleClose={handleCloseModal} />
       )}
       {showEdit && <EditCase caseId={caseId} onClose={handleCloseModal} />}
       {showDelete && (

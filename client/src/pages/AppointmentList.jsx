@@ -8,6 +8,7 @@ import EditAppointment from "../components/Edit/EditAppointment.jsx";
 import {
   useDeleteAppointmentMutation,
   useGetAppointmentsQuery,
+  useUpdateAppointmentPriorityMutation,
   useUpdateAppointmentStatusMutation,
 } from "../features/appointmentApiSlice.js";
 import { toast } from "react-toastify";
@@ -25,6 +26,7 @@ import {
 } from "material-react-table";
 
 const AppointmentStatus = ["Pending", "Canceled", "Completed"];
+const AppointmentPriority = ["Low", "Medium", "High"];
 
 function AppointmentList() {
   const user = useSelector(getCurrentUser);
@@ -55,6 +57,7 @@ function AppointmentList() {
   });
 
   const [updateAppointmentStatus] = useUpdateAppointmentStatusMutation();
+  const [updateAppointmentPriority] = useUpdateAppointmentPriorityMutation();
   const [deleteAppointment] = useDeleteAppointmentMutation();
 
   //
@@ -94,7 +97,7 @@ function AppointmentList() {
         id: "schedule", //id required if you use accessorFn instead of accessorKey
         header: "Schedule Appointment",
         enableColumnFilter: false,
-        Cell: ({ cell }) => (
+        Cell: ({ row }) => (
           <>
             <div
               className=" hover:underline font-bold text-center h-full grid place-items-center"
@@ -102,7 +105,7 @@ function AppointmentList() {
               onClick={(e) => {
                 e.stopPropagation();
                 setShowScheduler(true);
-                setAppointmentId(cell.getValue());
+                setAppointmentId(row.original._id);
               }}
             >
               Schedule
@@ -137,6 +140,7 @@ function AppointmentList() {
         filterVariant: "select",
         Cell: ({ row }) => (
           <select
+            onClick={(e) => e.stopPropagation()}
             className=" p-1 outline-none border-none cursor-pointer bg-transparent h-full grid place-items-center"
             defaultValue={row.original.status}
             onChange={(e) => handleAppointmentStateChange(row.original._id, e)}
@@ -150,6 +154,50 @@ function AppointmentList() {
                 return (
                   <option key={value} value={row.original.status}>
                     {row.original.status}
+                  </option>
+                );
+              } else {
+                return (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                );
+              }
+            })}
+          </select>
+        ),
+      },
+      {
+        accessorKey: "priority", //id required if you use accessorFn instead of accessorKey
+        header: "Priority",
+        filterFn: "equals",
+        filterSelectOptions: ["Low", "Medium", "High"],
+        filterVariant: "select",
+        Cell: ({ row }) => (
+          <select
+            onClick={(e) => e.stopPropagation()}
+            className={` p-1 h-full outline-none border-none cursor-pointer bg-transparent  +
+                ${
+                  row.original.priority == "Low"
+                    ? "bg-green-400"
+                    : row.original.priority == "Medium"
+                    ? "bg-yellow-400"
+                    : row.original.priority == "High"
+                    ? "bg-red-400"
+                    : null
+                }`}
+            defaultValue={row.original.priority}
+            onChange={(e) => handleCasePriorityChange(row.original._id, e)}
+            disabled={
+              user.roleType == rolesList.boredMembers ||
+              user.roleType == rolesList.staff
+            }
+          >
+            {AppointmentPriority.map((value) => {
+              if (value == row.original.priority) {
+                return (
+                  <option key={value} value={row.original.priority}>
+                    {row.original.priority}
                   </option>
                 );
               } else {
@@ -279,6 +327,22 @@ function AppointmentList() {
         id: appointmentid,
       }).unwrap();
 
+      toast.success(response, {
+        position: "bottom-right",
+      });
+    } catch (error) {
+      toast.error(error.data, {
+        position: "bottom-right",
+      });
+    }
+  };
+
+  const handleCasePriorityChange = async (caseId, e) => {
+    try {
+      const response = await updateAppointmentPriority({
+        priority: e.target.value,
+        id: caseId,
+      }).unwrap();
       toast.success(response, {
         position: "bottom-right",
       });

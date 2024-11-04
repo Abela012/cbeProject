@@ -37,11 +37,13 @@ export const apiSlice = createApi({
   tagTypes: [
     "Case",
     "Appointment",
+    "Stati",
     "User",
     "Office",
     "Category",
     "Role",
     "Schedule",
+    "FollowUp",
   ],
   endpoints: (builder) => ({}),
 });

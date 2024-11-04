@@ -72,10 +72,7 @@ function SideBar() {
               <MdWindow size={20} />
             </CustNavLink> */}
 
-            <CustNavLink
-              linkName="Case Mangagement"
-              linkPath="case-management/case-list"
-            >
+            <CustNavLink linkName="Case Mangagement" linkPath="case-management">
               <LuMenuSquare size={20} />
             </CustNavLink>
           </>

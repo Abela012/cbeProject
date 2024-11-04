@@ -36,7 +36,7 @@ const createRole = async (req, res) => {
     const foundRole = await Role.findOne({
       $or: [{ roleName: roleName }, { roleType: roleType }],
     });
-    if (foundRole) return res.json("Role already exists");
+    if (foundRole) return res.status(400).json("Role already exists");
     const newRole = await Role.create({
       roleName,
       roleType,

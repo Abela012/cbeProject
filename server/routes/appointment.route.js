@@ -8,6 +8,7 @@ import {
   getAppointments,
   getAppointmentStati,
   updateAppointment,
+  updateAppointmentPriority,
   updateAppointmentStatus,
 } from "../controllers/appointment.Controller.js";
 import verifyRole from "../middleware/verifyRole.js";
@@ -89,6 +90,17 @@ appointmentRouter.patch(
     rolesList.cos
   ),
   updateAppointmentStatus
+);
+
+appointmentRouter.patch(
+  "/update-appointment-priority/:id",
+  verifyRole(
+    rolesList.secretary,
+    rolesList.president,
+    rolesList.vp,
+    rolesList.cos
+  ),
+  updateAppointmentPriority
 );
 
 appointmentRouter.delete(

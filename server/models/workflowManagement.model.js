@@ -2,9 +2,14 @@ import { model, Schema } from "mongoose";
 
 const WorkflowManagementSchema = Schema(
   {
-    caseId: { type: String },
-    assigneFrom: { type: String },
-    assigneTo: { type: String },
+    taskId: { type: Schema.Types.ObjectId, ref: "Task" },
+    followUp: [
+      {
+        user: { type: Schema.Types.ObjectId, ref: "User" },
+        message: { type: String },
+        time: { type: String },
+      },
+    ],
   },
   { timestamp: true }
 );

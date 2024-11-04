@@ -5,11 +5,13 @@ import { useGetOfficesQuery } from "../features/officeApiSlice";
 import TextArea from "./textArea/TextArea";
 import { useAssigneCaseMutation } from "../features/caseApiSlice";
 import { toast } from "react-toastify";
+import FormInput from "./forminput/FormInput";
 
 const AssignCase = ({ caseId, handleClose }) => {
   const [newAssignment, setNewAssignment] = useState({
     officeId: "",
     description: "",
+    dueDate: "",
   });
   const [offices, setOffice] = useState();
   const { data: officeList, isFetching } = useGetOfficesQuery();
@@ -22,7 +24,6 @@ const AssignCase = ({ caseId, handleClose }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewAssignment((prev) => ({ ...prev, [name]: value }));
-    console.log(value);
   };
 
   const handleSubmit = async (e) => {
@@ -35,7 +36,7 @@ const AssignCase = ({ caseId, handleClose }) => {
       toast.success(response, {
         position: "bottom-right",
       });
-      setNewAssignment({ officeId: "", description: "" });
+      setNewAssignment({ officeId: "", description: "", dueDate: "" });
     } catch (error) {
       toast.error(error.data, {
         position: "bottom-right",
@@ -70,6 +71,16 @@ const AssignCase = ({ caseId, handleClose }) => {
           lableName="Description"
           value={newAssignment.description}
           required={true}
+        />
+        <FormInput
+          lableName="Due date"
+          inputName="dueDate"
+          name="dueDate"
+          min={new Date().toISOString().slice(0, 11) + "08:00"}
+          type="datetime-local"
+          required={true}
+          value={newAssignment.dueDate}
+          onChange={handleChange}
         />
         <div className="flex items-center justify-evenly w-full">
           <Button type="submit">Assign</Button>
