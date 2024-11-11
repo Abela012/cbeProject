@@ -25,6 +25,7 @@ import Scheduler from "./pages/Scheduler";
 import Dashboard from "./pages/Dashboard";
 import UpcomingCase from "./pages/UpcomingCase";
 import UpcomingTask from "./pages/UpcomingTask";
+import UpcomingAppointment from "./pages/UpcomingAppointment";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
                 element: <Dashboard />,
               },
               {
+                path: "upcoming-appointment",
+                element: <UpcomingAppointment />,
+              },
+              {
                 path: "manage-appointment",
                 element: <AppointmentManagement />,
                 children: [
@@ -95,6 +100,14 @@ const router = createBrowserRouter([
                   {
                     index: true,
                     element: <CaseList />,
+                  },
+                  {
+                    path: "upcoming-case",
+                    element: <UpcomingCase />,
+                  },
+                  {
+                    path: "upcoming-task",
+                    element: <UpcomingTask />,
                   },
                 ],
               },
@@ -118,6 +131,10 @@ const router = createBrowserRouter([
               {
                 path: "",
                 element: <Dashboard />,
+              },
+              {
+                path: "upcoming-appointment",
+                element: <UpcomingAppointment />,
               },
               {
                 path: "manage-appointment",

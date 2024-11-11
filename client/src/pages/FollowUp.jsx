@@ -11,6 +11,7 @@ import Button from "../components/button/Button";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { parseISO } from "date-fns";
+import { rolesList } from "../util/userRoles";
 
 function FollowUp({ caseId, handleClose }) {
   //   const officeId = "66d01e877ee4082d58a5e7df";
@@ -32,7 +33,13 @@ function FollowUp({ caseId, handleClose }) {
   const [sendMessage] = useSendMessageMutation();
 
   useEffect(() => {
-    setSelectedOffice(caseData?.assignedOfficeIdList[0]?._id);
+    caseData?.assignedOfficeIdList?.map((office) => {
+      if (user.officeId == office._id) {
+        return setSelectedOffice(office._id);
+      } else {
+        return setSelectedOffice(caseData?.assignedOfficeIdList[0]?._id);
+      }
+    });
   }, [isSuccessCase]);
 
   // console.log(data, caseData);
@@ -60,24 +67,52 @@ function FollowUp({ caseId, handleClose }) {
     <OverLay handleClick={handleClose}>
       <div className=" flex flex-col gap-4 bg-white p-5 rounded-lg w-[80%] sm:w-[600px] h-[90%] overflow-auto ">
         <div className=" grid gap-2 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 ">
-          {caseData?.assignedOfficeIdList ? (
-            caseData?.assignedOfficeIdList?.map((office) => (
-              <span
-                key={office._id}
-                className={
-                  selectedOffice == office._id
-                    ? " bg-secondary-dark" +
-                      " text-center p-2 border-b-2 border-secondary-dark  rounded-t "
-                    : " text-center p-2 border-b-2 border-secondary-dark  rounded-t "
-                }
-                onClick={(e) => setSelectedOffice(office?._id)}
-              >
-                {office.officeName}
-              </span>
-            ))
-          ) : (
-            <span className="w-max">No assigned to anyone</span>
-          )}
+          {(() => {
+            switch (user.roleType) {
+              case rolesList.staff:
+                return caseData?.assignedOfficeIdList.length !== 0 ? (
+                  caseData?.assignedOfficeIdList?.map(
+                    (office) =>
+                      user.officeId == office._id && (
+                        <span
+                          key={office._id}
+                          className={
+                            selectedOffice == office._id
+                              ? " bg-secondary-dark" +
+                                " text-center p-2 border-b-2 border-secondary-dark  rounded-t "
+                              : " text-center p-2 border-b-2 border-secondary-dark  rounded-t "
+                          }
+                          onClick={(e) => setSelectedOffice(office?._id)}
+                        >
+                          {office.officeName}
+                        </span>
+                      )
+                  )
+                ) : (
+                  <span className="w-max">No assigned to anyone</span>
+                );
+
+              default:
+                return caseData?.assignedOfficeIdList.length !== 0 ? (
+                  caseData?.assignedOfficeIdList?.map((office) => (
+                    <span
+                      key={office._id}
+                      className={
+                        selectedOffice == office._id
+                          ? " bg-secondary-dark" +
+                            " text-center p-2 border-b-2 border-secondary-dark  rounded-t "
+                          : " text-center p-2 border-b-2 border-secondary-dark  rounded-t "
+                      }
+                      onClick={(e) => setSelectedOffice(office?._id)}
+                    >
+                      {office.officeName}
+                    </span>
+                  ))
+                ) : (
+                  <span className="w-max">No assigned to anyone</span>
+                );
+            }
+          })()}
         </div>
 
         <div className="">
@@ -105,38 +140,34 @@ function FollowUp({ caseId, handleClose }) {
                     {chat.taskId.description}
                   </h2>
 
-                  {chat?.followUp.lenght == 0 ? (
-                    "No message yet"
-                  ) : (
-                    <div className="flex flex-col gap-4 max-h-60 overflow-auto bg-[rgb(241,241,241)]">
-                      {chat?.followUp.length == 0 ? (
-                        <span className="text-sm opacity-50 text-center w-full inline-block">
-                          No message yet
-                        </span>
-                      ) : (
-                        chat?.followUp?.map((msg, idx) => (
-                          <span
-                            key={idx}
-                            className={
-                              user._id == msg.user
-                                ? " border bg-primary-light rounded p-1 w-1/2 self-end relative"
-                                : " border bg-white rounded p-1 w-1/2 relative"
-                            }
-                          >
-                            {msg.message}
-                            <span className="absolute right-1 text-xs -bottom-4">
-                              {parseISO(msg?.time).toLocaleTimeString([], {
-                                month: "long",
-                                day: "2-digit",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </span>
+                  <div className="flex flex-col gap-4 max-h-60 overflow-auto bg-[rgb(241,241,241)]">
+                    {chat?.followUp.length == 0 ? (
+                      <span className="text-sm opacity-50 text-center w-full inline-block">
+                        No message yet
+                      </span>
+                    ) : (
+                      chat?.followUp?.map((msg, idx) => (
+                        <span
+                          key={idx}
+                          className={
+                            user._id == msg.user
+                              ? " border bg-primary-light rounded p-1 w-1/2 self-end relative"
+                              : " border bg-white rounded p-1 w-1/2 relative"
+                          }
+                        >
+                          {msg.message}
+                          <span className="absolute right-1 text-xs -bottom-4">
+                            {parseISO(msg?.time).toLocaleTimeString([], {
+                              month: "long",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
                           </span>
-                        ))
-                      )}
-                    </div>
-                  )}
+                        </span>
+                      ))
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

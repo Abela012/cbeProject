@@ -61,6 +61,27 @@ const getScheduleList = async (req, res) => {
   }
 };
 
+const getUpcomingScheduleList = async (req, res) => {
+  try {
+    const { officeId } = req.params;
+    const foundSchedule = await ScheduleList.find({
+      officeId,
+      isDeleted: false,
+    }).populate({ path: "appointmentId", select: "status" });
+    const payload = foundSchedule.filter((schedule) => {
+      if (schedule.appointmentId) {
+        return schedule?.appointmentId.status == "Pending" && schedule;
+      } else {
+        return schedule;
+      }
+    });
+
+    return res.status(200).json(payload);
+  } catch (error) {
+    return res.status(500).json("Server error");
+  }
+};
+
 const getSchedule = async (req, res) => {
   try {
     const { id } = req.params;
@@ -120,6 +141,7 @@ const deleteSchedule = async (req, res) => {
 export {
   createSchedule,
   getScheduleList,
+  getUpcomingScheduleList,
   getSchedule,
   updateSchedule,
   deleteSchedule,

@@ -6,6 +6,7 @@ import {
   deleteSchedule,
   getSchedule,
   getScheduleList,
+  getUpcomingScheduleList,
   updateSchedule,
 } from "../controllers/scheduleList.Controller.js";
 
@@ -20,6 +21,11 @@ scheduleListRoute.get(
   "/get-schedule-list/:officeId",
   verifyRole(rolesList.president, rolesList.vp, rolesList.cos),
   getScheduleList
+);
+scheduleListRoute.get(
+  "/get-upcoming-schedule-list/:officeId",
+  verifyRole(rolesList.president, rolesList.vp, rolesList.cos),
+  getUpcomingScheduleList
 );
 scheduleListRoute.get(
   "/get-schedule/:id",
