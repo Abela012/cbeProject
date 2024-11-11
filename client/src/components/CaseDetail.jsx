@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useGetCaseTaskQuery } from "../features/caseApiSlice";
 import { skipToken } from "@reduxjs/toolkit/query";
-import { formatDistanceToNow } from "date-fns";
+import { calcDaysUntilDue } from "../util/dueDate";
 
 function CaseDetail({ detail }) {
   const [hoveredOfficeId, setHoveredOfficeId] = useState(null);
@@ -119,7 +119,9 @@ function CaseDetail({ detail }) {
           <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <dt className=" font-medium text-gray-500">Due date</dt>
             <dd className="mt-1  text-gray-900 sm:mt-0 sm:col-span-2">
-              {detail.dueDate && formatDistanceToNow(new Date(detail?.dueDate))}
+              {detail.dueDate &&
+                calcDaysUntilDue(new Date(detail?.dueDate)).daysRemaining +
+                  " day/s"}
             </dd>
           </div>
         </dl>

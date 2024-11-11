@@ -81,12 +81,11 @@ function CaseList() {
 
   // show upcoming cases
   useEffect(() => {
-    const now = new Date();
     cases?.forEach((task) => {
       if (task.status == "Pending") {
-        const due = calcDaysUntilDue(new Date(task?.dueDate), now);
+        const { daysRemaining } = calcDaysUntilDue(new Date(task?.dueDate));
         if (
-          due !== "" &&
+          daysRemaining !== 0 &&
           !upcomingCases.some((existingCase) => existingCase._id === task._id)
         ) {
           setUpcomingCases((prev) => [...prev, task]);
@@ -97,12 +96,11 @@ function CaseList() {
 
   // show upcoming tasks
   useEffect(() => {
-    const now = new Date();
     tasks?.forEach((task) => {
       if (task.status == "Pending") {
-        const due = calcDaysUntilDue(new Date(task?.dueDate), now);
+        const { daysRemaining } = calcDaysUntilDue(new Date(task?.dueDate));
         if (
-          due !== "" &&
+          daysRemaining !== 0 &&
           !upcomingTasks.some((existingTask) => existingTask._id === task._id)
         ) {
           setUpcomingTasks((prev) => [...prev, task]);

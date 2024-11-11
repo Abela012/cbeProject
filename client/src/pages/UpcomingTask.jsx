@@ -23,12 +23,15 @@ function UpcomingTask() {
       {data?.some(
         (task) =>
           task.status === "Pending" &&
-          calcDaysUntilDue(new Date(task?.dueDate), new Date()) !== ""
+          calcDaysUntilDue(new Date(task?.dueDate)).daysRemaining !== 0
       ) ? (
         data?.map((task) => {
           if (task.status === "Pending") {
-            const due = calcDaysUntilDue(new Date(task?.dueDate), new Date());
-            if (due !== "") {
+            const { daysRemaining } = calcDaysUntilDue(
+              new Date(task?.dueDate),
+              new Date()
+            );
+            if (daysRemaining !== 0) {
               return (
                 <div
                   key={task._id}

@@ -24,12 +24,12 @@ function UpcomingCase() {
       {data?.some(
         (item) =>
           item.status === "Pending" &&
-          calcDaysUntilDue(new Date(item?.dueDate), new Date()) !== ""
+          calcDaysUntilDue(new Date(item?.dueDate)).daysRemaining !== 0
       ) ? (
         data?.map((item) => {
           if (item.status == "Pending") {
-            const due = calcDaysUntilDue(new Date(item?.dueDate), new Date());
-            if (due !== "") {
+            const { daysRemaining } = calcDaysUntilDue(new Date(item?.dueDate));
+            if (daysRemaining !== 0) {
               return (
                 <div
                   key={item._id}

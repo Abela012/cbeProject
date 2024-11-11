@@ -25,15 +25,15 @@ function UpcomingAppointment() {
           </div>
           {scheduleList?.some(
             (item) =>
-              calcDaysUntilDue(new Date(item?.startTime), new Date()) !== ""
+              calcDaysUntilDue(new Date(item?.startTime)).daysRemaining !== 0
           ) ? (
             scheduleList?.map((item) => {
-              const due = calcDaysUntilDue(
+              const { daysRemaining } = calcDaysUntilDue(
                 new Date(item?.startTime),
                 new Date()
               );
 
-              if (due !== "") {
+              if (daysRemaining !== 0) {
                 return (
                   <div
                     key={item._id}

@@ -42,9 +42,9 @@ function Dashboard() {
   useEffect(() => {
     const now = new Date();
     schedules?.forEach((schedule) => {
-      const due = calcDaysUntilDue(new Date(schedule?.startTime), now);
+      const { daysRemaining } = calcDaysUntilDue(new Date(schedule?.startTime));
       if (
-        due !== "" &&
+        daysRemaining !== 0 &&
         !upcomingSchedules.some(
           (existingSchedule) => existingSchedule._id === schedule._id
         )
