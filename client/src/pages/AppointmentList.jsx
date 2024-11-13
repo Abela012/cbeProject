@@ -173,43 +173,50 @@ function AppointmentList() {
         filterFn: "equals",
         filterSelectOptions: ["Low", "Medium", "High"],
         filterVariant: "select",
-        Cell: ({ row }) => (
-          <select
-            onClick={(e) => e.stopPropagation()}
-            className={` p-1 h-full outline-none border-none cursor-pointer bg-transparent  +
-                ${
-                  row.original.priority == "Low"
-                    ? "bg-green-400"
-                    : row.original.priority == "Medium"
-                    ? "bg-yellow-400"
-                    : row.original.priority == "High"
-                    ? "bg-red-400"
-                    : null
-                }`}
-            defaultValue={row.original.priority}
-            onChange={(e) => handleCasePriorityChange(row.original._id, e)}
-            disabled={
-              user.roleType == rolesList.boredMembers ||
-              user.roleType == rolesList.staff
+        Cell: ({ row }) => {
+          const getPriorityClass = (priority) => {
+            switch (priority) {
+              case "Low":
+                return "bg-green-400";
+              case "Medium":
+                return "bg-yellow-400";
+              case "High":
+                return "bg-red-400";
+              default:
+                return "";
             }
-          >
-            {AppointmentPriority.map((value) => {
-              if (value == row.original.priority) {
-                return (
-                  <option key={value} value={row.original.priority}>
-                    {row.original.priority}
-                  </option>
-                );
-              } else {
-                return (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                );
+          };
+          return (
+            <select
+              onClick={(e) => e.stopPropagation()}
+              className={`p-2 h-full outline-none border-none rounded cursor-pointer ${getPriorityClass(
+                row.original.priority
+              )}`}
+              defaultValue={row.original.priority}
+              onChange={(e) => handleCasePriorityChange(row.original._id, e)}
+              disabled={
+                user.roleType == rolesList.boredMembers ||
+                user.roleType == rolesList.staff
               }
-            })}
-          </select>
-        ),
+            >
+              {AppointmentPriority.map((value) => {
+                if (value == row.original.priority) {
+                  return (
+                    <option key={value} value={row.original.priority}>
+                      {row.original.priority}
+                    </option>
+                  );
+                } else {
+                  return (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  );
+                }
+              })}
+            </select>
+          );
+        },
       },
       {
         id: "actions",

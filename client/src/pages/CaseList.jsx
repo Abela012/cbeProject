@@ -81,12 +81,11 @@ function CaseList() {
 
   // show upcoming cases
   useEffect(() => {
-    const now = new Date();
     cases?.forEach((task) => {
       if (task.status == "Pending") {
-        const due = calcDaysUntilDue(new Date(task?.dueDate), now);
+        const { daysRemaining } = calcDaysUntilDue(new Date(task?.dueDate));
         if (
-          due !== "" &&
+          daysRemaining !== 0 &&
           !upcomingCases.some((existingCase) => existingCase._id === task._id)
         ) {
           setUpcomingCases((prev) => [...prev, task]);
@@ -97,12 +96,11 @@ function CaseList() {
 
   // show upcoming tasks
   useEffect(() => {
-    const now = new Date();
     tasks?.forEach((task) => {
       if (task.status == "Pending") {
-        const due = calcDaysUntilDue(new Date(task?.dueDate), now);
+        const { daysRemaining } = calcDaysUntilDue(new Date(task?.dueDate));
         if (
-          due !== "" &&
+          daysRemaining !== 0 &&
           !upcomingTasks.some((existingTask) => existingTask._id === task._id)
         ) {
           setUpcomingTasks((prev) => [...prev, task]);
@@ -118,8 +116,10 @@ function CaseList() {
   const columns = useMemo(
     () => [
       {
-        accessorKey: "customerId.fullName", //simple recommended way to define a column
-        header: "Customer Name",
+        accessorFn: (row) =>
+          row.customerId?.fullName || row.officeId?.officeName, // Custom accessor function
+        id: "customerOrOfficeName", // Unique ID for the column
+        header: "Customer/Office Name",
         // muiTableHeadCellProps: { style: { color: "green" } }, //custom props
         enableHiding: false, //disable a feature for this column
       },
@@ -165,43 +165,41 @@ function CaseList() {
         filterFn: "equals",
         filterSelectOptions: ["Low", "Medium", "High"],
         filterVariant: "select",
-        Cell: ({ row }) => (
-          <select
-            onClick={(e) => e.stopPropagation()}
-            className={` p-2 h-full outline-none border-none rounded cursor-pointer bg-transparent  +
-                ${
-                  row.original.priority == "Low"
-                    ? "bg-green-400"
-                    : row.original.priority == "Medium"
-                    ? "bg-yellow-400"
-                    : row.original.priority == "High"
-                    ? "bg-red-400"
-                    : null
-                }`}
-            defaultValue={row.original.priority}
-            onChange={(e) => handleCasePriorityChange(row.original._id, e)}
-            disabled={
-              user.roleType == rolesList.boredMembers ||
-              user.roleType == rolesList.staff
+        Cell: ({ row }) => {
+          const getPriorityClass = (priority) => {
+            switch (priority) {
+              case "Low":
+                return "bg-green-400";
+              case "Medium":
+                return "bg-yellow-400";
+              case "High":
+                return "bg-red-400";
+              default:
+                return "";
             }
-          >
-            {CasePriority.map((value) => {
-              if (value == row.original.priority) {
-                return (
-                  <option key={value} value={row.original.priority}>
-                    {row.original.priority}
-                  </option>
-                );
-              } else {
-                return (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                );
+          };
+
+          return (
+            <select
+              onClick={(e) => e.stopPropagation()}
+              className={`p-2 h-full outline-none border-none rounded cursor-pointer ${getPriorityClass(
+                row.original.priority
+              )}`}
+              defaultValue={row.original.priority}
+              onChange={(e) => handleCasePriorityChange(row.original._id, e)}
+              disabled={
+                user.roleType == rolesList.boredMembers ||
+                user.roleType == rolesList.staff
               }
-            })}
-          </select>
-        ),
+            >
+              {CasePriority.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          );
+        },
       },
       {
         accessorKey: "currentAssignedOfficeId", //id required if you use accessorFn instead of accessorKey
@@ -397,9 +395,13 @@ function CaseList() {
             </span>
             <span className=" text-xs font-bold ">Upcoming tasks</span>
           </Link>
-          <Button className="!p-0" onClick={handleCreateClick}>
-            Create case
-          </Button>
+
+          {user.roleType !== rolesList.boredMembers &&
+          user.roleType !== rolesList.staff ? (
+            <Button className="!p-0" onClick={handleCreateClick}>
+              Create case
+            </Button>
+          ) : null}
         </div>
       </div>
       <MaterialReactTable table={table} />

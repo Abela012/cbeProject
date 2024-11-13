@@ -31,6 +31,13 @@ export const scheduleSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["Schedule"],
     }),
+    getUpcomingScheduleList: builder.query({
+      query: (query) => ({
+        url: `/get-upcoming-schedule-list/${query.officeId}`,
+        method: "GET",
+      }),
+      providesTags: ["Schedule"],
+    }),
     updateSchedule: builder.mutation({
       query: ({ id, ...schedule }) => ({
         url: `/update-schedule/${id}`,
@@ -52,6 +59,7 @@ export const scheduleSlice = apiSlice.injectEndpoints({
 export const {
   useCreateScheduleMutation,
   useGetScheduleListQuery,
+  useGetUpcomingScheduleListQuery,
   useGetScheduleQuery,
   useUpdateScheduleMutation,
   useDeleteScheduleMutation,
